@@ -29,6 +29,7 @@ import org.checkerframework.checker.interning.qual.UsesObjectEquals;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
 
 import java.io.*;
 import java.lang.ProcessBuilder.Redirect;
@@ -94,7 +95,7 @@ import java.util.stream.Stream;
  *
  * @since   1.0
  */
-@AnnotatedFor({"interning", "nullness"})
+@AnnotatedFor({"interning", "nullness", "mustcall"})
 public abstract @UsesObjectEquals class Process {
     /**
      * Default constructor for Process.
@@ -122,6 +123,7 @@ public abstract @UsesObjectEquals class Process {
     "possibly returning a \"null stream\".  A \"null stream\" is a non-null",
     "Stream with particular behavior, not a @Nullable Stream reference."})
     @SideEffectFree
+    @NotOwning
     public abstract OutputStream getOutputStream();
 
     /**
@@ -149,6 +151,7 @@ public abstract @UsesObjectEquals class Process {
      *         process
      */
     @SideEffectFree
+    @NotOwning
     public abstract InputStream getInputStream();
 
     /**
@@ -171,6 +174,7 @@ public abstract @UsesObjectEquals class Process {
      *         the process
      */
     @SideEffectFree
+    @NotOwning
     public abstract InputStream getErrorStream();
 
     /**
