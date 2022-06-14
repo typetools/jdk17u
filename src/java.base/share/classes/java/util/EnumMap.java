@@ -533,8 +533,8 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
         @SideEffectFree
         @SuppressWarnings({
             "unchecked",
-            "nullness:argument.type.incompatible",
-            "nullness:override.param.invalid"
+            "nullness:argument",
+            "nullness:override.param"
         })
         public <T> @Nullable T[] toArray(@Nullable T[] a) {
             int size = size();
@@ -547,7 +547,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
         }
         @CFComment({"nullness: Value returned by unmaskNull",
         "will be of type V (not @Nullable V) for mapped value"})
-        @SuppressWarnings({"nullness:argument.type.incompatible"})
+        @SuppressWarnings({"nullness:argument"})
         private Object[] fillEntryArray(Object[] a) {
             int j = 0;
             for (int i = 0; i < vals.length; i++)
@@ -599,7 +599,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
     private class ValueIterator extends EnumMapIterator<V> {
         @CFComment({"nullness: Value returned by unmaskNull",
                     "will be of type V (not @Nullable V) for mapped value"})
-        @SuppressWarnings({"nullness:return.type.incompatible"})
+        @SuppressWarnings({"nullness:return"})
         public V next() {
             if (!hasNext())
                 throw new NoSuchElementException();
@@ -640,7 +640,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
 
             @CFComment({"nullness: Value returned by unmaskNull",
                         "will be of type V (not @Nullable V) for mapped value"})
-            @SuppressWarnings("nullness:return.type.incompatible")
+            @SuppressWarnings("nullness:return")
             public V getValue() {
                 checkIndexForEntryUse();
                 return unmaskNull(vals[index]);
@@ -648,7 +648,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
 
             @CFComment({"nullness: Value returned by unmaskNull",
             "will be of type V (not @Nullable V) for mapped value"})
-            @SuppressWarnings("nullness:return.type.incompatible")
+            @SuppressWarnings("nullness:return")
             public V setValue(V value) {
                 checkIndexForEntryUse();
                 V oldValue = unmaskNull(vals[index]);

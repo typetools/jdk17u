@@ -843,7 +843,7 @@ public
      * @throws  IllegalThreadStateException If the Thread group has been destroyed.
      */
     @CFComment({"index: #1: If ngroups = groups.length, length of group is doubled"})
-    @SuppressWarnings({"index:array.access.unsafe.high", "index:compound.assignment.type.incompatible"})
+    @SuppressWarnings({"index:array.access.unsafe.high", "index:compound.assignment"})
     private final void add(ThreadGroup g){
         synchronized (this) {
             if (destroyed) {
@@ -868,7 +868,7 @@ public
      * @return if this Thread has already been destroyed.
      */
     @CFComment({"index: #1: ngroups - i <= groups.length - i"})
-    @SuppressWarnings("index:argument.type.incompatible")
+    @SuppressWarnings("index:argument")
     private void remove(ThreadGroup g) {
         synchronized (this) {
             if (destroyed) {
@@ -926,7 +926,7 @@ public
      *          if the Thread group has been destroyed
      */
     @CFComment({"index: #1: If nthreads = threads.length, length of threads is doubled"})
-    @SuppressWarnings({"index:array.access.unsafe.high", "index:compound.assignment.type.incompatible"})
+    @SuppressWarnings({"index:array.access.unsafe.high", "index:compound.assignment"})
     void add(Thread t) {
         synchronized (this) {
             if (destroyed) {
@@ -1004,7 +1004,7 @@ public
      *         the Thread to be removed
      */
     @CFComment({"index: #1: --nthreads - i < threads.length - i, also, --nthreads - i is @NonNegative as --nthreads >= i"})
-    @SuppressWarnings("index:argument.type.incompatible")
+    @SuppressWarnings("index:argument")
     private void remove(Thread t) {
         synchronized (this) {
             if (destroyed) {

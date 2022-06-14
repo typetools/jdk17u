@@ -85,7 +85,7 @@ import java.util.function.Supplier;
             "but in such a case:",
             "* the subclass must override initialValue to return a non-null value",
             "* the subclass needs to suppress a warning:",
-            "@SuppressWarnings(\"nullness:type.argument.type.incompatible\") // initialValue returns non-null"
+            "@SuppressWarnings(\"nullness:type.argument\") // initialValue returns non-null"
         })
 @AnnotatedFor({"interning", "nullness"})
 public @UsesObjectEquals class ThreadLocal<@Nullable T> {

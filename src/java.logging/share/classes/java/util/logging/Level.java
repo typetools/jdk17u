@@ -244,7 +244,7 @@ public @Interned class Level implements java.io.Serializable {
     // private constructor to specify whether this instance should be added
     // to the KnownLevel list from which Level.parse method does its look up
     @CFComment({"nullness: All the fields required by KnownLevel.add method are already initialized before passing it as an argument"})
-    @SuppressWarnings({"argument.type.incompatible"})
+    @SuppressWarnings({"argument"})
     private Level(String name, int value, @Nullable @BinaryName String resourceBundleName, boolean visible) {
         if (name == null) {
             throw new NullPointerException();

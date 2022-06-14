@@ -2349,7 +2349,7 @@ public abstract @UsesObjectEquals class ClassLoader {
      */
     @CFComment({"nullness: The size of array passed to toArray",
      "method is of exact same size as of the map for which toArray method is invoked"})
-    @SuppressWarnings({"nullness:return.type.incompatible"})
+    @SuppressWarnings({"nullness:return"})
     protected Package[] getPackages() {
         Stream<Package> pkgs = packages();
         ClassLoader ld = parent;
