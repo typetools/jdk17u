@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2020, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -38,7 +38,7 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
 
-import jdk.internal.misc.SharedSecrets;
+import jdk.internal.access.SharedSecrets;
 
 /**
  * A specialized {@link Map} implementation for use with enum type keys.  All
@@ -61,7 +61,7 @@ import jdk.internal.misc.SharedSecrets;
  * throw {@link NullPointerException}.  Attempts to test for the
  * presence of a null key or to remove one will, however, function properly.
  * Null values are permitted.
-
+ *
  * <P>Like most collection implementations {@code EnumMap} is not
  * synchronized. If multiple threads access an enum map concurrently, and at
  * least one of the threads modifies the map, it should be synchronized
@@ -352,8 +352,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
     @SuppressWarnings({"nullness:contracts.precondition.override.invalid"})
     @RequiresNonNull({"keyUniverse", "vals"})
     public void putAll(@UnknownInitialization EnumMap<K, V> this, Map<? extends K, ? extends V> m) {
-        if (m instanceof EnumMap) {
-            EnumMap<?, ?> em = (EnumMap<?, ?>)m;
+        if (m instanceof EnumMap<?, ?> em) {
             if (em.keyType != keyType) {
                 if (em.isEmpty())
                     return;
@@ -506,16 +505,12 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
 
         @Pure
         public boolean contains(@Nullable Object o) {
-            if (!(o instanceof Map.Entry))
-                return false;
-            Map.Entry<?,?> entry = (Map.Entry<?,?>)o;
-            return containsMapping(entry.getKey(), entry.getValue());
+            return o instanceof Map.Entry<?, ?> entry
+                    && containsMapping(entry.getKey(), entry.getValue());
         }
         public boolean remove(@Nullable Object o) {
-            if (!(o instanceof Map.Entry))
-                return false;
-            Map.Entry<?,?> entry = (Map.Entry<?,?>)o;
-            return removeMapping(entry.getKey(), entry.getValue());
+            return o instanceof Map.Entry<?, ?> entry
+                    && removeMapping(entry.getKey(), entry.getValue());
         }
         @Pure
         public @NonNegative int size() {
@@ -660,10 +655,9 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
                 if (index < 0)
                     return o == this;
 
-                if (!(o instanceof Map.Entry))
+                if (!(o instanceof Map.Entry<?, ?> e))
                     return false;
 
-                Map.Entry<?,?> e = (Map.Entry<?,?>)o;
                 V ourValue = unmaskNull(vals[index]);
                 Object hisValue = e.getValue();
                 return (e.getKey() == keyUniverse[index] &&
@@ -709,10 +703,9 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
             return true;
         if (o instanceof EnumMap)
             return equals((EnumMap<?,?>)o);
-        if (!(o instanceof Map))
+        if (!(o instanceof Map<?, ?> m))
             return false;
 
-        Map<?,?> m = (Map<?,?>)o;
         if (size != m.size())
             return false;
 
@@ -810,6 +803,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
                                         .getEnumConstantsShared(keyType);
     }
 
+    @java.io.Serial
     private static final long serialVersionUID = 458661240069192865L;
 
     /**
@@ -821,6 +815,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
      *             and value (Object) for each key-value mapping represented
      *             by the enum map.
      */
+    @java.io.Serial
     private void writeObject(java.io.ObjectOutputStream s)
         throws java.io.IOException
     {
@@ -846,6 +841,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
      * deserialize it).
      */
     @SuppressWarnings("unchecked")
+    @java.io.Serial
     private void readObject(java.io.ObjectInputStream s)
         throws java.io.IOException, ClassNotFoundException
     {

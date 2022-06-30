@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2020, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -48,7 +48,6 @@ import org.checkerframework.framework.qual.CFComment;
  * <strong>NOTE: This class is obsolete.  New implementations should
  * implement the Map interface, rather than extending this class.</strong>
  *
- * @author  unascribed
  * @see     java.util.Map
  * @see     java.lang.Object#equals(java.lang.Object)
  * @see     java.lang.Object#hashCode()
@@ -119,7 +118,7 @@ class Dictionary<K,V> {
      * @param   key   a key in this dictionary.
      *          {@code null} if the key is not mapped to any value in
      *          this dictionary.
-     * @exception NullPointerException if the {@code key} is {@code null}.
+     * @throws    NullPointerException if the {@code key} is {@code null}.
      * @see     java.util.Dictionary#put(java.lang.Object, java.lang.Object)
      */
     @Pure
@@ -147,7 +146,7 @@ class Dictionary<K,V> {
      * @return     the previous value to which the {@code key} was mapped
      *             in this dictionary, or {@code null} if the key did not
      *             have a previous mapping.
-     * @exception  NullPointerException  if the {@code key} or
+     * @throws     NullPointerException  if the {@code key} or
      *               {@code value} is {@code null}.
      * @see        java.lang.Object#equals(java.lang.Object)
      * @see        java.util.Dictionary#get(java.lang.Object)
@@ -164,7 +163,7 @@ class Dictionary<K,V> {
      * @return  the value to which the {@code key} had been mapped in this
      *          dictionary, or {@code null} if the key did not have a
      *          mapping.
-     * @exception NullPointerException if {@code key} is {@code null}.
+     * @throws    NullPointerException if {@code key} is {@code null}.
      */
     public abstract @Nullable V remove(@GuardSatisfied Dictionary<K, V> this, Object key);
 }

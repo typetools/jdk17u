@@ -47,8 +47,7 @@ import org.checkerframework.framework.qual.AnnotatedFor;
 import java.io.Serializable;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
-import jdk.internal.misc.SharedSecrets;
+import jdk.internal.access.SharedSecrets;
 
 /**
  * Resizable-array implementation of the {@link Deque} interface.  Array
@@ -191,7 +190,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * sufficient to hold 16 elements.
      */
     public ArrayDeque() {
-        elements = new Object[16];
+        elements = new Object[16 + 1];
     }
 
     /**
@@ -1179,6 +1178,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
         }
     }
 
+    @java.io.Serial
     private static final long serialVersionUID = 2340985798034038923L;
 
     /**
@@ -1190,6 +1190,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * followed by all of its elements (each an object reference) in
      * first-to-last order.
      */
+    @java.io.Serial
     private void writeObject(java.io.ObjectOutputStream s)
             throws java.io.IOException {
         s.defaultWriteObject();
@@ -1214,6 +1215,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      *         could not be found
      * @throws java.io.IOException if an I/O error occurs
      */
+    @java.io.Serial
     private void readObject(java.io.ObjectInputStream s)
             throws java.io.IOException, ClassNotFoundException {
         s.defaultReadObject();

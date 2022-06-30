@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2017, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2021, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -38,6 +38,8 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
+import jdk.internal.event.ProcessStartEvent;
 import sun.security.action.GetPropertyAction;
 
 /**
@@ -93,7 +95,7 @@ import sun.security.action.GetPropertyAction;
  * <li><a id="redirect-output">a destination for <i>standard output</i>
  * and <i>standard error</i></a>.  By default, the subprocess writes standard
  * output and standard error to pipes.  Java code can access these pipes
- * via the input streams returned by {@link Process#getOutputStream()} and
+ * via the input streams returned by {@link Process#getInputStream()} and
  * {@link Process#getErrorStream()}.  However, standard output and
  * standard error may be redirected to other destinations using
  * {@link #redirectOutput(Redirect) redirectOutput} and
@@ -351,6 +353,7 @@ public final class ProcessBuilder
      * @see    System#getenv()
      */
     public Map<String,String> environment() {
+        @SuppressWarnings("removal")
         SecurityManager security = System.getSecurityManager();
         if (security != null)
             security.checkPermission(new RuntimePermission("getenv.*"));
@@ -676,9 +679,8 @@ public final class ProcessBuilder
         public boolean equals(Object obj) {
             if (obj == this)
                 return true;
-            if (! (obj instanceof Redirect))
+            if (! (obj instanceof Redirect r))
                 return false;
-            Redirect r = (Redirect) obj;
             if (r.type() != this.type())
                 return false;
             assert this.file() != null;
@@ -1080,7 +1082,7 @@ public final class ProcessBuilder
      * Start a new Process using an explicit array of redirects.
      * See {@link #start} for details of starting each Process.
      *
-     * @param redirect array of redirects for stdin, stdout, stderr
+     * @param redirects array of redirects for stdin, stdout, stderr
      * @return the new Process
      * @throws IOException if an I/O error occurs
      */
@@ -1096,6 +1098,7 @@ public final class ProcessBuilder
         // Throws IndexOutOfBoundsException if command is empty
         String prog = cmdarray[0];
 
+        @SuppressWarnings("removal")
         SecurityManager security = System.getSecurityManager();
         if (security != null)
             security.checkExec(prog);
@@ -1109,11 +1112,23 @@ public final class ProcessBuilder
         }
 
         try {
-            return ProcessImpl.start(cmdarray,
+            Process process = ProcessImpl.start(cmdarray,
                                      environment,
                                      dir,
                                      redirects,
                                      redirectErrorStream);
+            ProcessStartEvent event = new ProcessStartEvent();
+            if (event.isEnabled()) {
+                StringJoiner command = new StringJoiner(" ");
+                for (String s: cmdarray) {
+                    command.add(s);
+                }
+                event.directory = dir;
+                event.command = command.toString();
+                event.pid = process.pid();
+                event.commit();
+            }
+            return process;
         } catch (IOException | IllegalArgumentException e) {
             String exceptionInfo = ": " + e.getMessage();
             Throwable cause = e;
@@ -1162,12 +1177,12 @@ public final class ProcessBuilder
      * are forcibly destroyed.
      * <p>
      * The {@code startPipeline} method performs the same checks on
-     * each ProcessBuilder as does the {@link #start} method. The new process
-     * will invoke the command and arguments given by {@link #command()},
-     * in a working directory as given by {@link #directory()},
-     * with a process environment as given by {@link #environment()}.
+     * each ProcessBuilder as does the {@link #start} method. Each new process
+     * invokes the command and arguments given by the respective process builder's
+     * {@link #command()}, in a working directory as given by its {@link #directory()},
+     * with a process environment as given by its {@link #environment()}.
      * <p>
-     * This method checks that the command is a valid operating
+     * Each process builder's command is checked to be a valid operating
      * system command.  Which commands are valid is system-dependent,
      * but at the very least the command must be a non-empty list of
      * non-null strings.
@@ -1179,7 +1194,7 @@ public final class ProcessBuilder
      * <p>
      * If there is a security manager, its
      * {@link SecurityManager#checkExec checkExec}
-     * method is called with the first component of this object's
+     * method is called with the first component of each process builder's
      * {@code command} array as its argument. This may result in
      * a {@link SecurityException} being thrown.
      * <p>
@@ -1199,8 +1214,8 @@ public final class ProcessBuilder
      * If the operating system does not support the creation of
      * processes, an {@link UnsupportedOperationException} will be thrown.
      * <p>
-     * Subsequent modifications to this process builder will not
-     * affect the returned {@link Process}.
+     * Subsequent modifications to any of the specified builders
+     * will not affect the returned {@link Process}.
      * @apiNote
      * For example to count the unique imports for all the files in a file hierarchy
      * on a Unix compatible platform:
@@ -1208,9 +1223,9 @@ public final class ProcessBuilder
      * String directory = "/home/duke/src";
      * ProcessBuilder[] builders = {
      *              new ProcessBuilder("find", directory, "-type", "f"),
-                    new ProcessBuilder("xargs", "grep", "-h", "^import "),
-                    new ProcessBuilder("awk", "{print $2;}"),
-                    new ProcessBuilder("sort", "-u")};
+     *              new ProcessBuilder("xargs", "grep", "-h", "^import "),
+     *              new ProcessBuilder("awk", "{print $2;}"),
+     *              new ProcessBuilder("sort", "-u")};
      * List<Process> processes = ProcessBuilder.startPipeline(
      *         Arrays.asList(builders));
      * Process last = processes.get(processes.size()-1);
