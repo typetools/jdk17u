@@ -25,6 +25,10 @@
 
 package java.lang;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.tainting.qual.Untainted;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -189,6 +193,7 @@ import sun.security.action.GetPropertyAction;
  * @since 1.5
  */
 
+@AnnotatedFor({"nullness", "tainting"})
 public final class ProcessBuilder
 {
     private List<String> command;
@@ -208,7 +213,7 @@ public final class ProcessBuilder
      *
      * @param  command the list containing the program and its arguments
      */
-    public ProcessBuilder(List<String> command) {
+    public ProcessBuilder(List<@Untainted String> command) {
         if (command == null)
             throw new NullPointerException();
         this.command = command;
@@ -225,7 +230,7 @@ public final class ProcessBuilder
      *
      * @param command a string array containing the program and its arguments
      */
-    public ProcessBuilder(String... command) {
+    public ProcessBuilder(@Untainted String... command) {
         this.command = new ArrayList<>(command.length);
         for (String arg : command)
             this.command.add(arg);
@@ -242,7 +247,7 @@ public final class ProcessBuilder
      * @param  command the list containing the program and its arguments
      * @return this process builder
      */
-    public ProcessBuilder command(List<String> command) {
+    public ProcessBuilder command(List<@Untainted String> command) {
         if (command == null)
             throw new NullPointerException();
         this.command = command;
@@ -260,7 +265,7 @@ public final class ProcessBuilder
      * @param  command a string array containing the program and its arguments
      * @return this process builder
      */
-    public ProcessBuilder command(String... command) {
+    public ProcessBuilder command(@Untainted String... command) {
         this.command = new ArrayList<>(command.length);
         for (String arg : command)
             this.command.add(arg);
@@ -275,7 +280,7 @@ public final class ProcessBuilder
      *
      * @return this process builder's program and its arguments
      */
-    public List<String> command() {
+    public List<@Untainted String> command() {
         return command;
     }
 
@@ -401,7 +406,7 @@ public final class ProcessBuilder
      *
      * @return this process builder's working directory
      */
-    public File directory() {
+    public @Nullable File directory() {
         return directory;
     }
 
@@ -418,7 +423,7 @@ public final class ProcessBuilder
      * @param  directory the new working directory
      * @return this process builder
      */
-    public ProcessBuilder directory(File directory) {
+    public ProcessBuilder directory(@Nullable File directory) {
         this.directory = directory;
         return this;
     }

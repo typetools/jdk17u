@@ -25,6 +25,8 @@
 
 package jdk.javadoc.internal.doclets.formats.html;
 
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.util.Set;
 
 import javax.lang.model.element.PackageElement;
@@ -138,6 +140,7 @@ public class SerializedFormWriterImpl extends SubWriterHolderWriter
      * @param typeElement the class being processed.
      * @return true if the class, that is being processed, is generated and is visible.
      */
+    @Pure
     public boolean isVisibleClass(TypeElement typeElement) {
         return visibleClasses.contains(typeElement) && configuration.isGeneratedDoc(typeElement)
                 && !utils.hasHiddenTag(typeElement);

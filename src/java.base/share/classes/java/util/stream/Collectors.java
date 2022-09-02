@@ -24,6 +24,10 @@
  */
 package java.util.stream;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -103,6 +107,7 @@ import jdk.internal.access.SharedSecrets;
  *
  * @since 1.8
  */
+@AnnotatedFor({"lock", "nullness"})
 public final class Collectors {
 
     static final Set<Collector.Characteristics> CH_CONCURRENT_ID
@@ -2010,6 +2015,7 @@ public final class Collectors {
         }
 
         @Override
+        @SideEffectFree
         public Set<Map.Entry<Boolean, T>> entrySet() {
             return new AbstractSet<>() {
                 @Override
@@ -2020,6 +2026,7 @@ public final class Collectors {
                 }
 
                 @Override
+                @Pure
                 public int size() {
                     return 2;
                 }

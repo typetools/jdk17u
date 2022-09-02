@@ -25,6 +25,11 @@
 
 package java.util;
 
+import org.checkerframework.checker.index.qual.IndexFor;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.concurrent.CountedCompleter;
 import java.util.concurrent.RecursiveTask;
 
@@ -48,7 +53,8 @@ import java.util.concurrent.RecursiveTask;
  *
  * @since 1.7 * 14
  */
-final class DualPivotQuicksort {
+@AnnotatedFor({"index", "interning"})
+final @UsesObjectEquals class DualPivotQuicksort {
 
     /**
      * Prevents instantiation.
@@ -152,7 +158,7 @@ final class DualPivotQuicksort {
      * @param low the index of the first element, inclusive, to be sorted
      * @param high the index of the last element, exclusive, to be sorted
      */
-    static void sort(int[] a, int parallelism, int low, int high) {
+    static void sort(int[] a, int parallelism, @IndexOrHigh({"#1"}) int low, @IndexOrHigh({"#1"}) int high) {
         int size = high - low;
 
         if (parallelism > 1 && size > MIN_PARALLEL_SORT_SIZE) {
@@ -175,7 +181,7 @@ final class DualPivotQuicksort {
      * @param low the index of the first element, inclusive, to be sorted
      * @param high the index of the last element, exclusive, to be sorted
      */
-    static void sort(Sorter sorter, int[] a, int bits, int low, int high) {
+    static void sort(Sorter sorter, int[] a, int bits, @IndexOrHigh({"#1"}) int low, @IndexOrHigh({"#1"}) int high) {
         while (true) {
             int end = high - 1, size = high - low;
 
@@ -1202,7 +1208,7 @@ final class DualPivotQuicksort {
      * @param end the index of the last element for simple insertion sort
      * @param high the index of the last element, exclusive, to be sorted
      */
-    private static void mixedInsertionSort(long[] a, int low, int end, int high) {
+    private static void mixedInsertionSort(long[] a, @IndexOrHigh({"#1"}) int low, @IndexFor({"#1"}) int end, @IndexOrHigh({"#1"}) int high) {
         if (end == high) {
 
             /*
@@ -1315,7 +1321,7 @@ final class DualPivotQuicksort {
      * @param low the index of the first element, inclusive, to be sorted
      * @param high the index of the last element, exclusive, to be sorted
      */
-    private static void insertionSort(long[] a, int low, int high) {
+    private static void insertionSort(long[] a, @IndexOrHigh({"#1"}) int low, @IndexOrHigh({"#1"}) int high) {
         for (int i, k = low; ++k < high; ) {
             long ai = a[i = k];
 
@@ -1698,7 +1704,7 @@ final class DualPivotQuicksort {
      * @param low the index of the first element, inclusive, to be sorted
      * @param high the index of the last element, exclusive, to be sorted
      */
-    private static void countingSort(byte[] a, int low, int high) {
+    private static void countingSort(byte[] a, @IndexOrHigh({"#1"}) int low, @IndexOrHigh({"#1"}) int high) {
         int[] count = new int[NUM_BYTE_VALUES];
 
         /*
@@ -2345,7 +2351,7 @@ final class DualPivotQuicksort {
      * @param low the index of the first element, inclusive, to be sorted
      * @param high the index of the last element, exclusive, to be sorted
      */
-    private static void countingSort(short[] a, int low, int high) {
+    private static void countingSort(short[] a, @IndexOrHigh({"#1"}) int low, @IndexOrHigh({"#1"}) int high) {
         int[] count = new int[NUM_SHORT_VALUES];
 
         /*
@@ -2743,7 +2749,7 @@ final class DualPivotQuicksort {
      * @param end the index of the last element for simple insertion sort
      * @param high the index of the last element, exclusive, to be sorted
      */
-    private static void mixedInsertionSort(float[] a, int low, int end, int high) {
+    private static void mixedInsertionSort(float[] a, @IndexOrHigh({"#1"}) int low, @IndexFor({"#1"}) int end, @IndexOrHigh({"#1"}) int high) {
         if (end == high) {
 
             /*
@@ -3201,7 +3207,7 @@ final class DualPivotQuicksort {
      * @param low the index of the first element, inclusive, to be sorted
      * @param high the index of the last element, exclusive, to be sorted
      */
-    static void sort(double[] a, int parallelism, int low, int high) {
+    static void sort(double[] a, int parallelism, @IndexOrHigh({"#1"}) int low, @IndexOrHigh({"#1"}) int high) {
         /*
          * Phase 1. Count the number of negative zero -0.0d,
          * turn them into positive zero, and move all NaNs

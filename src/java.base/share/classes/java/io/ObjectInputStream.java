@@ -25,6 +25,16 @@
 
 package java.io;
 
+import org.checkerframework.checker.index.qual.GTENegativeOne;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signedness.qual.SignedPositive;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.ObjectInputFilter.Config;
 import java.io.ObjectStreamClass.RecordSupport;
 import java.lang.System.Logger;
@@ -244,6 +254,7 @@ import sun.security.action.GetIntegerAction;
  *      <cite>Java Object Serialization Specification,</cite> Section 3, "Object Input Classes"</a>
  * @since   1.1
  */
+@AnnotatedFor({"nullness", "index", "signedness"})
 public class ObjectInputStream
     extends InputStream implements ObjectInput, ObjectStreamConstants
 {
@@ -381,7 +392,7 @@ public class ObjectInputStream
      * @see     ObjectInputStream#readFields()
      * @see     ObjectOutputStream#ObjectOutputStream(OutputStream)
      */
-    public ObjectInputStream(InputStream in) throws IOException {
+    public @MustCallAlias ObjectInputStream(@MustCallAlias InputStream in) throws IOException {
         verifySubclass();
         bin = new BlockDataInputStream(in);
         handles = new HandleTable(10);
@@ -1011,7 +1022,7 @@ public class ObjectInputStream
      * @throws  IOException If an I/O error has occurred.
      * @see java.io.DataInputStream#readFully(byte[],int,int)
      */
-    public int read(byte[] buf, int off, int len) throws IOException {
+    public @GTENegativeOne @LTEqLengthOf({"#1"}) int read(byte[] buf, @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException {
         if (buf == null) {
             throw new NullPointerException();
         }
@@ -1029,7 +1040,7 @@ public class ObjectInputStream
      * @throws  IOException if there are I/O errors while reading from the
      *          underlying {@code InputStream}
      */
-    public int available() throws IOException {
+    public @NonNegative int available() throws IOException {
         return bin.available();
     }
 
@@ -1080,7 +1091,7 @@ public class ObjectInputStream
      * @throws  EOFException If end of file is reached.
      * @throws  IOException If other I/O error has occurred.
      */
-    public int readUnsignedByte()  throws IOException {
+    public @SignedPositive @NonNegative int readUnsignedByte()  throws IOException {
         return bin.readUnsignedByte();
     }
 
@@ -1113,7 +1124,7 @@ public class ObjectInputStream
      * @throws  EOFException If end of file is reached.
      * @throws  IOException If other I/O error has occurred.
      */
-    public int readUnsignedShort() throws IOException {
+    public @SignedPositive @NonNegative int readUnsignedShort() throws IOException {
         return bin.readUnsignedShort();
     }
 
@@ -1186,7 +1197,7 @@ public class ObjectInputStream
      * @throws  EOFException If end of file is reached.
      * @throws  IOException If other I/O error has occurred.
      */
-    public void readFully(byte[] buf, int off, int len) throws IOException {
+    public void readFully(byte[] buf, @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException {
         int endoff = off + len;
         if (off < 0 || len < 0 || endoff > buf.length || endoff < 0) {
             throw new IndexOutOfBoundsException();
@@ -1201,7 +1212,7 @@ public class ObjectInputStream
      * @return  the actual number of bytes skipped.
      * @throws  IOException If an I/O error has occurred.
      */
-    public int skipBytes(int len) throws IOException {
+    public @NonNegative int skipBytes(@NonNegative int len) throws IOException {
         return bin.skipBytes(len);
     }
 
@@ -1215,7 +1226,7 @@ public class ObjectInputStream
      *          see DataInputStream for the details and alternatives.
      */
     @Deprecated
-    public String readLine() throws IOException {
+    public @Nullable String readLine() throws IOException {
         return bin.readLine();
     }
 
@@ -1592,7 +1603,7 @@ public class ObjectInputStream
          * @throws IllegalArgumentException if type of {@code name} is
          *         not serializable or if the field type is incorrect
          */
-        public abstract Object get(String name, Object val) throws IOException;
+        public abstract @Nullable Object get(String name, @Nullable Object val) throws IOException;
     }
 
     /**
@@ -3347,11 +3358,11 @@ public class ObjectInputStream
             readFully(b, 0, b.length, false);
         }
 
-        public void readFully(byte[] b, int off, int len) throws IOException {
+        public void readFully(byte[] b, @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException {
             readFully(b, off, len, false);
         }
 
-        public void readFully(byte[] b, int off, int len, boolean copy)
+        public void readFully(byte[] b, @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len, boolean copy)
             throws IOException
         {
             while (len > 0) {
@@ -3384,7 +3395,7 @@ public class ObjectInputStream
             return (byte) v;
         }
 
-        public int readUnsignedByte() throws IOException {
+        public @SignedPositive @NonNegative int readUnsignedByte() throws IOException {
             int v = read();
             if (v < 0) {
                 throw new EOFException();
@@ -3416,7 +3427,7 @@ public class ObjectInputStream
             return v;
         }
 
-        public int readUnsignedShort() throws IOException {
+        public @SignedPositive @NonNegative int readUnsignedShort() throws IOException {
             if (!blkmode) {
                 pos = 0;
                 in.readFully(buf, 0, 2);

@@ -25,6 +25,7 @@
 
 package jdk.javadoc.internal.doclets.toolkit.taglets;
 
+import org.checkerframework.dataflow.qual.Pure;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -160,6 +161,7 @@ public class SimpleTaglet extends BaseTaglet implements InheritableTaglet {
         return set;
     }
 
+    @Pure
     private static boolean isEnabled(String locations) {
         return locations.matches("[^Xx]*");
     }

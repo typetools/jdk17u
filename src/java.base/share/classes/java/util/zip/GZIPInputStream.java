@@ -25,6 +25,13 @@
 
 package java.util.zip;
 
+import org.checkerframework.checker.index.qual.GTENegativeOne;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+import org.checkerframework.checker.index.qual.Positive;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.SequenceInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
@@ -41,6 +48,7 @@ import java.io.EOFException;
  * @since 1.1
  *
  */
+@AnnotatedFor({"index", "mustcall"})
 public class GZIPInputStream extends InflaterInputStream {
     /**
      * CRC-32 for uncompressed data.
@@ -73,7 +81,7 @@ public class GZIPInputStream extends InflaterInputStream {
      * @throws    IOException if an I/O error has occurred
      * @throws    IllegalArgumentException if {@code size <= 0}
      */
-    public GZIPInputStream(InputStream in, int size) throws IOException {
+    public @MustCallAlias GZIPInputStream(@MustCallAlias InputStream in, @Positive int size) throws IOException {
         super(in, in != null ? new Inflater(true) : null, size);
         usesDefaultInflater = true;
         readHeader(in);
@@ -87,7 +95,7 @@ public class GZIPInputStream extends InflaterInputStream {
      *                         compression method used is unsupported
      * @throws    IOException if an I/O error has occurred
      */
-    public GZIPInputStream(InputStream in) throws IOException {
+    public @MustCallAlias GZIPInputStream(@MustCallAlias InputStream in) throws IOException {
         this(in, 512);
     }
 
@@ -109,7 +117,7 @@ public class GZIPInputStream extends InflaterInputStream {
      * @throws    IOException if an I/O error has occurred.
      *
      */
-    public int read(byte[] buf, int off, int len) throws IOException {
+    public @GTENegativeOne @LTEqLengthOf({"#1"}) int read(byte[] buf, @IndexOrHigh({"#1"}) int off, @IndexOrHigh({"#1"}) int len) throws IOException {
         ensureOpen();
         if (eos) {
             return -1;

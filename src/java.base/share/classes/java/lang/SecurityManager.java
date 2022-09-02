@@ -25,6 +25,9 @@
 
 package java.lang;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleDescriptor.Exports;
 import java.lang.module.ModuleDescriptor.Opens;
@@ -318,8 +321,9 @@ import sun.security.util.SecurityConstants;
  *       See <a href="https://openjdk.java.net/jeps/411">JEP 411</a> for
  *       discussion and alternatives.
  */
+@AnnotatedFor({"interning", "nullness"})
 @Deprecated(since="17", forRemoval=true)
-public class SecurityManager {
+public @UsesObjectEquals class SecurityManager {
 
     /*
      * Have we been initialized. Effective against finalizer attacks.

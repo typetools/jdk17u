@@ -25,6 +25,10 @@
 
 package java.security;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.*;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -191,7 +195,8 @@ import sun.security.util.Debug;
  * @since 1.2
  */
 
-public class KeyStore {
+@AnnotatedFor({"interning", "nullness"})
+public @UsesObjectEquals class KeyStore {
 
     private static final Debug kdebug = Debug.getInstance("keystore");
     private static final Debug pdebug =
@@ -236,7 +241,7 @@ public class KeyStore {
          *
          * @return the parameter used to protect keystore data, or null
          */
-        public ProtectionParameter getProtectionParameter();
+        public @Nullable ProtectionParameter getProtectionParameter();
     }
 
     /**
@@ -274,7 +279,7 @@ public class KeyStore {
          *
          * @param password the password, which may be {@code null}
          */
-        public PasswordProtection(char[] password) {
+        public PasswordProtection(char @Nullable [] password) {
             this.password = (password == null) ? null : password.clone();
             this.protectionAlgorithm = null;
             this.protectionParameters = null;
@@ -301,8 +306,8 @@ public class KeyStore {
          *
          * @since 1.8
          */
-        public PasswordProtection(char[] password, String protectionAlgorithm,
-            AlgorithmParameterSpec protectionParameters) {
+        public PasswordProtection(char @Nullable [] password, String protectionAlgorithm,
+            @Nullable AlgorithmParameterSpec protectionParameters) {
             if (protectionAlgorithm == null) {
                 throw new NullPointerException("invalid null input");
             }
@@ -320,7 +325,7 @@ public class KeyStore {
          *
          * @since 1.8
          */
-        public String getProtectionAlgorithm() {
+        public @Nullable String getProtectionAlgorithm() {
             return protectionAlgorithm;
         }
 
@@ -332,7 +337,7 @@ public class KeyStore {
          *
          * @since 1.8
          */
-        public AlgorithmParameterSpec getProtectionParameters() {
+        public @Nullable AlgorithmParameterSpec getProtectionParameters() {
             return protectionParameters;
         }
 
@@ -349,7 +354,7 @@ public class KeyStore {
          * @throws    IllegalStateException if the password has
          *              been cleared (destroyed)
          */
-        public synchronized char[] getPassword() {
+        public synchronized char @Nullable [] getPassword() {
             if (destroyed) {
                 throw new IllegalStateException("password has been cleared");
             }
@@ -1040,7 +1045,7 @@ public class KeyStore {
      * @throws    UnrecoverableKeyException if the key cannot be recovered
      * (e.g., the given password is wrong).
      */
-    public final Key getKey(String alias, char[] password)
+    public final @Nullable Key getKey(String alias, char[] password)
         throws KeyStoreException, NoSuchAlgorithmException,
             UnrecoverableKeyException
     {
@@ -1066,7 +1071,7 @@ public class KeyStore {
      * @throws    KeyStoreException if the keystore has not been initialized
      * (loaded).
      */
-    public final Certificate[] getCertificateChain(String alias)
+    public final Certificate @Nullable [] getCertificateChain(String alias)
         throws KeyStoreException
     {
         if (!initialized) {
@@ -1099,7 +1104,7 @@ public class KeyStore {
      * @throws    KeyStoreException if the keystore has not been initialized
      * (loaded).
      */
-    public final Certificate getCertificate(String alias)
+    public final @Nullable Certificate getCertificate(String alias)
         throws KeyStoreException
     {
         if (!initialized) {
@@ -1119,7 +1124,7 @@ public class KeyStore {
      * @throws    KeyStoreException if the keystore has not been initialized
      * (loaded).
      */
-    public final Date getCreationDate(String alias)
+    public final @Nullable Date getCreationDate(String alias)
         throws KeyStoreException
     {
         if (!initialized) {
@@ -1370,7 +1375,7 @@ public class KeyStore {
      * @throws    KeyStoreException if the keystore has not been initialized
      * (loaded).
      */
-    public final String getCertificateAlias(Certificate cert)
+    public final @Nullable String getCertificateAlias(Certificate cert)
         throws KeyStoreException
     {
         if (!initialized) {
@@ -1425,7 +1430,7 @@ public class KeyStore {
      *
      * @since 1.5
      */
-    public final void store(LoadStoreParameter param)
+    public final void store(@Nullable LoadStoreParameter param)
                 throws KeyStoreException, IOException,
                 NoSuchAlgorithmException, CertificateException {
         if (!initialized) {
@@ -1467,7 +1472,7 @@ public class KeyStore {
      * @throws    CertificateException if any of the certificates in the
      * keystore could not be loaded
      */
-    public final void load(InputStream stream, char[] password)
+    public final void load(@Nullable InputStream stream, char @Nullable [] password)
         throws IOException, NoSuchAlgorithmException, CertificateException
     {
         keyStoreSpi.engineLoad(stream, password);
@@ -1500,7 +1505,7 @@ public class KeyStore {
      *
      * @since 1.5
      */
-    public final void load(LoadStoreParameter param)
+    public final void load(@Nullable LoadStoreParameter param)
                 throws IOException, NoSuchAlgorithmException,
                 CertificateException {
 
@@ -1536,7 +1541,7 @@ public class KeyStore {
      *
      * @since 1.5
      */
-    public final Entry getEntry(String alias, ProtectionParameter protParam)
+    public final @Nullable Entry getEntry(String alias, @Nullable ProtectionParameter protParam)
                 throws NoSuchAlgorithmException, UnrecoverableEntryException,
                 KeyStoreException {
 
@@ -1574,7 +1579,7 @@ public class KeyStore {
      * @since 1.5
      */
     public final void setEntry(String alias, Entry entry,
-                        ProtectionParameter protParam)
+                        @Nullable ProtectionParameter protParam)
                 throws KeyStoreException {
         if (alias == null || entry == null) {
             throw new NullPointerException("invalid null input");
@@ -1675,7 +1680,7 @@ public class KeyStore {
      *
      * @since 9
      */
-    public static final KeyStore getInstance(File file, char[] password)
+    public static final KeyStore getInstance(File file, char @Nullable [] password)
         throws KeyStoreException, IOException, NoSuchAlgorithmException,
             CertificateException {
         return getInstance(file, password, null, true);
@@ -1732,7 +1737,7 @@ public class KeyStore {
      * @since 9
      */
     public static final KeyStore getInstance(File file,
-        LoadStoreParameter param) throws KeyStoreException, IOException,
+        @Nullable LoadStoreParameter param) throws KeyStoreException, IOException,
             NoSuchAlgorithmException, CertificateException {
         return getInstance(file, null, param, false);
     }
@@ -1956,7 +1961,7 @@ public class KeyStore {
          *   of either PasswordProtection or CallbackHandlerProtection; or
          *   if file does not exist or does not refer to a normal file
          */
-        public static Builder newInstance(String type, Provider provider,
+        public static Builder newInstance(String type, @Nullable Provider provider,
                 File file, ProtectionParameter protection) {
             if ((type == null) || (file == null) || (protection == null)) {
                 throw new NullPointerException();
@@ -2173,7 +2178,7 @@ public class KeyStore {
          * @throws NullPointerException if type or protection is null
          */
         public static Builder newInstance(final String type,
-                final Provider provider, final ProtectionParameter protection) {
+                final @Nullable Provider provider, final ProtectionParameter protection) {
             if ((type == null) || (protection == null)) {
                 throw new NullPointerException();
             }

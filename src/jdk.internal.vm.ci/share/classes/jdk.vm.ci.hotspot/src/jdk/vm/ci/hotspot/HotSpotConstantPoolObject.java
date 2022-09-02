@@ -22,6 +22,12 @@
  */
 package jdk.vm.ci.hotspot;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 
@@ -54,7 +60,9 @@ public final class HotSpotConstantPoolObject implements JavaConstant {
     }
 
     @Override
-    public boolean equals(Object o) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object o) {
         if (o instanceof HotSpotConstantPoolObject) {
             HotSpotConstantPoolObject other = (HotSpotConstantPoolObject) o;
             return type.equals(other.type) && cpi == other.cpi && constant.equals(other.constant);

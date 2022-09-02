@@ -25,6 +25,9 @@
 
 package java.lang;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.security.*;
 import java.lang.module.ModuleFinder;
 
@@ -397,6 +400,7 @@ import java.lang.module.ModuleFinder;
  * @since 1.2
  */
 
+@AnnotatedFor({"nullness"})
 public final class RuntimePermission extends BasicPermission {
 
     @java.io.Serial
@@ -432,7 +436,7 @@ public final class RuntimePermission extends BasicPermission {
      * @throws IllegalArgumentException if {@code name} is empty.
      */
 
-    public RuntimePermission(String name, String actions)
+    public RuntimePermission(String name, @Nullable String actions)
     {
         super(name, actions);
     }

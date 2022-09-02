@@ -25,6 +25,9 @@
 
 package java.lang.reflect;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.StringJoiner;
 
 /**
@@ -43,7 +46,8 @@ import java.util.StringJoiner;
  * @author Kenneth Russell
  * @since 1.1
  */
-public class Modifier {
+@AnnotatedFor({"interning"})
+public @UsesObjectEquals class Modifier {
     /**
      * Do not call.
      */

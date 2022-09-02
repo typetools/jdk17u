@@ -25,6 +25,11 @@
 
 package java.io;
 
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 /**
  * The {@code DataOutput} interface provides
  * for converting data from any of the Java
@@ -46,6 +51,7 @@ package java.io;
  * @see     java.io.DataOutputStream
  * @since   1.0
  */
+@AnnotatedFor({"nullness", "index"})
 public interface DataOutput {
     /**
      * Writes to the output stream the eight
@@ -93,7 +99,7 @@ public interface DataOutput {
      * @param      len   the number of bytes to write.
      * @throws     IOException  if an I/O error occurs.
      */
-    void write(byte b[], int off, int len) throws IOException;
+    void write(byte b[], @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException;
 
     /**
      * Writes a {@code boolean} value to this output stream.

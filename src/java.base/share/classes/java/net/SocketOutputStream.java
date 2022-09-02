@@ -25,6 +25,9 @@
 
 package java.net;
 
+import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,6 +41,7 @@ import java.nio.channels.FileChannel;
  * @author      Jonathan Payne
  * @author      Arthur van Hoff
  */
+@AnnotatedFor({"signedness"})
 class SocketOutputStream extends FileOutputStream {
     static {
         init();
@@ -80,7 +84,7 @@ class SocketOutputStream extends FileOutputStream {
      * @param len the number of bytes that are written
      * @throws    IOException If an I/O error has occurred.
      */
-    private native void socketWrite0(FileDescriptor fd, byte[] b, int off,
+    private native void socketWrite0(FileDescriptor fd, @PolySigned byte[] b, int off,
                                      int len) throws IOException;
 
     /**
@@ -91,7 +95,7 @@ class SocketOutputStream extends FileOutputStream {
      * @param len the number of bytes that are written
      * @throws    IOException If an I/O error has occurred.
      */
-    private void socketWrite(byte b[], int off, int len) throws IOException {
+    private void socketWrite(@PolySigned byte b[], int off, int len) throws IOException {
 
 
         if (len <= 0 || off < 0 || len > b.length - off) {
@@ -131,7 +135,7 @@ class SocketOutputStream extends FileOutputStream {
      * @param b the data to be written
      * @throws    SocketException If an I/O error has occurred.
      */
-    public void write(byte b[]) throws IOException {
+    public void write(@PolySigned byte b[]) throws IOException {
         socketWrite(b, 0, b.length);
     }
 
@@ -143,7 +147,7 @@ class SocketOutputStream extends FileOutputStream {
      * @param len the number of bytes that are written
      * @throws    SocketException If an I/O error has occurred.
      */
-    public void write(byte b[], int off, int len) throws IOException {
+    public void write(@PolySigned byte b[], int off, int len) throws IOException {
         socketWrite(b, off, len);
     }
 

@@ -25,6 +25,9 @@
 
 package java.security.spec;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import jdk.internal.access.JavaSecuritySpecAccess;
 import jdk.internal.access.SharedSecrets;
 
@@ -45,7 +48,8 @@ import java.util.Arrays;
  * @since 1.2
  */
 
-public abstract class EncodedKeySpec implements KeySpec {
+@AnnotatedFor({"interning"})
+public abstract @UsesObjectEquals class EncodedKeySpec implements KeySpec {
 
     private byte[] encodedKey;
     private String algorithmName;

@@ -25,6 +25,13 @@
 
 package java.io;
 
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.nio.channels.FileChannel;
 import jdk.internal.access.SharedSecrets;
 import jdk.internal.access.JavaIOFileDescriptorAccess;
@@ -66,6 +73,7 @@ import sun.nio.ch.FileChannelImpl;
  * @see     java.nio.file.Files#newOutputStream
  * @since   1.0
  */
+@AnnotatedFor({"index", "mustcall", "nullness", "signedness"})
 public class FileOutputStream extends OutputStream
 {
     /**
@@ -259,7 +267,7 @@ public class FileOutputStream extends OutputStream
      *               write access to the file descriptor
      * @see        java.lang.SecurityManager#checkWrite(java.io.FileDescriptor)
      */
-    public FileOutputStream(FileDescriptor fdObj) {
+    public @MustCallAlias FileOutputStream(@MustCallAlias FileDescriptor fdObj) {
         @SuppressWarnings("removal")
         SecurityManager security = System.getSecurityManager();
         if (fdObj == null) {
@@ -309,7 +317,7 @@ public class FileOutputStream extends OutputStream
      * @param      b   the byte to be written.
      * @throws     IOException  if an I/O error occurs.
      */
-    public void write(int b) throws IOException {
+    public void write(@PolySigned int b) throws IOException {
         write(b, fdAccess.getAppend(fd));
     }
 
@@ -322,7 +330,7 @@ public class FileOutputStream extends OutputStream
      *     end of file
      * @throws    IOException If an I/O error has occurred.
      */
-    private native void writeBytes(byte b[], int off, int len, boolean append)
+    private native void writeBytes(@PolySigned byte b[], int off, int len, boolean append)
         throws IOException;
 
     /**
@@ -332,7 +340,7 @@ public class FileOutputStream extends OutputStream
      * @param      b   the data.
      * @throws     IOException  if an I/O error occurs.
      */
-    public void write(byte b[]) throws IOException {
+    public void write(@PolySigned byte b[]) throws IOException {
         writeBytes(b, 0, b.length, fdAccess.getAppend(fd));
     }
 
@@ -345,7 +353,7 @@ public class FileOutputStream extends OutputStream
      * @param      len   the number of bytes to write.
      * @throws     IOException  if an I/O error occurs.
      */
-    public void write(byte b[], int off, int len) throws IOException {
+    public void write(@PolySigned byte b[], @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException {
         writeBytes(b, off, len, fdAccess.getAppend(fd));
     }
 
@@ -404,7 +412,7 @@ public class FileOutputStream extends OutputStream
      * @throws     IOException  if an I/O error occurs.
      * @see        java.io.FileDescriptor
      */
-     public final FileDescriptor getFD()  throws IOException {
+     public final @MustCallAlias FileDescriptor getFD(@MustCallAlias FileOutputStream this)  throws IOException {
         if (fd != null) {
             return fd;
         }
@@ -427,7 +435,7 @@ public class FileOutputStream extends OutputStream
      *
      * @since 1.4
      */
-    public FileChannel getChannel() {
+    public @MustCallAlias FileChannel getChannel(@MustCallAlias FileOutputStream this) {
         FileChannel fc = this.channel;
         if (fc == null) {
             synchronized (this) {

@@ -25,6 +25,17 @@
 
 package java.util;
 
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.index.qual.Positive;
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.CFComment;
+
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import jdk.internal.access.SharedSecrets;
@@ -83,8 +94,10 @@ import jdk.internal.util.ArraysSupport;
  * @author Josh Bloch, Doug Lea
  * @param <E> the type of elements held in this queue
  */
+@CFComment({"lock/nullness: This class doesn't permits null elements"})
+@AnnotatedFor({"lock", "nullness", "index"})
 @SuppressWarnings("unchecked")
-public class PriorityQueue<E> extends AbstractQueue<E>
+public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
     implements java.io.Serializable {
 
     @java.io.Serial
@@ -138,7 +151,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is less
      *         than 1
      */
-    public PriorityQueue(int initialCapacity) {
+    public PriorityQueue(@Positive int initialCapacity) {
         this(initialCapacity, null);
     }
 
@@ -166,7 +179,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is
      *         less than 1
      */
-    public PriorityQueue(int initialCapacity,
+    public PriorityQueue(@Positive int initialCapacity,
                          Comparator<? super E> comparator) {
         // Note: This restriction of at least one is not actually needed,
         // but continues for 1.5 compatibility
@@ -307,7 +320,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      *         according to the priority queue's ordering
      * @throws NullPointerException if the specified element is null
      */
-    public boolean add(E e) {
+    public boolean add(@GuardSatisfied PriorityQueue<E> this, E e) {
         return offer(e);
     }
 
@@ -332,7 +345,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
         return true;
     }
 
-    public E peek() {
+    public @Nullable E peek(@GuardSatisfied PriorityQueue<E> this) {
         return (E) queue[0];
     }
 
@@ -357,7 +370,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      * @param o element to be removed from this queue, if present
      * @return {@code true} if this queue changed as a result of the call
      */
-    public boolean remove(Object o) {
+    public boolean remove(@GuardSatisfied PriorityQueue<E> this, @Nullable Object o) {
         int i = indexOf(o);
         if (i == -1)
             return false;
@@ -390,7 +403,8 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      * @param o object to be checked for containment in this queue
      * @return {@code true} if this queue contains the specified element
      */
-    public boolean contains(Object o) {
+    @Pure
+    public boolean contains(@GuardSatisfied PriorityQueue<E> this, @GuardSatisfied @Nullable Object o) {
         return indexOf(o) >= 0;
     }
 
@@ -407,7 +421,8 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      *
      * @return an array containing all of the elements in this queue
      */
-    public Object[] toArray() {
+    @SideEffectFree
+    public @PolyNull Object[] toArray(PriorityQueue<@PolyNull E> this) {
         return Arrays.copyOf(queue, size);
     }
 
@@ -447,7 +462,8 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      *         this queue
      * @throws NullPointerException if the specified array is null
      */
-    public <T> T[] toArray(T[] a) {
+    @SideEffectFree
+    public <T> @Nullable T @PolyNull [] toArray(T @PolyNull [] a) {
         final int size = this.size;
         if (a.length < size)
             // Make a new array of a's runtime type, but my contents:
@@ -464,6 +480,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      *
      * @return an iterator over the elements in this queue
      */
+    @SideEffectFree
     public Iterator<E> iterator() {
         return new Itr();
     }
@@ -552,7 +569,8 @@ public class PriorityQueue<E> extends AbstractQueue<E>
         }
     }
 
-    public int size() {
+    @Pure
+    public @NonNegative int size(@GuardSatisfied PriorityQueue<E> this) {
         return size;
     }
 
@@ -560,7 +578,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      * Removes all of the elements from this priority queue.
      * The queue will be empty after this call returns.
      */
-    public void clear() {
+    public void clear(@GuardSatisfied PriorityQueue<E> this) {
         modCount++;
         final Object[] es = queue;
         for (int i = 0, n = size; i < n; i++)
@@ -568,7 +586,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
         size = 0;
     }
 
-    public E poll() {
+    public @Nullable E poll(@GuardSatisfied PriorityQueue<E> this) {
         final Object[] es;
         final E result;
 
@@ -743,7 +761,8 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      *         {@code null} if this queue is sorted according to the
      *         natural ordering of its elements
      */
-    public Comparator<? super E> comparator() {
+    @Pure
+    public @Nullable Comparator<? super E> comparator(@GuardSatisfied PriorityQueue<E> this) {
         return comparator;
     }
 

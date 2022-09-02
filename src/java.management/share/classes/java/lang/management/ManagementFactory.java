@@ -24,6 +24,11 @@
  */
 
 package java.lang.management;
+
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.mustcall.qual.MustCall;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.FilePermission;
 import java.io.IOException;
 import javax.management.DynamicMBean;
@@ -246,8 +251,9 @@ import sun.management.spi.PlatformMBeanProvider.PlatformComponent;
  * @author  Mandy Chung
  * @since   1.5
  */
+@AnnotatedFor({"interning", "mustcall"})
 @SuppressWarnings("removal")
-public class ManagementFactory {
+public @UsesObjectEquals class ManagementFactory {
     // A class with only static fields and methods.
     private ManagementFactory() {};
 
@@ -589,7 +595,7 @@ public class ManagementFactory {
      * @throws java.io.IOException if a communication problem
      * occurred when accessing the {@code MBeanServerConnection}.
      */
-    public static <T> T
+    public static <T> @MustCall({}) T
         newPlatformMXBeanProxy(MBeanServerConnection connection,
                                String mxbeanName,
                                Class<T> mxbeanInterface)

@@ -25,6 +25,7 @@
 
 package jdk.javadoc.internal.doclets.toolkit.util;
 
+import org.checkerframework.dataflow.qual.Pure;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -137,6 +138,7 @@ public class CommentHelper {
         }
     }
 
+    @Pure
     public boolean isTypeParameter(DocTree dtree) {
         if (dtree.getKind() == PARAM) {
             return ((ParamTree)dtree).isTypeParameter();

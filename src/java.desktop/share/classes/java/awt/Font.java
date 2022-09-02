@@ -25,6 +25,14 @@
 
 package java.awt;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.checker.interning.qual.Interned;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.font.LineMetrics;
@@ -258,6 +266,7 @@ import static sun.font.EAttribute.EWIDTH;
  * especially important are called out as having 'baseline-relative
  * coordinates.'
  */
+@AnnotatedFor({"interning"})
 public class Font implements java.io.Serializable
 {
     private static class FontAccessImpl extends FontAccess {
@@ -309,7 +318,7 @@ public class Font implements java.io.Serializable
      * to provide compile-time verification of the name.
      * @since 1.6
      */
-    public static final String DIALOG = "Dialog";
+    public static final @Interned String DIALOG = "Dialog";
 
     /**
      * A String constant for the canonical family name of the
@@ -317,7 +326,7 @@ public class Font implements java.io.Serializable
      * to provide compile-time verification of the name.
      * @since 1.6
      */
-    public static final String DIALOG_INPUT = "DialogInput";
+    public static final @Interned String DIALOG_INPUT = "DialogInput";
 
     /**
      * A String constant for the canonical family name of the
@@ -325,7 +334,7 @@ public class Font implements java.io.Serializable
      * to provide compile-time verification of the name.
      * @since 1.6
      */
-    public static final String SANS_SERIF = "SansSerif";
+    public static final @Interned String SANS_SERIF = "SansSerif";
 
     /**
      * A String constant for the canonical family name of the
@@ -333,7 +342,7 @@ public class Font implements java.io.Serializable
      * to provide compile-time verification of the name.
      * @since 1.6
      */
-    public static final String SERIF = "Serif";
+    public static final @Interned String SERIF = "Serif";
 
     /**
      * A String constant for the canonical family name of the
@@ -341,7 +350,7 @@ public class Font implements java.io.Serializable
      * to provide compile-time verification of the name.
      * @since 1.6
      */
-    public static final String MONOSPACED = "Monospaced";
+    public static final @Interned String MONOSPACED = "Monospaced";
 
     /*
      * Constants to be used for styles. Can be combined to mix
@@ -1840,7 +1849,9 @@ public class Font implements java.io.Serializable
      *          {@code false} otherwise.
      * @since 1.0
      */
-    public boolean equals(Object obj) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object obj) {
         if (obj == this) {
             return true;
         }

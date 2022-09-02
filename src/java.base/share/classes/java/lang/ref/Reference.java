@@ -25,6 +25,11 @@
 
 package java.lang.ref;
 
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import jdk.internal.vm.annotation.ForceInline;
 import jdk.internal.vm.annotation.IntrinsicCandidate;
 import jdk.internal.access.JavaLangRefAccess;
@@ -41,6 +46,8 @@ import jdk.internal.ref.Cleaner;
  * @since    1.2
  */
 
+@AnnotatedFor({"lock", "nullness"})
+@SuppressWarnings({"rawtypes"})
 public abstract class Reference<T> {
 
     /* The state of a Reference object is characterized by two attributes.  It
@@ -210,6 +217,7 @@ public abstract class Reference<T> {
             super(g, null, name, 0, false);
         }
 
+        @SuppressWarnings({"unchecked"})
         public void run() {
             while (true) {
                 processPendingReferences();
@@ -348,8 +356,9 @@ public abstract class Reference<T> {
      *           {@code null} if this reference object has been cleared
      * @see #refersTo
      */
+    @SideEffectFree
     @IntrinsicCandidate
-    public T get() {
+    public @Nullable T get(@GuardSatisfied Reference<T> this) {
         return this.referent;
     }
 
@@ -496,6 +505,7 @@ public abstract class Reference<T> {
         this(referent, null);
     }
 
+    @SuppressWarnings({"unchecked"})
     Reference(T referent, ReferenceQueue<? super T> queue) {
         this.referent = referent;
         this.queue = (queue == null) ? ReferenceQueue.NULL : queue;

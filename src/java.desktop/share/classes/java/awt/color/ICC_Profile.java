@@ -35,6 +35,9 @@
 
 package java.awt.color;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -83,7 +86,8 @@ import sun.java2d.cmm.ProfileDeferralInfo;
  *
  * @see ICC_ColorSpace
  */
-public class ICC_Profile implements Serializable {
+@AnnotatedFor({"interning"})
+public @UsesObjectEquals class ICC_Profile implements Serializable {
 
     /**
      * Use serialVersionUID from JDK 1.2 for interoperability.

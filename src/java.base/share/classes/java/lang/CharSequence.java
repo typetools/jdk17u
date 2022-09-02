@@ -25,6 +25,15 @@
 
 package java.lang;
 
+import org.checkerframework.checker.index.qual.IndexFor;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LengthOf;
+import org.checkerframework.checker.index.qual.SameLen;
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.PrimitiveIterator;
@@ -56,6 +65,7 @@ import java.util.stream.StreamSupport;
  * @since 1.4
  */
 
+@AnnotatedFor({"lock", "nullness", "index"})
 public interface CharSequence {
 
     /**
@@ -64,7 +74,8 @@ public interface CharSequence {
      *
      * @return  the number of {@code char}s in this sequence
      */
-    int length();
+    @Pure
+    @LengthOf({"this"}) int length(@GuardSatisfied CharSequence this);
 
     /**
      * Returns the {@code char} value at the specified index.  An index ranges from zero
@@ -84,7 +95,7 @@ public interface CharSequence {
      *          if the {@code index} argument is negative or not less than
      *          {@code length()}
      */
-    char charAt(int index);
+    char charAt(@IndexFor({"this"}) int index);
 
     /**
      * Returns {@code true} if this character sequence is empty.
@@ -119,7 +130,7 @@ public interface CharSequence {
      *          if {@code end} is greater than {@code length()},
      *          or if {@code start} is greater than {@code end}
      */
-    CharSequence subSequence(int start, int end);
+    CharSequence subSequence(@IndexOrHigh({"this"}) int start, @IndexOrHigh({"this"}) int end);
 
     /**
      * Returns a string containing the characters in this sequence in the same
@@ -128,7 +139,8 @@ public interface CharSequence {
      *
      * @return  a string consisting of exactly this sequence of characters
      */
-    public String toString();
+    @SideEffectFree
+    public @SameLen({"this"}) String toString(@GuardSatisfied CharSequence this);
 
     /**
      * Returns a stream of {@code int} zero-extending the {@code char} values

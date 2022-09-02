@@ -25,6 +25,9 @@
 
 package java.awt.dnd;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.awt.Component;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -53,7 +56,8 @@ import sun.awt.AWTAccessor.DropTargetContextAccessor;
  * @since 1.2
  */
 
-public class DropTargetContext implements Serializable {
+@AnnotatedFor({"interning"})
+public @UsesObjectEquals class DropTargetContext implements Serializable {
 
     /**
      * Use serialVersionUID from JDK 1.4 for interoperability.

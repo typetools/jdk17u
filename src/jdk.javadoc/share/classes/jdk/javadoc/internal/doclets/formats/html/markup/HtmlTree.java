@@ -25,6 +25,7 @@
 
 package jdk.javadoc.internal.doclets.formats.html.markup;
 
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -866,6 +867,7 @@ public class HtmlTree extends Content {
     }
 
     @Override
+    @Pure
     public boolean isEmpty() {
         return (!hasContent() && !hasAttrs());
     }
@@ -906,6 +908,7 @@ public class HtmlTree extends Content {
      * @return true if the HTML tree is valid
      */
     @Override
+    @Pure
     public boolean isValid() {
         switch (tagName) {
             case A:
@@ -940,6 +943,7 @@ public class HtmlTree extends Content {
      *
      * @see <a href="https://www.w3.org/TR/html51/dom.html#kinds-of-content-phrasing-content">Phrasing Content</a>
      */
+    @Pure
     public boolean isInline() {
         switch (tagName) {
             case A: case BUTTON: case BR: case CODE: case EM: case I: case IMG:

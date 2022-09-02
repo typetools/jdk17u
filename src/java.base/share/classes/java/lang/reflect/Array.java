@@ -25,6 +25,14 @@
 
 package java.lang.reflect;
 
+import org.checkerframework.checker.index.qual.IndexFor;
+import org.checkerframework.checker.index.qual.LengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.common.value.qual.StaticallyExecutable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import jdk.internal.vm.annotation.IntrinsicCandidate;
 
 /**
@@ -38,8 +46,9 @@ import jdk.internal.vm.annotation.IntrinsicCandidate;
  * @author Nakul Saraiya
  * @since 1.1
  */
+@AnnotatedFor({"index", "interning"})
 public final
-class Array {
+@UsesObjectEquals class Array {
 
     /**
      * Constructor.  Class Array is not instantiable.
@@ -73,7 +82,7 @@ class Array {
      * @throws NegativeArraySizeException if the specified {@code length}
      *         is negative
      */
-    public static Object newInstance(Class<?> componentType, int length)
+    public static Object newInstance(Class<?> componentType, @NonNegative int length)
         throws NegativeArraySizeException {
         return newArray(componentType, length);
     }
@@ -109,7 +118,7 @@ class Array {
      * @throws    NegativeArraySizeException if any of the components in
      * the specified {@code dimensions} argument is negative.
      */
-    public static Object newInstance(Class<?> componentType, int... dimensions)
+    public static Object newInstance(Class<?> componentType, @NonNegative int... dimensions)
         throws IllegalArgumentException, NegativeArraySizeException {
         return multiNewArray(componentType, dimensions);
     }
@@ -122,8 +131,10 @@ class Array {
      * @throws    IllegalArgumentException if the object argument is not
      * an array
      */
+    @Pure
     @IntrinsicCandidate
-    public static native int getLength(Object array)
+    @StaticallyExecutable
+    public static native @LengthOf({"#1"}) int getLength(Object array)
         throws IllegalArgumentException;
 
     /**
@@ -142,7 +153,8 @@ class Array {
      * argument is negative, or if it is greater than or equal to the
      * length of the specified array
      */
-    public static native Object get(Object array, int index)
+    @Pure
+    public static native Object get(Object array, @IndexFor({"#1"}) int index)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -161,7 +173,9 @@ class Array {
      * length of the specified array
      * @see Array#get
      */
-    public static native boolean getBoolean(Object array, int index)
+    @Pure
+    @StaticallyExecutable
+    public static native boolean getBoolean(Object array, @IndexFor({"#1"}) int index)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -180,7 +194,9 @@ class Array {
      * length of the specified array
      * @see Array#get
      */
-    public static native byte getByte(Object array, int index)
+    @Pure
+    @StaticallyExecutable
+    public static native byte getByte(Object array, @IndexFor({"#1"}) int index)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -199,7 +215,9 @@ class Array {
      * length of the specified array
      * @see Array#get
      */
-    public static native char getChar(Object array, int index)
+    @Pure
+    @StaticallyExecutable
+    public static native char getChar(Object array, @IndexFor({"#1"}) int index)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -218,7 +236,9 @@ class Array {
      * length of the specified array
      * @see Array#get
      */
-    public static native short getShort(Object array, int index)
+    @Pure
+    @StaticallyExecutable
+    public static native short getShort(Object array, @IndexFor({"#1"}) int index)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -237,7 +257,9 @@ class Array {
      * length of the specified array
      * @see Array#get
      */
-    public static native int getInt(Object array, int index)
+    @Pure
+    @StaticallyExecutable
+    public static native int getInt(Object array, @IndexFor({"#1"}) int index)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -256,7 +278,9 @@ class Array {
      * length of the specified array
      * @see Array#get
      */
-    public static native long getLong(Object array, int index)
+    @Pure
+    @StaticallyExecutable
+    public static native long getLong(Object array, @IndexFor({"#1"}) int index)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -275,7 +299,9 @@ class Array {
      * length of the specified array
      * @see Array#get
      */
-    public static native float getFloat(Object array, int index)
+    @Pure
+    @StaticallyExecutable
+    public static native float getFloat(Object array, @IndexFor({"#1"}) int index)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -294,7 +320,9 @@ class Array {
      * length of the specified array
      * @see Array#get
      */
-    public static native double getDouble(Object array, int index)
+    @Pure
+    @StaticallyExecutable
+    public static native double getDouble(Object array, @IndexFor({"#1"}) int index)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -314,7 +342,7 @@ class Array {
      * argument is negative, or if it is greater than or equal to
      * the length of the specified array
      */
-    public static native void set(Object array, int index, Object value)
+    public static native void set(Object array, @IndexFor({"#1"}) int index, Object value)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -334,7 +362,7 @@ class Array {
      * the length of the specified array
      * @see Array#set
      */
-    public static native void setBoolean(Object array, int index, boolean z)
+    public static native void setBoolean(Object array, @IndexFor({"#1"}) int index, boolean z)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -354,7 +382,7 @@ class Array {
      * the length of the specified array
      * @see Array#set
      */
-    public static native void setByte(Object array, int index, byte b)
+    public static native void setByte(Object array, @IndexFor({"#1"}) int index, byte b)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -374,7 +402,7 @@ class Array {
      * the length of the specified array
      * @see Array#set
      */
-    public static native void setChar(Object array, int index, char c)
+    public static native void setChar(Object array, @IndexFor({"#1"}) int index, char c)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -394,7 +422,7 @@ class Array {
      * the length of the specified array
      * @see Array#set
      */
-    public static native void setShort(Object array, int index, short s)
+    public static native void setShort(Object array, @IndexFor({"#1"}) int index, short s)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -414,7 +442,7 @@ class Array {
      * the length of the specified array
      * @see Array#set
      */
-    public static native void setInt(Object array, int index, int i)
+    public static native void setInt(Object array, @IndexFor({"#1"}) int index, int i)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -434,7 +462,7 @@ class Array {
      * the length of the specified array
      * @see Array#set
      */
-    public static native void setLong(Object array, int index, long l)
+    public static native void setLong(Object array, @IndexFor({"#1"}) int index, long l)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -454,7 +482,7 @@ class Array {
      * the length of the specified array
      * @see Array#set
      */
-    public static native void setFloat(Object array, int index, float f)
+    public static native void setFloat(Object array, @IndexFor({"#1"}) int index, float f)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /**
@@ -474,7 +502,7 @@ class Array {
      * the length of the specified array
      * @see Array#set
      */
-    public static native void setDouble(Object array, int index, double d)
+    public static native void setDouble(Object array, @IndexFor({"#1"}) int index, double d)
         throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
     /*

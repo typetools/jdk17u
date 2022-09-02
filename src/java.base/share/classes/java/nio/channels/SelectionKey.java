@@ -25,6 +25,10 @@
 
 package java.nio.channels;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
@@ -100,7 +104,8 @@ import java.lang.invoke.VarHandle;
  * @see Selector
  */
 
-public abstract class SelectionKey {
+@AnnotatedFor({"interning", "mustcall"})
+public abstract @UsesObjectEquals class SelectionKey {
 
     /**
      * Constructs an instance of this class.
@@ -116,7 +121,7 @@ public abstract class SelectionKey {
      *
      * @return  This key's channel
      */
-    public abstract SelectableChannel channel();
+    public abstract @NotOwning SelectableChannel channel();
 
     /**
      * Returns the selector for which this key was created.  This method will

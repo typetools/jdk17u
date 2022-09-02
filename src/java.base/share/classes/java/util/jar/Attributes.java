@@ -25,6 +25,13 @@
 
 package java.util.jar;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -34,6 +41,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import org.checkerframework.framework.qual.CFComment;
 
 import jdk.internal.misc.CDS;
 import jdk.internal.vm.annotation.Stable;
@@ -59,6 +68,15 @@ import sun.util.logging.PlatformLogger;
  * @see     Manifest
  * @since   1.2
  */
+@CFComment({"signature: ",
+        "TODO: Attributes does not declare a toString method.",
+        "This declaration then pollutes java.lang.Object.toString, making",
+        "any override illegal.",
+        "public class Attributes implements Map<Object,Object>, Cloneable {",
+        "public @Interned String toString();",
+        "}"}
+)
+@AnnotatedFor({"nullness"})
 public class Attributes implements Map<Object,Object>, Cloneable {
     /**
      * The attribute name-value mappings.
@@ -195,6 +213,7 @@ public class Attributes implements Map<Object,Object>, Cloneable {
      * @return true if this Map maps one or more attribute names to
      *         the specified value
      */
+    @Pure
     public boolean containsValue(Object value) {
         return map.containsValue(value);
     }
@@ -205,6 +224,7 @@ public class Attributes implements Map<Object,Object>, Cloneable {
      * @param name the attribute name
      * @return true if this Map contains the specified attribute name
      */
+    @Pure
     public boolean containsKey(Object name) {
         return map.containsKey(name);
     }
@@ -234,6 +254,7 @@ public class Attributes implements Map<Object,Object>, Cloneable {
     /**
      * Returns the number of attributes in this Map.
      */
+    @Pure
     public int size() {
         return map.size();
     }
@@ -241,6 +262,7 @@ public class Attributes implements Map<Object,Object>, Cloneable {
     /**
      * Returns true if this Map contains no attributes.
      */
+    @Pure
     public boolean isEmpty() {
         return map.isEmpty();
     }
@@ -263,6 +285,7 @@ public class Attributes implements Map<Object,Object>, Cloneable {
      * Returns a Collection view of the attribute name-value mappings
      * contained in this Map.
      */
+    @SideEffectFree
     public Set<Map.Entry<Object,Object>> entrySet() {
         return map.entrySet();
     }
@@ -276,7 +299,9 @@ public class Attributes implements Map<Object,Object>, Cloneable {
      * @param o the Object to be compared
      * @return true if the specified Object is equal to this Map
      */
-    public boolean equals(Object o) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object o) {
         return map.equals(o);
     }
 

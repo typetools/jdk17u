@@ -80,6 +80,8 @@ define SetupInterimModule
       DISABLED_WARNINGS := module options, \
       JAVAC_FLAGS := \
           --module-path $(BUILDTOOLS_OUTPUTDIR)/interim_langtools_modules \
+          -cp $(TOPDIR)/checker-qual.jar \
+          --add-reads $1.interim=ALL-UNNAMED \
           $$(INTERIM_LANGTOOLS_ADD_EXPORTS) \
           --patch-module java.base=$(BUILDTOOLS_OUTPUTDIR)/gensrc/java.base.interim \
           --add-exports java.base/jdk.internal.javac=java.compiler.interim \

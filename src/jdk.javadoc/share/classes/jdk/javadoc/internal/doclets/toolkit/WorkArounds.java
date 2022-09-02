@@ -25,6 +25,8 @@
 
 package jdk.javadoc.internal.doclets.toolkit;
 
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -110,6 +112,7 @@ public class WorkArounds {
      *       handle "@deprecated tag in package-info.java", when this issue
      *       is fixed this method and its uses must be jettisoned.
      */
+    @Pure
     public boolean isDeprecated0(Element e) {
         if (!utils.getDeprecatedTrees(e).isEmpty()) {
             return true;
@@ -123,6 +126,7 @@ public class WorkArounds {
     }
 
     // TODO: fix jx.l.m add this method.
+    @Pure
     public boolean isSynthesized(AnnotationMirror aDesc) {
         return ((Attribute)aDesc).isSynthesized();
     }

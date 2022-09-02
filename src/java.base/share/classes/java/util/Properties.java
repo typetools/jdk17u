@@ -25,6 +25,15 @@
 
 package java.util;
 
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nullness.qual.KeyFor;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.checker.propkey.qual.PropertyKey;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -140,6 +149,7 @@ import jdk.internal.util.xml.PropertiesDefaultHandler;
  * @author  Xueming Shen
  * @since   1.0
  */
+@AnnotatedFor({"index", "lock", "nullness", "propkey"})
 public class Properties extends Hashtable<Object,Object> {
     /**
      * use serialVersionUID from JDK 1.1.X for interoperability
@@ -225,7 +235,7 @@ public class Properties extends Hashtable<Object,Object> {
      * @see #getProperty
      * @since    1.2
      */
-    public synchronized Object setProperty(String key, String value) {
+    public synchronized @Nullable Object setProperty(@GuardSatisfied Properties this, @PropertyKey String key, String value) {
         return put(key, value);
     }
 
@@ -788,7 +798,7 @@ public class Properties extends Hashtable<Object,Object> {
      *             {@code Strings}.
      */
     @Deprecated
-    public void save(OutputStream out, String comments)  {
+    public void save(OutputStream out, @Nullable String comments)  {
         try {
             store(out, comments);
         } catch (IOException e) {
@@ -842,7 +852,7 @@ public class Properties extends Hashtable<Object,Object> {
      * @throws     NullPointerException  if {@code writer} is null.
      * @since 1.6
      */
-    public void store(Writer writer, String comments)
+    public void store(Writer writer, @Nullable String comments)
         throws IOException
     {
         store0((writer instanceof BufferedWriter)?(BufferedWriter)writer
@@ -889,7 +899,7 @@ public class Properties extends Hashtable<Object,Object> {
      * @throws     NullPointerException  if {@code out} is null.
      * @since 1.2
      */
-    public void store(OutputStream out, String comments)
+    public void store(OutputStream out, @Nullable String comments)
         throws IOException
     {
         store0(new BufferedWriter(new OutputStreamWriter(out, ISO_8859_1.INSTANCE)),
@@ -981,7 +991,7 @@ public class Properties extends Hashtable<Object,Object> {
      * @see    #loadFromXML(InputStream)
      * @since 1.5
      */
-    public void storeToXML(OutputStream os, String comment)
+    public void storeToXML(OutputStream os, @Nullable String comment)
         throws IOException
     {
         storeToXML(os, comment, UTF_8.INSTANCE);
@@ -1030,7 +1040,7 @@ public class Properties extends Hashtable<Object,Object> {
      *         Encoding in Entities</a>
      * @since 1.5
      */
-    public void storeToXML(OutputStream os, String comment, String encoding)
+    public void storeToXML(OutputStream os, @Nullable String comment, String encoding)
         throws IOException {
         Objects.requireNonNull(os);
         Objects.requireNonNull(encoding);
@@ -1098,7 +1108,8 @@ public class Properties extends Hashtable<Object,Object> {
      * @see     #setProperty
      * @see     #defaults
      */
-    public String getProperty(String key) {
+    @Pure
+    public @Nullable String getProperty(@GuardSatisfied Properties this, @PropertyKey String key) {
         Object oval = map.get(key);
         String sval = (oval instanceof String) ? (String)oval : null;
         Properties defaults;
@@ -1118,7 +1129,8 @@ public class Properties extends Hashtable<Object,Object> {
      * @see     #setProperty
      * @see     #defaults
      */
-    public String getProperty(String key, String defaultValue) {
+    @Pure
+    public @PolyNull String getProperty(@GuardSatisfied Properties this, @PropertyKey String key, @PolyNull String defaultValue) {
         String val = getProperty(key);
         return (val == null) ? defaultValue : val;
     }
@@ -1255,11 +1267,13 @@ public class Properties extends Hashtable<Object,Object> {
     // Hashtable methods overridden and delegated to a ConcurrentHashMap instance
 
     @Override
+    @Pure
     public int size() {
         return map.size();
     }
 
     @Override
+    @Pure
     public boolean isEmpty() {
         return map.isEmpty();
     }
@@ -1282,11 +1296,13 @@ public class Properties extends Hashtable<Object,Object> {
     }
 
     @Override
+    @Pure
     public boolean containsValue(Object value) {
         return map.containsValue(value);
     }
 
     @Override
+    @Pure
     public boolean containsKey(Object key) {
         return map.containsKey(key);
     }
@@ -1322,7 +1338,7 @@ public class Properties extends Hashtable<Object,Object> {
     }
 
     @Override
-    public Set<Object> keySet() {
+    public Set<@KeyFor("this") Object> keySet() {
         return Collections.synchronizedSet(map.keySet(), this);
     }
 
@@ -1332,7 +1348,8 @@ public class Properties extends Hashtable<Object,Object> {
     }
 
     @Override
-    public Set<Map.Entry<Object, Object>> entrySet() {
+    @SideEffectFree
+    public Set<Map.Entry<@KeyFor("this") Object, Object>> entrySet() {
         return Collections.synchronizedSet(new EntrySet(map.entrySet()), this);
     }
 
@@ -1413,6 +1430,7 @@ public class Properties extends Hashtable<Object,Object> {
     }
 
     @Override
+    @Pure
     public Object getOrDefault(Object key, Object defaultValue) {
         return map.getOrDefault(key, defaultValue);
     }
@@ -1448,25 +1466,25 @@ public class Properties extends Hashtable<Object,Object> {
     }
 
     @Override
-    public synchronized Object computeIfAbsent(Object key,
-            Function<? super Object, ?> mappingFunction) {
+    public synchronized @PolyNull Object computeIfAbsent(Object key,
+            Function<? super Object, ? extends @PolyNull Object> mappingFunction) {
         return map.computeIfAbsent(key, mappingFunction);
     }
 
     @Override
-    public synchronized Object computeIfPresent(Object key,
-            BiFunction<? super Object, ? super Object, ?> remappingFunction) {
+    public synchronized @PolyNull Object computeIfPresent(Object key,
+            BiFunction<? super Object, ? super Object, ? extends @PolyNull Object> remappingFunction) {
         return map.computeIfPresent(key, remappingFunction);
     }
 
     @Override
-    public synchronized Object compute(Object key,
-            BiFunction<? super Object, ? super Object, ?> remappingFunction) {
+    public synchronized @PolyNull Object compute(Object key,
+            BiFunction<? super Object, ? super Object, ? extends @PolyNull Object> remappingFunction) {
         return map.compute(key, remappingFunction);
     }
 
     @Override
-    public synchronized Object merge(Object key, Object value,
+    public synchronized @Nullable Object merge(Object key, Object value,
             BiFunction<? super Object, ? super Object, ?> remappingFunction) {
         return map.merge(key, value, remappingFunction);
     }
