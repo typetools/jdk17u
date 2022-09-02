@@ -13,6 +13,22 @@ Annotations for classes that exist in JDK 8 but were removed in JDK 11 appear
 in jdk8.astub files in repository https://github.com/typetools/checker-framework/ .
 
 
+## Building
+
+See file `azure-pipelines.yml`.  Briefly:
+
+```
+bash configure --disable-warnings-as-errors --with-jtreg
+make jdk
+```
+
+You might need to change `--with-jtreg` to one of these:
+```
+  --with-jtreg=/usr/share/jtreg
+  --with-jtreg=$HOME/bin/install/jtreg
+```
+
+
 ## Contributing
 
 We welcome pull requests that add new annotations or correct existing ones.
