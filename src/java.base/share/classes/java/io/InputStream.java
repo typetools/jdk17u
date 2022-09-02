@@ -25,6 +25,7 @@
 
 package java.io;
 
+import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.index.qual.GTENegativeOne;
 import org.checkerframework.checker.index.qual.IndexOrHigh;
 import org.checkerframework.checker.index.qual.LTEqLengthOf;
@@ -90,7 +91,7 @@ public abstract class InputStream implements Closeable {
      *
      * @since 11
      */
-    public static InputStream nullInputStream() {
+    public static @MustCall() InputStream nullInputStream() {
         return new InputStream() {
             private volatile boolean closed;
 
