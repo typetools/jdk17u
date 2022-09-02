@@ -140,6 +140,15 @@ git pull https://github.com/typetools/jdk.git
 ```
 
 
+## Design
+
+The goal of this repository is to write Checker Framework annotations in
+JDK source code.  In order to compile, it is necessary that definitions of
+those annotations are available -- in a module such as java.base, or on the
+classpath.  I tried putting them in java.base (which worked for JDK 11),
+but I wasn't able to make that work for JDK 17.
+
+
 ## Upstream README follows
 
 The remainder of this file is the `README.md` from `openjdk/jdk`.
