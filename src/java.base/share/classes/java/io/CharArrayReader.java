@@ -30,6 +30,7 @@ import org.checkerframework.checker.index.qual.IndexOrHigh;
 import org.checkerframework.checker.index.qual.LTEqLengthOf;
 import org.checkerframework.checker.index.qual.LTLengthOf;
 import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.mustcall.qual.InheritableMustCall;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
 import java.nio.CharBuffer;
@@ -42,7 +43,8 @@ import java.util.Objects;
  * @author      Herb Jellinek
  * @since       1.1
  */
-@AnnotatedFor({"nullness", "index"})
+@AnnotatedFor({"index", "mustcall", "nullness"})
+@InheritableMustCall({})
 public class CharArrayReader extends Reader {
     /** The character buffer. */
     protected char[] buf;
