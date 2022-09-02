@@ -9,6 +9,8 @@ them cause build failures, especially in the interim builds):
  * src/java.base/share/classes/java/time/*
  * src/jdk.compiler/share/classes/com/sun/tools/javac/*
 
+Annotations for classes that exist in JDK 11 but were removed in JDK 17 appear
+in jdk11.astub files in repository https://github.com/typetools/checker-framework/ .
 Annotations for classes that exist in JDK 8 but were removed in JDK 11 appear
 in jdk8.astub files in repository https://github.com/typetools/checker-framework/ .
 
@@ -48,15 +50,15 @@ determine that is to run `git log --graph | tac` on both and find the common
 prefix):
 https://github.com/typetools/jdk/commit/74007890bb9a3fa3a65683a3f480e399f2b1a0b6
 
-This fork is an ancestor of JDK release forks such as jdk11u.  This fork
+This fork is an ancestor of JDK release forks such as jdk17u.  This fork
 does not compile, because the commit of `openjdk/jdk` on which it is based
 no longer compiles, due to changes to tools such as compilers.
-Repositories such as jdk11u and jdk12u have been updated and do compile.
+Repositories such as jdk11u and jdk17u have been updated and do compile.
 
 This fork's annotations are pulled into those repositories, in order to
-build an annotated JDK.  We do not write annotations in (say) jdk11u,
+build an annotated JDK.  We do not write annotations in (say) jdk17u,
 because it has diverged far from other repositories.  It would be even more
-painful to write annotations on jdk11u and then try to merge it into a
+painful to write annotations on jdk17u and then try to merge it into a
 subsequent version like jdk12u.
 
 
@@ -68,6 +70,8 @@ update jdk17u from its upstreams, using the directions in section
 
 If that does not resolve the issue, then do the following in a clone of the
 branch of `jdk` whose pull request is failing.
+
+[[TODO: These instructions need to be updated for JDK 17.]]
 
 ```
 BRANCH=`git rev-parse --abbrev-ref HEAD`
@@ -145,7 +149,7 @@ git pull https://github.com/typetools/jdk.git
 The goal of this repository is to write Checker Framework annotations in
 JDK source code.  In order to compile, it is necessary that definitions of
 those annotations are available -- in a module such as java.base, or on the
-classpath.  I tried putting them in java.base (which worked for JDK 11),
+classpath.  I tried putting them in `java.base` (which worked for JDK 11),
 but I wasn't able to make that work for JDK 17.
 
 
