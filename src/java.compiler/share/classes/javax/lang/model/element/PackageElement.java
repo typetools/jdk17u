@@ -26,6 +26,7 @@
 package javax.lang.model.element;
 
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+
 import java.util.List;
 import javax.lang.model.type.TypeMirror;
 

@@ -23,10 +23,10 @@
  * questions.
  */
 
+package java.awt;
+
 import org.checkerframework.checker.interning.qual.UsesObjectEquals;
 import org.checkerframework.framework.qual.AnnotatedFor;
-
-package java.awt;
 
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
