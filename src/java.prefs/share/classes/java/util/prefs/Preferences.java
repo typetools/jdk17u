@@ -907,7 +907,7 @@ public abstract @UsesObjectEquals class Preferences {
      * @see #get(String,String)
      * @see #putByteArray(String,byte[])
      */
-    public abstract byte @PolyNull[] getByteArray(String key, byte @PolyNull[] def);
+    public abstract byte @PolyNull [] getByteArray(String key, byte @PolyNull [] def);
 
     /**
      * Returns all of the keys that have an associated value in this
