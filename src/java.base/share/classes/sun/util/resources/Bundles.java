@@ -40,6 +40,8 @@
 
 package sun.util.resources;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.security.AccessController;
@@ -552,7 +554,7 @@ public abstract class Bundles {
             }
         }
 
-        private Throwable getCause() {
+        private @Nullable Throwable getCause() {
             return cause;
         }
 

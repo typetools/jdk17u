@@ -25,6 +25,8 @@
 
 package java.io;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Signals that one of the ObjectStreamExceptions was thrown during a
  * write operation.  Thrown during a read operation when one of the
@@ -82,7 +84,7 @@ public class WriteAbortedException extends ObjectStreamException {
      * @since   1.4
      */
     @Override
-    public Throwable getCause() {
+    public @Nullable Throwable getCause() {
         return detail;
     }
 }

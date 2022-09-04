@@ -47,6 +47,7 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.KeyFor;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.propkey.qual.PropertyKey;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.dataflow.qual.Pure;
@@ -780,7 +781,7 @@ public abstract class ResourceBundle {
             }
         }
 
-        private Throwable getCause() {
+        private @Nullable Throwable getCause() {
             return cause;
         }
 
