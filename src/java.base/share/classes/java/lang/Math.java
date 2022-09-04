@@ -1474,6 +1474,7 @@ public final @UsesObjectEquals class Math {
      * @see Math#abs(int)
      * @since 15
      */
+    @Pure
     public static int absExact(int a) {
         if (a == Integer.MIN_VALUE)
             throw new ArithmeticException(
@@ -1521,6 +1522,7 @@ public final @UsesObjectEquals class Math {
      * @see Math#abs(long)
      * @since 15
      */
+    @Pure
     public static long absExact(long a) {
         if (a == Long.MIN_VALUE)
             throw new ArithmeticException(

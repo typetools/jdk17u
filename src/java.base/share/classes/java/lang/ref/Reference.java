@@ -27,6 +27,7 @@ package java.lang.ref;
 
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
@@ -371,6 +372,7 @@ public abstract class Reference<T> {
      * @return {@code true} if {@code obj} is the referent of this reference object
      * @since 16
      */
+    @Pure
     public final boolean refersTo(T obj) {
         return refersToImpl(obj);
     }

@@ -3888,6 +3888,8 @@ public final class String
      *
      * @since 12
      */
+    @CFComment("n may be negative")
+    @SideEffectFree
     public String indent(int n) {
         if (isEmpty()) {
             return "";
@@ -3904,11 +3906,13 @@ public final class String
         return stream.collect(Collectors.joining("\n", "", "\n"));
     }
 
+    @Pure
     private int indexOfNonWhitespace() {
         return isLatin1() ? StringLatin1.indexOfNonWhitespace(value)
                           : StringUTF16.indexOfNonWhitespace(value);
     }
 
+    @Pure
     private int lastIndexOfNonWhitespace() {
         return isLatin1() ? StringLatin1.lastIndexOfNonWhitespace(value)
                           : StringUTF16.lastIndexOfNonWhitespace(value);
@@ -4002,6 +4006,7 @@ public final class String
      * @since 15
      *
      */
+    @SideEffectFree
     public String stripIndent() {
         int length = length();
         if (length == 0) {
@@ -4125,6 +4130,7 @@ public final class String
      *
      * @since 15
      */
+    @SideEffectFree
     public String translateEscapes() {
         if (isEmpty()) {
             return "";
@@ -4386,6 +4392,7 @@ public final class String
      * @since 15
      *
      */
+    @SideEffectFree
     public String formatted(Object... args) {
         return new Formatter().format(this, args).toString();
     }
