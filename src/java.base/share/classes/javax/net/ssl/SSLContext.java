@@ -64,7 +64,7 @@ public class SSLContext {
 
     private final String protocol;
 
-    private static volatile SSLContext defaultContext;
+    private static volatile @MonotonicNonNull SSLContext defaultContext;
 
     private static final VarHandle VH_DEFAULT_CONTEXT;
 

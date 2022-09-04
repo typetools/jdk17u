@@ -150,7 +150,8 @@ import sun.security.util.SecurityConstants;
  * @since   1.0
  */
 @AnnotatedFor({"interning", "lock", "nullness"})
-public class Thread implements Runnable {
+public
+@UsesObjectEquals class Thread implements Runnable {
     /* Make sure registerNatives is the first thing <clinit> does. */
     private static native void registerNatives();
     static {

@@ -137,7 +137,7 @@ public class Arrays {
      * @throws ArrayIndexOutOfBoundsException
      *     if {@code fromIndex < 0} or {@code toIndex > a.length}
      */
-    public static void sort(int[] a, int fromIndex, int toIndex) {
+    public static void sort(int[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, 0, fromIndex, toIndex);
     }
@@ -175,7 +175,7 @@ public class Arrays {
      * @throws ArrayIndexOutOfBoundsException
      *     if {@code fromIndex < 0} or {@code toIndex > a.length}
      */
-    public static void sort(long[] a, int fromIndex, int toIndex) {
+    public static void sort(long[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, 0, fromIndex, toIndex);
     }
@@ -213,7 +213,7 @@ public class Arrays {
      * @throws ArrayIndexOutOfBoundsException
      *     if {@code fromIndex < 0} or {@code toIndex > a.length}
      */
-    public static void sort(short[] a, int fromIndex, int toIndex) {
+    public static void sort(short[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, fromIndex, toIndex);
     }
@@ -251,7 +251,7 @@ public class Arrays {
      * @throws ArrayIndexOutOfBoundsException
      *     if {@code fromIndex < 0} or {@code toIndex > a.length}
      */
-    public static void sort(char[] a, int fromIndex, int toIndex) {
+    public static void sort(char[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, fromIndex, toIndex);
     }
@@ -289,7 +289,7 @@ public class Arrays {
      * @throws ArrayIndexOutOfBoundsException
      *     if {@code fromIndex < 0} or {@code toIndex > a.length}
      */
-    public static void sort(byte[] a, int fromIndex, int toIndex) {
+    public static void sort(byte[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, fromIndex, toIndex);
     }
@@ -343,7 +343,7 @@ public class Arrays {
      * @throws ArrayIndexOutOfBoundsException
      *     if {@code fromIndex < 0} or {@code toIndex > a.length}
      */
-    public static void sort(float[] a, int fromIndex, int toIndex) {
+    public static void sort(float[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, 0, fromIndex, toIndex);
     }
@@ -397,7 +397,7 @@ public class Arrays {
      * @throws ArrayIndexOutOfBoundsException
      *     if {@code fromIndex < 0} or {@code toIndex > a.length}
      */
-    public static void sort(double[] a, int fromIndex, int toIndex) {
+    public static void sort(double[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, 0, fromIndex, toIndex);
     }
@@ -439,7 +439,7 @@ public class Arrays {
      *
      * @since 1.8
      */
-    public static void parallelSort(byte[] a, int fromIndex, int toIndex) {
+    public static void parallelSort(byte[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, fromIndex, toIndex);
     }
@@ -481,7 +481,7 @@ public class Arrays {
      *
      * @since 1.8
      */
-    public static void parallelSort(char[] a, int fromIndex, int toIndex) {
+    public static void parallelSort(char[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, fromIndex, toIndex);
     }
@@ -523,7 +523,7 @@ public class Arrays {
      *
      * @since 1.8
      */
-    public static void parallelSort(short[] a, int fromIndex, int toIndex) {
+    public static void parallelSort(short[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, fromIndex, toIndex);
     }
@@ -565,7 +565,7 @@ public class Arrays {
      *
      * @since 1.8
      */
-    public static void parallelSort(int[] a, int fromIndex, int toIndex) {
+    public static void parallelSort(int[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, ForkJoinPool.getCommonPoolParallelism(), fromIndex, toIndex);
     }
@@ -607,7 +607,7 @@ public class Arrays {
      *
      * @since 1.8
      */
-    public static void parallelSort(long[] a, int fromIndex, int toIndex) {
+    public static void parallelSort(long[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, ForkJoinPool.getCommonPoolParallelism(), fromIndex, toIndex);
     }
@@ -665,7 +665,7 @@ public class Arrays {
      *
      * @since 1.8
      */
-    public static void parallelSort(float[] a, int fromIndex, int toIndex) {
+    public static void parallelSort(float[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, ForkJoinPool.getCommonPoolParallelism(), fromIndex, toIndex);
     }
@@ -723,7 +723,7 @@ public class Arrays {
      *
      * @since 1.8
      */
-    public static void parallelSort(double[] a, int fromIndex, int toIndex) {
+    public static void parallelSort(double[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, ForkJoinPool.getCommonPoolParallelism(), fromIndex, toIndex);
     }
@@ -732,7 +732,7 @@ public class Arrays {
      * Checks that {@code fromIndex} and {@code toIndex} are in
      * the range and throws an exception if they aren't.
      */
-    static void rangeCheck(int arrayLength, int fromIndex, int toIndex) {
+    static void rangeCheck(int arrayLength, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         if (fromIndex > toIndex) {
             throw new IllegalArgumentException(
                 "fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
@@ -869,7 +869,7 @@ public class Arrays {
      */
     @SuppressWarnings("unchecked")
     public static <T extends Comparable<? super T>>
-    void parallelSort(T[] a, int fromIndex, int toIndex) {
+    void parallelSort(T[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         int n = toIndex - fromIndex, p, g;
         if (n <= MIN_ARRAY_SORT_GRAN ||
@@ -976,7 +976,7 @@ public class Arrays {
      * @since 1.8
      */
     @SuppressWarnings("unchecked")
-    public static <T> void parallelSort(T[] a, int fromIndex, int toIndex,
+    public static <T> void parallelSort(T[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex,
                                         Comparator<? super T> cmp) {
         rangeCheck(a.length, fromIndex, toIndex);
         if (cmp == null)
@@ -1425,8 +1425,8 @@ public class Arrays {
      * @throws NullPointerException if the specified array or function is null
      * @since 1.8
      */
-    public static <T> void parallelPrefix(T[] array, int fromIndex,
-                                          int toIndex, BinaryOperator<T> op) {
+    public static <T> void parallelPrefix(T[] array, @IndexOrHigh({"#1"}) int fromIndex,
+                                          @IndexOrHigh({"#1"}) int toIndex, BinaryOperator<T> op) {
         Objects.requireNonNull(op);
         rangeCheck(array.length, fromIndex, toIndex);
         if (fromIndex < toIndex)
@@ -1470,8 +1470,8 @@ public class Arrays {
      * @throws NullPointerException if the specified array or function is null
      * @since 1.8
      */
-    public static void parallelPrefix(long[] array, int fromIndex,
-                                      int toIndex, LongBinaryOperator op) {
+    public static void parallelPrefix(long[] array, @IndexOrHigh({"#1"}) int fromIndex,
+                                      @IndexOrHigh({"#1"}) int toIndex, LongBinaryOperator op) {
         Objects.requireNonNull(op);
         rangeCheck(array.length, fromIndex, toIndex);
         if (fromIndex < toIndex)
@@ -1518,8 +1518,8 @@ public class Arrays {
      * @throws NullPointerException if the specified array or function is null
      * @since 1.8
      */
-    public static void parallelPrefix(double[] array, int fromIndex,
-                                      int toIndex, DoubleBinaryOperator op) {
+    public static void parallelPrefix(double[] array, @IndexOrHigh({"#1"}) int fromIndex,
+                                      @IndexOrHigh({"#1"}) int toIndex, DoubleBinaryOperator op) {
         Objects.requireNonNull(op);
         rangeCheck(array.length, fromIndex, toIndex);
         if (fromIndex < toIndex)
@@ -1563,8 +1563,8 @@ public class Arrays {
      * @throws NullPointerException if the specified array or function is null
      * @since 1.8
      */
-    public static void parallelPrefix(int[] array, int fromIndex,
-                                      int toIndex, IntBinaryOperator op) {
+    public static void parallelPrefix(int[] array, @IndexOrHigh({"#1"}) int fromIndex,
+                                      @IndexOrHigh({"#1"}) int toIndex, IntBinaryOperator op) {
         Objects.requireNonNull(op);
         rangeCheck(array.length, fromIndex, toIndex);
         if (fromIndex < toIndex)
