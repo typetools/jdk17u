@@ -627,7 +627,7 @@ public class PrintStream extends FilterOutputStream
      * @since 14
      */
     @Override
-    public void write(byte buf[]) throws IOException {
+    public void write(@GuardSatisfied PrintStream this, @PolySigned byte buf[]) throws IOException {
         this.write(buf, 0, buf.length);
     }
 
@@ -649,7 +649,7 @@ public class PrintStream extends FilterOutputStream
      *
      * @since 14
      */
-    public void writeBytes(byte buf[]) {
+    public void writeBytes(@GuardSatisfied PrintStream this, @PolySigned byte buf[]) {
         this.write(buf, 0, buf.length);
     }
 

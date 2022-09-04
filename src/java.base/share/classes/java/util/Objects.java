@@ -462,6 +462,7 @@ public final @UsesObjectEquals class Objects {
      * @since 16
      */
     @ForceInline
+    @Pure
     public static
     long checkIndex(long index, long length) {
         return Preconditions.checkIndex(index, length, null);
@@ -488,6 +489,7 @@ public final @UsesObjectEquals class Objects {
      * @throws IndexOutOfBoundsException if the sub-range is out of bounds
      * @since 16
      */
+    @Pure
     public static
     long checkFromToIndex(long fromIndex, long toIndex, long length) {
         return Preconditions.checkFromToIndex(fromIndex, toIndex, length, null);
@@ -514,6 +516,7 @@ public final @UsesObjectEquals class Objects {
      * @throws IndexOutOfBoundsException if the sub-range is out of bounds
      * @since 16
      */
+    @Pure
     public static
     long checkFromIndexSize(long fromIndex, long size, long length) {
         return Preconditions.checkFromIndexSize(fromIndex, size, length, null);

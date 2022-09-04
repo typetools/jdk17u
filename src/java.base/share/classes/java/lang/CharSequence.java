@@ -95,6 +95,7 @@ public interface CharSequence {
      *          if the {@code index} argument is negative or not less than
      *          {@code length()}
      */
+    @Pure
     char charAt(@IndexFor({"this"}) int index);
 
     /**
@@ -108,6 +109,7 @@ public interface CharSequence {
      *
      * @since 15
      */
+    @Pure
     default boolean isEmpty() {
         return this.length() == 0;
     }
@@ -130,6 +132,7 @@ public interface CharSequence {
      *          if {@code end} is greater than {@code length()},
      *          or if {@code start} is greater than {@code end}
      */
+    @SideEffectFree
     CharSequence subSequence(@IndexOrHigh({"this"}) int start, @IndexOrHigh({"this"}) int end);
 
     /**
@@ -294,6 +297,7 @@ public interface CharSequence {
      * @since 11
      */
     @SuppressWarnings("unchecked")
+    @Pure
     public static int compare(CharSequence cs1, CharSequence cs2) {
         if (Objects.requireNonNull(cs1) == Objects.requireNonNull(cs2)) {
             return 0;

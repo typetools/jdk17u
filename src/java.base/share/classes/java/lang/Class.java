@@ -3839,6 +3839,7 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
      * @jls 8.10 Record Classes
      * @since 16
      */
+    @Pure
     public boolean isRecord() {
         // this superclass and final modifier check is not strictly necessary
         // they are intrinsified and serve as a fast-path check
@@ -4452,6 +4453,7 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
      * @since 12
      */
     @Override
+    @SideEffectFree
     public String descriptorString() {
         if (isPrimitive())
             return Wrapper.forPrimitiveType(this).basicTypeString();
@@ -4490,6 +4492,7 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
      * @since 12
      */
     @Override
+    @Pure
     public Class<?> componentType() {
         return isArray() ? componentType : null;
     }
@@ -4502,6 +4505,7 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
      * @since 12
      */
     @Override
+    @Pure
     public Class<?> arrayType() {
         return Array.newInstance(this, 0).getClass();
     }
@@ -4530,6 +4534,7 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
      * @see MethodHandles.Lookup#defineHiddenClass
      */
     @IntrinsicCandidate
+    @Pure
     public native boolean isHidden();
 
     /**
@@ -4622,6 +4627,7 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
      * @jls 9.1 Interface Declarations
      * @since 17
      */
+    @Pure
     public boolean isSealed() {
         if (isArray() || isPrimitive()) {
             return false;

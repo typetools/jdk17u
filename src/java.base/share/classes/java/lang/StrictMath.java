@@ -26,6 +26,7 @@
 package java.lang;
 
 import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
 import java.util.Random;
@@ -873,6 +874,7 @@ public final @UsesObjectEquals class StrictMath {
      * @see Math#incrementExact(int)
      * @since 14
      */
+    @Pure
     public static int incrementExact(int a) {
         return Math.incrementExact(a);
     }
@@ -888,6 +890,7 @@ public final @UsesObjectEquals class StrictMath {
      * @see Math#incrementExact(long)
      * @since 14
      */
+    @Pure
     public static long incrementExact(long a) {
         return Math.incrementExact(a);
     }
@@ -903,6 +906,7 @@ public final @UsesObjectEquals class StrictMath {
      * @see Math#decrementExact(int)
      * @since 14
      */
+    @Pure
     public static int decrementExact(int a) {
         return Math.decrementExact(a);
     }
@@ -918,6 +922,7 @@ public final @UsesObjectEquals class StrictMath {
      * @see Math#decrementExact(long)
      * @since 14
      */
+    @Pure
     public static long decrementExact(long a) {
         return Math.decrementExact(a);
     }
@@ -933,6 +938,7 @@ public final @UsesObjectEquals class StrictMath {
      * @see Math#negateExact(int)
      * @since 14
      */
+    @Pure
     public static int negateExact(int a) {
         return Math.negateExact(a);
     }
@@ -948,6 +954,7 @@ public final @UsesObjectEquals class StrictMath {
      * @see Math#negateExact(long)
      * @since 14
      */
+    @Pure
     public static long negateExact(long a) {
         return Math.negateExact(a);
     }
@@ -1185,6 +1192,7 @@ public final @UsesObjectEquals class StrictMath {
      * @see Math#absExact(int)
      * @since 15
      */
+    @Pure
     public static int absExact(int a) {
         return Math.absExact(a);
     }
@@ -1227,6 +1235,7 @@ public final @UsesObjectEquals class StrictMath {
      * @see Math#absExact(long)
      * @since 15
      */
+    @Pure
     public static long absExact(long a) {
         return Math.absExact(a);
     }

@@ -33,6 +33,7 @@ import org.checkerframework.checker.index.qual.LTLengthOf;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.interning.qual.UsesObjectEquals;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
 import java.util.*;
@@ -418,6 +419,7 @@ public final @UsesObjectEquals class Console implements Flushable
      *          {@code Console}
      * @since 17
      */
+    @Pure
     public Charset charset() {
         assert CHARSET != null : "charset() should not return null";
         return CHARSET;
