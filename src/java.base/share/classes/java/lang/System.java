@@ -404,7 +404,6 @@ public final @UsesObjectEquals class System {
      *       method.
      */
     @Deprecated(since="17", forRemoval=true)
-    @CallerSensitive
     public static void setSecurityManager(@SuppressWarnings("removal") @Nullable SecurityManager sm) {
         if (allowSecurityManager()) {
             var callerClass = Reflection.getCallerClass();
