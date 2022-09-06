@@ -111,6 +111,7 @@ public class ConcurrentSkipListSet<E extends @NonNull Object>
      * element.  This field is declared final for the sake of thread
      * safety, which entails some ugliness in clone().
      */
+    @SuppressWarnings("serial") // Conditionally serializable
     private final ConcurrentNavigableMap<E,Object> m;
 
     /**
@@ -523,6 +524,7 @@ public class ConcurrentSkipListSet<E extends @NonNull Object>
 
     /** Initializes map field; for use in clone. */
     private void setMap(ConcurrentNavigableMap<E,Object> map) {
+        @SuppressWarnings("removal")
         Field mapField = java.security.AccessController.doPrivileged(
             (java.security.PrivilegedAction<Field>) () -> {
                 try {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2021, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -47,8 +47,7 @@ import java.io.IOException;
  * @since 1.1
  */
 @AnnotatedFor({"index", "signedness"})
-public
-class DeflaterOutputStream extends FilterOutputStream {
+public class DeflaterOutputStream extends FilterOutputStream {
     /**
      * Compressor for this stream.
      */
@@ -109,7 +108,7 @@ class DeflaterOutputStream extends FilterOutputStream {
      * @param out the output stream
      * @param def the compressor ("deflater")
      * @param size the output buffer size
-     * @exception IllegalArgumentException if {@code size <= 0}
+     * @throws    IllegalArgumentException if {@code size <= 0}
      */
     public @MustCallAlias DeflaterOutputStream(@MustCallAlias OutputStream out, Deflater def, @Positive int size) {
         this(out, def, size, false);
@@ -167,7 +166,7 @@ class DeflaterOutputStream extends FilterOutputStream {
      * @since 1.7
      */
     public @MustCallAlias DeflaterOutputStream(@MustCallAlias OutputStream out, boolean syncFlush) {
-        this(out, new Deflater(), 512, syncFlush);
+        this(out, out != null ? new Deflater() : null, 512, syncFlush);
         usesDefaultDeflater = true;
     }
 
@@ -188,7 +187,7 @@ class DeflaterOutputStream extends FilterOutputStream {
      * Writes a byte to the compressed output stream. This method will
      * block until the byte can be written.
      * @param b the byte to be written
-     * @exception IOException if an I/O error has occurred
+     * @throws    IOException if an I/O error has occurred
      */
     public void write(@NonNegative int b) throws IOException {
         byte[] buf = new byte[1];
@@ -202,7 +201,7 @@ class DeflaterOutputStream extends FilterOutputStream {
      * @param b the data to be written
      * @param off the start offset of the data
      * @param len the length of the data
-     * @exception IOException if an I/O error has occurred
+     * @throws    IOException if an I/O error has occurred
      */
     public void write(@PolySigned byte[] b, @IndexOrHigh({"#1"}) int off, @IndexOrHigh({"#1"}) int len) throws IOException {
         if (def.finished()) {
@@ -225,7 +224,7 @@ class DeflaterOutputStream extends FilterOutputStream {
      * Finishes writing compressed data to the output stream without closing
      * the underlying stream. Use this method when applying multiple filters
      * in succession to the same output stream.
-     * @exception IOException if an I/O error has occurred
+     * @throws    IOException if an I/O error has occurred
      */
     public void finish() throws IOException {
         if (!def.finished()) {
@@ -239,7 +238,7 @@ class DeflaterOutputStream extends FilterOutputStream {
     /**
      * Writes remaining compressed data to the output stream and closes the
      * underlying stream.
-     * @exception IOException if an I/O error has occurred
+     * @throws    IOException if an I/O error has occurred
      */
     public void close() throws IOException {
         if (!closed) {
