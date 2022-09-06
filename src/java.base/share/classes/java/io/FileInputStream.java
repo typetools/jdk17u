@@ -25,6 +25,14 @@
 
 package java.io;
 
+import org.checkerframework.checker.index.qual.GTENegativeOne;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import jdk.internal.util.ArraysSupport;
@@ -61,6 +69,7 @@ import sun.nio.ch.FileChannelImpl;
  * @see     java.nio.file.Files#newInputStream
  * @since   1.0
  */
+@AnnotatedFor({"index", "mustcall", "nullness"})
 public class FileInputStream extends InputStream
 {
     private static final int DEFAULT_BUFFER_SIZE = 8192;
@@ -182,7 +191,7 @@ public class FileInputStream extends InputStream
      *             file descriptor.
      * @see        SecurityManager#checkRead(java.io.FileDescriptor)
      */
-    public FileInputStream(FileDescriptor fdObj) {
+    public @MustCallAlias FileInputStream(@MustCallAlias FileDescriptor fdObj) {
         @SuppressWarnings("removal")
         SecurityManager security = System.getSecurityManager();
         if (fdObj == null) {
@@ -224,7 +233,7 @@ public class FileInputStream extends InputStream
      *             file is reached.
      * @throws     IOException  if an I/O error occurs.
      */
-    public int read() throws IOException {
+    public @GTENegativeOne int read() throws IOException {
         return read0();
     }
 
@@ -250,7 +259,7 @@ public class FileInputStream extends InputStream
      *             the file has been reached.
      * @throws     IOException  if an I/O error occurs.
      */
-    public int read(byte b[]) throws IOException {
+    public @GTENegativeOne @LTEqLengthOf({"#1"}) int read(byte b[]) throws IOException {
         return readBytes(b, 0, b.length);
     }
 
@@ -272,7 +281,7 @@ public class FileInputStream extends InputStream
      *             {@code b.length - off}
      * @throws     IOException  if an I/O error occurs.
      */
-    public int read(byte b[], int off, int len) throws IOException {
+    public @GTENegativeOne @LTEqLengthOf({"#1"}) int read(byte b[], @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException {
         return readBytes(b, off, len);
     }
 
@@ -388,7 +397,7 @@ public class FileInputStream extends InputStream
      * @throws     IOException  if n is negative, if the stream does not
      *             support seek, or if an I/O error occurs.
      */
-    public long skip(long n) throws IOException {
+    public @NonNegative long skip(long n) throws IOException {
         return skip0(n);
     }
 
@@ -411,7 +420,7 @@ public class FileInputStream extends InputStream
      * @throws     IOException  if this file input stream has been closed by calling
      *             {@code close} or an I/O error occurs.
      */
-    public int available() throws IOException {
+    public @NonNegative int available() throws IOException {
         return available0();
     }
 
@@ -471,7 +480,7 @@ public class FileInputStream extends InputStream
      * @throws     IOException  if an I/O error occurs.
      * @see        java.io.FileDescriptor
      */
-    public final FileDescriptor getFD() throws IOException {
+    public final @MustCallAlias FileDescriptor getFD(@MustCallAlias FileInputStream this) throws IOException {
         if (fd != null) {
             return fd;
         }
@@ -493,7 +502,7 @@ public class FileInputStream extends InputStream
      *
      * @since 1.4
      */
-    public FileChannel getChannel() {
+    public @MustCallAlias FileChannel getChannel(@MustCallAlias FileInputStream this) {
         FileChannel fc = this.channel;
         if (fc == null) {
             synchronized (this) {

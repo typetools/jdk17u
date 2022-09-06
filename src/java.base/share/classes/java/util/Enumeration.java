@@ -25,6 +25,9 @@
 
 package java.util;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 /**
  * An object that implements the Enumeration interface generates a
  * series of elements, one at a time. Successive calls to the
@@ -61,6 +64,7 @@ package java.util;
  * @author  Lee Boynton
  * @since   1.0
  */
+@AnnotatedFor({"lock", "nullness"})
 public interface Enumeration<E> {
     /**
      * Tests if this enumeration contains more elements.
@@ -69,6 +73,7 @@ public interface Enumeration<E> {
      *           contains at least one more element to provide;
      *          {@code false} otherwise.
      */
+    @Pure
     boolean hasMoreElements();
 
     /**

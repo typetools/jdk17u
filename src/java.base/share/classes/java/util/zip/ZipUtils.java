@@ -25,6 +25,8 @@
 
 package java.util.zip;
 
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.nio.ByteBuffer;
 import java.nio.file.attribute.FileTime;
 import java.time.DateTimeException;
@@ -38,6 +40,7 @@ import static java.util.zip.ZipConstants.ENDHDR;
 
 import jdk.internal.misc.Unsafe;
 
+@AnnotatedFor({"signedness"})
 class ZipUtils {
 
     // used to adjust values between Windows and java epoch

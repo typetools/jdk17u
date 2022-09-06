@@ -25,6 +25,12 @@
 
 package java.lang.invoke;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import java.lang.constant.ClassDesc;
 import java.lang.constant.Constable;
 import java.lang.constant.MethodTypeDesc;
@@ -837,7 +843,9 @@ class MethodType
     // detail to allow for faster method type lookups.
     // See ConcurrentWeakInternSet.WeakEntry#equals(Object)
     @Override
-    public boolean equals(Object x) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object x) {
         if (this == x) {
             return true;
         }

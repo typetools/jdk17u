@@ -25,6 +25,15 @@
 
 package java.lang;
 
+import org.checkerframework.checker.lock.qual.NewObject;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.common.value.qual.IntVal;
+import org.checkerframework.common.value.qual.PolyValue;
+import org.checkerframework.common.value.qual.StaticallyExecutable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.lang.invoke.MethodHandles;
 import java.lang.constant.Constable;
 import java.lang.constant.ConstantDesc;
@@ -64,6 +73,7 @@ import jdk.internal.vm.annotation.IntrinsicCandidate;
  * @author  Joseph D. Darcy
  * @since 1.0
  */
+@AnnotatedFor({"nullness", "value"})
 @jdk.internal.ValueBased
 public final class Float extends Number
         implements Comparable<Float>, Constable, ConstantDesc {
@@ -122,7 +132,7 @@ public final class Float extends Number
      *
      * @since 1.6
      */
-    public static final int MAX_EXPONENT = 127;
+    public static final @IntVal(127) int MAX_EXPONENT = 127;
 
     /**
      * Minimum exponent a normalized {@code float} variable may have.
@@ -131,21 +141,21 @@ public final class Float extends Number
      *
      * @since 1.6
      */
-    public static final int MIN_EXPONENT = -126;
+    public static final @IntVal(-126) int MIN_EXPONENT = -126;
 
     /**
      * The number of bits used to represent a {@code float} value.
      *
      * @since 1.5
      */
-    public static final int SIZE = 32;
+    public static final @IntVal(32) int SIZE = 32;
 
     /**
      * The number of bytes used to represent a {@code float} value.
      *
      * @since 1.8
      */
-    public static final int BYTES = SIZE / Byte.SIZE;
+    public static final @IntVal(4) int BYTES = SIZE / Byte.SIZE;
 
     /**
      * The {@code Class} instance representing the primitive type
@@ -222,6 +232,8 @@ public final class Float extends Number
      * @param   f   the float to be converted.
      * @return a string representation of the argument.
      */
+    @SideEffectFree
+    @StaticallyExecutable
     public static String toString(float f) {
         return FloatingDecimal.toJavaFormatString(f);
     }
@@ -304,6 +316,8 @@ public final class Float extends Number
      * @since 1.5
      * @author Joseph D. Darcy
      */
+    @SideEffectFree
+    @StaticallyExecutable
     public static String toHexString(float f) {
         if (Math.abs(f) < Float.MIN_NORMAL
             &&  f != 0.0f ) {// float subnormal
@@ -436,7 +450,9 @@ public final class Float extends Number
      * @throws  NumberFormatException  if the string does not contain a
      *          parsable number.
      */
-    public static Float valueOf(String s) throws NumberFormatException {
+    @SideEffectFree
+    @StaticallyExecutable
+    public static @NewObject Float valueOf(String s) throws NumberFormatException {
         return new Float(parseFloat(s));
     }
 
@@ -453,8 +469,10 @@ public final class Float extends Number
      * @return a {@code Float} instance representing {@code f}.
      * @since  1.5
      */
+    @SideEffectFree
+    @StaticallyExecutable
     @IntrinsicCandidate
-    public static Float valueOf(float f) {
+    public static @NewObject @PolyValue Float valueOf(@PolyValue float f) {
         return new Float(f);
     }
 
@@ -472,6 +490,8 @@ public final class Float extends Number
      * @see    java.lang.Float#valueOf(String)
      * @since 1.2
      */
+    @Pure
+    @StaticallyExecutable
     public static float parseFloat(String s) throws NumberFormatException {
         return FloatingDecimal.parseFloat(s);
     }
@@ -484,6 +504,8 @@ public final class Float extends Number
      * @return  {@code true} if the argument is NaN;
      *          {@code false} otherwise.
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isNaN(float v) {
         return (v != v);
     }
@@ -496,6 +518,8 @@ public final class Float extends Number
      * @return  {@code true} if the argument is positive infinity or
      *          negative infinity; {@code false} otherwise.
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isInfinite(float v) {
         return (v == POSITIVE_INFINITY) || (v == NEGATIVE_INFINITY);
     }
@@ -511,6 +535,7 @@ public final class Float extends Number
      * floating-point value, {@code false} otherwise.
      * @since 1.8
      */
+    @StaticallyExecutable
      public static boolean isFinite(float f) {
         return Math.abs(f) <= Float.MAX_VALUE;
     }
@@ -533,8 +558,9 @@ public final class Float extends Number
      * {@link #valueOf(float)} is generally a better choice, as it is
      * likely to yield significantly better space and time performance.
      */
+    @StaticallyExecutable
     @Deprecated(since="9", forRemoval = true)
-    public Float(float value) {
+    public @PolyValue Float(@PolyValue float value) {
         this.value = value;
     }
 
@@ -549,8 +575,9 @@ public final class Float extends Number
      * static factory method {@link #valueOf(float)} method as follows:
      * {@code Float.valueOf((float)value)}.
      */
+    @StaticallyExecutable
     @Deprecated(since="9", forRemoval = true)
-    public Float(double value) {
+    public @PolyValue Float(@PolyValue double value) {
         this.value = (float)value;
     }
 
@@ -570,6 +597,7 @@ public final class Float extends Number
      * {@code float} primitive, or use {@link #valueOf(String)}
      * to convert a string to a {@code Float} object.
      */
+    @StaticallyExecutable
     @Deprecated(since="9", forRemoval = true)
     public Float(String s) throws NumberFormatException {
         value = parseFloat(s);
@@ -582,6 +610,8 @@ public final class Float extends Number
      * @return  {@code true} if the value represented by this object is
      *          NaN; {@code false} otherwise.
      */
+    @Pure
+    @StaticallyExecutable
     public boolean isNaN() {
         return isNaN(value);
     }
@@ -594,6 +624,8 @@ public final class Float extends Number
      *          positive infinity or negative infinity;
      *          {@code false} otherwise.
      */
+    @Pure
+    @StaticallyExecutable
     public boolean isInfinite() {
         return isInfinite(value);
     }
@@ -607,6 +639,8 @@ public final class Float extends Number
      * @return  a {@code String} representation of this object.
      * @see java.lang.Float#toString(float)
      */
+    @SideEffectFree
+    @StaticallyExecutable
     public String toString() {
         return Float.toString(value);
     }
@@ -619,7 +653,9 @@ public final class Float extends Number
      *          converted to type {@code byte}
      * @jls 5.1.3 Narrowing Primitive Conversion
      */
-    public byte byteValue() {
+    @Pure
+    @StaticallyExecutable
+    public @PolyValue byte byteValue(@PolyValue Float this) {
         return (byte)value;
     }
 
@@ -632,7 +668,9 @@ public final class Float extends Number
      * @jls 5.1.3 Narrowing Primitive Conversion
      * @since 1.1
      */
-    public short shortValue() {
+    @Pure
+    @StaticallyExecutable
+    public @PolyValue short shortValue(@PolyValue Float this) {
         return (short)value;
     }
 
@@ -644,7 +682,9 @@ public final class Float extends Number
      *          converted to type {@code int}
      * @jls 5.1.3 Narrowing Primitive Conversion
      */
-    public int intValue() {
+    @Pure
+    @StaticallyExecutable
+    public @PolyValue int intValue(@PolyValue Float this) {
         return (int)value;
     }
 
@@ -656,7 +696,9 @@ public final class Float extends Number
      *          converted to type {@code long}
      * @jls 5.1.3 Narrowing Primitive Conversion
      */
-    public long longValue() {
+    @Pure
+    @StaticallyExecutable
+    public @PolyValue long longValue(@PolyValue Float this) {
         return (long)value;
     }
 
@@ -665,8 +707,10 @@ public final class Float extends Number
      *
      * @return the {@code float} value represented by this object
      */
+    @Pure
+    @StaticallyExecutable
     @IntrinsicCandidate
-    public float floatValue() {
+    public @PolyValue float floatValue(@PolyValue Float this) {
         return value;
     }
 
@@ -678,7 +722,9 @@ public final class Float extends Number
      *         object converted to type {@code double}
      * @jls 5.1.2 Widening Primitive Conversion
      */
-    public double doubleValue() {
+    @Pure
+    @StaticallyExecutable
+    public @PolyValue double doubleValue(@PolyValue Float this) {
         return (double)value;
     }
 
@@ -691,6 +737,8 @@ public final class Float extends Number
      *
      * @return a hash code value for this object.
      */
+    @Pure
+    @StaticallyExecutable
     @Override
     public int hashCode() {
         return Float.hashCode(value);
@@ -704,6 +752,8 @@ public final class Float extends Number
      * @return a hash code value for a {@code float} value.
      * @since 1.8
      */
+    @Pure
+    @StaticallyExecutable
     public static int hashCode(float value) {
         return floatToIntBits(value);
     }
@@ -735,7 +785,9 @@ public final class Float extends Number
      * @see java.lang.Float#floatToIntBits(float)
      * @jls 15.21.1 Numerical Equality Operators == and !=
      */
-    public boolean equals(Object obj) {
+    @Pure
+    @StaticallyExecutable
+    public boolean equals(@Nullable Object obj) {
         return (obj instanceof Float)
                && (floatToIntBits(((Float)obj).value) == floatToIntBits(value));
     }
@@ -771,6 +823,8 @@ public final class Float extends Number
      * @param   value   a floating-point number.
      * @return the bits that represent the floating-point number.
      */
+    @Pure
+    @StaticallyExecutable
     @IntrinsicCandidate
     public static int floatToIntBits(float value) {
         if (!isNaN(value)) {
@@ -814,6 +868,8 @@ public final class Float extends Number
      * @return the bits that represent the floating-point number.
      * @since 1.3
      */
+    @Pure
+    @StaticallyExecutable
     @IntrinsicCandidate
     public static native int floatToRawIntBits(float value);
 
@@ -876,6 +932,8 @@ public final class Float extends Number
      * @return  the {@code float} floating-point value with the same bit
      *          pattern.
      */
+    @Pure
+    @StaticallyExecutable
     @IntrinsicCandidate
     public static native float intBitsToFloat(int bits);
 
@@ -919,6 +977,8 @@ public final class Float extends Number
      * @jls 15.20.1 Numerical Comparison Operators {@code <}, {@code <=}, {@code >}, and {@code >=}
      * @since   1.2
      */
+    @Pure
+    @StaticallyExecutable
     public int compareTo(Float anotherFloat) {
         return Float.compare(value, anotherFloat.value);
     }
@@ -941,6 +1001,8 @@ public final class Float extends Number
      *          {@code f2}.
      * @since 1.4
      */
+    @Pure
+    @StaticallyExecutable
     public static int compare(float f1, float f2) {
         if (f1 < f2)
             return -1;           // Neither val is NaN, thisVal is smaller
@@ -966,6 +1028,8 @@ public final class Float extends Number
      * @see java.util.function.BinaryOperator
      * @since 1.8
      */
+    @Pure
+    @StaticallyExecutable
     public static float sum(float a, float b) {
         return a + b;
     }
@@ -980,6 +1044,8 @@ public final class Float extends Number
      * @see java.util.function.BinaryOperator
      * @since 1.8
      */
+    @Pure
+    @StaticallyExecutable
     public static float max(float a, float b) {
         return Math.max(a, b);
     }
@@ -994,6 +1060,8 @@ public final class Float extends Number
      * @see java.util.function.BinaryOperator
      * @since 1.8
      */
+    @Pure
+    @StaticallyExecutable
     public static float min(float a, float b) {
         return Math.min(a, b);
     }

@@ -25,6 +25,10 @@
 
 package java.util;
 
+import org.checkerframework.checker.formatter.qual.FormatMethod;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.IOException;
@@ -1927,6 +1931,7 @@ import sun.util.locale.provider.ResourceBundleBasedAdapter;
  * @author  Iris Clark
  * @since 1.5
  */
+@AnnotatedFor({"formatter", "index", "lock", "mustcall", "nullness"})
 public final class Formatter implements Closeable, Flushable {
     private Appendable a;
     private final Locale l;
@@ -2001,7 +2006,7 @@ public final class Formatter implements Closeable, Flushable {
      *         Destination for the formatted output.  If {@code a} is
      *         {@code null} then a {@link StringBuilder} will be created.
      */
-    public Formatter(Appendable a) {
+    public @MustCallAlias Formatter(@MustCallAlias Appendable a) {
         this(Locale.getDefault(Locale.Category.FORMAT), nonNullAppendable(a));
     }
 
@@ -2034,7 +2039,7 @@ public final class Formatter implements Closeable, Flushable {
      *         formatting.  If {@code l} is {@code null} then no localization
      *         is applied.
      */
-    public Formatter(Appendable a, Locale l) {
+    public @MustCallAlias Formatter(@MustCallAlias Appendable a, Locale l) {
         this(l, nonNullAppendable(a));
     }
 
@@ -2342,7 +2347,7 @@ public final class Formatter implements Closeable, Flushable {
      * @param  ps
      *         The stream to use as the destination of this formatter.
      */
-    public Formatter(PrintStream ps) {
+    public @MustCallAlias Formatter(@MustCallAlias PrintStream ps) {
         this(Locale.getDefault(Locale.Category.FORMAT),
              (Appendable)Objects.requireNonNull(ps));
     }
@@ -2363,7 +2368,7 @@ public final class Formatter implements Closeable, Flushable {
      *         The output stream to use as the destination of this formatter.
      *         The output will be buffered.
      */
-    public Formatter(OutputStream os) {
+    public @MustCallAlias Formatter(@MustCallAlias OutputStream os) {
         this(Locale.getDefault(Locale.Category.FORMAT),
              new BufferedWriter(new OutputStreamWriter(os)));
     }
@@ -2388,7 +2393,7 @@ public final class Formatter implements Closeable, Flushable {
      * @throws  UnsupportedEncodingException
      *          If the named charset is not supported
      */
-    public Formatter(OutputStream os, String csn)
+    public @MustCallAlias Formatter(@MustCallAlias OutputStream os, String csn)
         throws UnsupportedEncodingException
     {
         this(os, csn, Locale.getDefault(Locale.Category.FORMAT));
@@ -2414,7 +2419,7 @@ public final class Formatter implements Closeable, Flushable {
      * @throws  UnsupportedEncodingException
      *          If the named charset is not supported
      */
-    public Formatter(OutputStream os, String csn, Locale l)
+    public @MustCallAlias Formatter(@MustCallAlias OutputStream os, String csn, Locale l)
         throws UnsupportedEncodingException
     {
         this(l, new BufferedWriter(new OutputStreamWriter(os, csn)));
@@ -2439,7 +2444,7 @@ public final class Formatter implements Closeable, Flushable {
      * @throws NullPointerException
      *         if {@code os} or {@code charset} is {@code null}.
      */
-    public Formatter(OutputStream os, Charset charset, Locale l) {
+    public @MustCallAlias Formatter(@MustCallAlias OutputStream os, Charset charset, Locale l) {
         this(l, new BufferedWriter(new OutputStreamWriter(os, charset)));
     }
 
@@ -2484,7 +2489,7 @@ public final class Formatter implements Closeable, Flushable {
      *          If this formatter has been closed by invoking its {@link
      *          #close()} method
      */
-    public Appendable out() {
+    public @MustCallAlias Appendable out(@MustCallAlias Formatter this) {
         ensureOpen();
         return a;
     }
@@ -2621,7 +2626,8 @@ public final class Formatter implements Closeable, Flushable {
      *
      * @return  This formatter
      */
-    public Formatter format(String format, Object ... args) {
+    @FormatMethod
+    public @MustCallAlias Formatter format(@MustCallAlias Formatter this, String format, Object ... args) {
         return format(l, format, args);
     }
 
@@ -2660,7 +2666,8 @@ public final class Formatter implements Closeable, Flushable {
      *
      * @return  This formatter
      */
-    public Formatter format(Locale l, String format, Object ... args) {
+    @FormatMethod
+    public @MustCallAlias Formatter format(@MustCallAlias Formatter this, Locale l, String format, Object ... args) {
         ensureOpen();
 
         // index of last argument referenced

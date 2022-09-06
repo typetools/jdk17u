@@ -25,6 +25,15 @@
 
 package java.io;
 
+import org.checkerframework.checker.formatter.qual.FormatMethod;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.Objects;
 import java.util.Formatter;
 import java.util.Locale;
@@ -58,6 +67,7 @@ import java.nio.charset.UnsupportedCharsetException;
  * @since       1.1
  */
 
+@AnnotatedFor({"formatter", "index", "lock", "mustcall", "nullness"})
 public class PrintWriter extends Writer {
 
     /**
@@ -95,7 +105,7 @@ public class PrintWriter extends Writer {
      *
      * @param  out        A character-output stream
      */
-    public PrintWriter (Writer out) {
+    public @MustCallAlias PrintWriter (@MustCallAlias Writer out) {
         this(out, false);
     }
 
@@ -107,7 +117,7 @@ public class PrintWriter extends Writer {
      *                    {@code printf}, or {@code format} methods will
      *                    flush the output buffer
      */
-    public PrintWriter(Writer out,
+    public @MustCallAlias PrintWriter(@MustCallAlias Writer out,
                        boolean autoFlush) {
         super(out);
         this.out = out;
@@ -124,7 +134,7 @@ public class PrintWriter extends Writer {
      *
      * @see java.io.OutputStreamWriter#OutputStreamWriter(java.io.OutputStream)
      */
-    public PrintWriter(OutputStream out) {
+    public @MustCallAlias PrintWriter(@MustCallAlias OutputStream out) {
         this(out, false);
     }
 
@@ -141,7 +151,7 @@ public class PrintWriter extends Writer {
      *
      * @see java.io.OutputStreamWriter#OutputStreamWriter(java.io.OutputStream)
      */
-    public PrintWriter(OutputStream out, boolean autoFlush) {
+    public @MustCallAlias PrintWriter(@MustCallAlias OutputStream out, boolean autoFlush) {
         this(out, autoFlush, Charset.defaultCharset());
     }
 
@@ -160,7 +170,7 @@ public class PrintWriter extends Writer {
      *
      * @since 10
      */
-    public PrintWriter(OutputStream out, boolean autoFlush, Charset charset) {
+    public @MustCallAlias PrintWriter(@MustCallAlias OutputStream out, boolean autoFlush, Charset charset) {
         this(new BufferedWriter(new OutputStreamWriter(out, charset)), autoFlush);
 
         // save print stream for error propagation
@@ -389,7 +399,7 @@ public class PrintWriter extends Writer {
      * Flushes the stream.
      * @see #checkError()
      */
-    public void flush() {
+    public void flush(@GuardSatisfied PrintWriter this) {
         try {
             synchronized (lock) {
                 ensureOpen();
@@ -407,7 +417,7 @@ public class PrintWriter extends Writer {
      *
      * @see #checkError()
      */
-    public void close() {
+    public void close(@GuardSatisfied PrintWriter this) {
         try {
             synchronized (lock) {
                 if (out == null)
@@ -428,7 +438,7 @@ public class PrintWriter extends Writer {
      *          either on the underlying output stream or during a format
      *          conversion.
      */
-    public boolean checkError() {
+    public boolean checkError(@GuardSatisfied PrintWriter this) {
         if (out != null) {
             flush();
         }
@@ -473,7 +483,7 @@ public class PrintWriter extends Writer {
      * Writes a single character.
      * @param c int specifying a character to be written.
      */
-    public void write(int c) {
+    public void write(@GuardSatisfied PrintWriter this, int c) {
         try {
             synchronized (lock) {
                 ensureOpen();
@@ -499,7 +509,7 @@ public class PrintWriter extends Writer {
      *          cause the corresponding method of the underlying {@code Writer}
      *          to throw an {@code IndexOutOfBoundsException}
      */
-    public void write(char buf[], int off, int len) {
+    public void write(@GuardSatisfied PrintWriter this, char buf[], @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) {
         try {
             synchronized (lock) {
                 ensureOpen();
@@ -519,7 +529,7 @@ public class PrintWriter extends Writer {
      * Writer class because it must suppress I/O exceptions.
      * @param buf Array of characters to be written
      */
-    public void write(char buf[]) {
+    public void write(@GuardSatisfied PrintWriter this, char buf[]) {
         write(buf, 0, buf.length);
     }
 
@@ -534,7 +544,7 @@ public class PrintWriter extends Writer {
      *          cause the corresponding method of the underlying {@code Writer}
      *          to throw an {@code IndexOutOfBoundsException}
      */
-    public void write(String s, int off, int len) {
+    public void write(@GuardSatisfied PrintWriter this, String s, @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) {
         try {
             synchronized (lock) {
                 ensureOpen();
@@ -554,7 +564,7 @@ public class PrintWriter extends Writer {
      * because it must suppress I/O exceptions.
      * @param s String to be written
      */
-    public void write(String s) {
+    public void write(@GuardSatisfied PrintWriter this, String s) {
         write(s, 0, s.length());
     }
 
@@ -586,7 +596,7 @@ public class PrintWriter extends Writer {
      *
      * @param      b   The {@code boolean} to be printed
      */
-    public void print(boolean b) {
+    public void print(@GuardSatisfied PrintWriter this, boolean b) {
         write(String.valueOf(b));
     }
 
@@ -598,7 +608,7 @@ public class PrintWriter extends Writer {
      *
      * @param      c   The {@code char} to be printed
      */
-    public void print(char c) {
+    public void print(@GuardSatisfied PrintWriter this, char c) {
         write(c);
     }
 
@@ -612,7 +622,7 @@ public class PrintWriter extends Writer {
      * @param      i   The {@code int} to be printed
      * @see        java.lang.Integer#toString(int)
      */
-    public void print(int i) {
+    public void print(@GuardSatisfied PrintWriter this, int i) {
         write(String.valueOf(i));
     }
 
@@ -626,7 +636,7 @@ public class PrintWriter extends Writer {
      * @param      l   The {@code long} to be printed
      * @see        java.lang.Long#toString(long)
      */
-    public void print(long l) {
+    public void print(@GuardSatisfied PrintWriter this, long l) {
         write(String.valueOf(l));
     }
 
@@ -640,7 +650,7 @@ public class PrintWriter extends Writer {
      * @param      f   The {@code float} to be printed
      * @see        java.lang.Float#toString(float)
      */
-    public void print(float f) {
+    public void print(@GuardSatisfied PrintWriter this, float f) {
         write(String.valueOf(f));
     }
 
@@ -654,7 +664,7 @@ public class PrintWriter extends Writer {
      * @param      d   The {@code double} to be printed
      * @see        java.lang.Double#toString(double)
      */
-    public void print(double d) {
+    public void print(@GuardSatisfied PrintWriter this, double d) {
         write(String.valueOf(d));
     }
 
@@ -668,7 +678,7 @@ public class PrintWriter extends Writer {
      *
      * @throws  NullPointerException  If {@code s} is {@code null}
      */
-    public void print(char s[]) {
+    public void print(@GuardSatisfied PrintWriter this, char s[]) {
         write(s);
     }
 
@@ -681,7 +691,7 @@ public class PrintWriter extends Writer {
      *
      * @param      s   The {@code String} to be printed
      */
-    public void print(String s) {
+    public void print(@GuardSatisfied PrintWriter this, @Nullable String s) {
         write(String.valueOf(s));
     }
 
@@ -695,7 +705,7 @@ public class PrintWriter extends Writer {
      * @param      obj   The {@code Object} to be printed
      * @see        java.lang.Object#toString()
      */
-    public void print(Object obj) {
+    public void print(@GuardSatisfied PrintWriter this, @Nullable Object obj) {
         write(String.valueOf(obj));
     }
 
@@ -706,7 +716,7 @@ public class PrintWriter extends Writer {
      * line separator is {@link System#lineSeparator()} and is not necessarily
      * a single newline character ({@code '\n'}).
      */
-    public void println() {
+    public void println(@GuardSatisfied PrintWriter this) {
         newLine();
     }
 
@@ -717,7 +727,7 @@ public class PrintWriter extends Writer {
      *
      * @param x the {@code boolean} value to be printed
      */
-    public void println(boolean x) {
+    public void println(@GuardSatisfied PrintWriter this, boolean x) {
         synchronized (lock) {
             print(x);
             println();
@@ -731,7 +741,7 @@ public class PrintWriter extends Writer {
      *
      * @param x the {@code char} value to be printed
      */
-    public void println(char x) {
+    public void println(@GuardSatisfied PrintWriter this, char x) {
         synchronized (lock) {
             print(x);
             println();
@@ -745,7 +755,7 @@ public class PrintWriter extends Writer {
      *
      * @param x the {@code int} value to be printed
      */
-    public void println(int x) {
+    public void println(@GuardSatisfied PrintWriter this, int x) {
         synchronized (lock) {
             print(x);
             println();
@@ -759,7 +769,7 @@ public class PrintWriter extends Writer {
      *
      * @param x the {@code long} value to be printed
      */
-    public void println(long x) {
+    public void println(@GuardSatisfied PrintWriter this, long x) {
         synchronized (lock) {
             print(x);
             println();
@@ -773,7 +783,7 @@ public class PrintWriter extends Writer {
      *
      * @param x the {@code float} value to be printed
      */
-    public void println(float x) {
+    public void println(@GuardSatisfied PrintWriter this, float x) {
         synchronized (lock) {
             print(x);
             println();
@@ -787,7 +797,7 @@ public class PrintWriter extends Writer {
      *
      * @param x the {@code double} value to be printed
      */
-    public void println(double x) {
+    public void println(@GuardSatisfied PrintWriter this, double x) {
         synchronized (lock) {
             print(x);
             println();
@@ -801,7 +811,7 @@ public class PrintWriter extends Writer {
      *
      * @param x the array of {@code char} values to be printed
      */
-    public void println(char x[]) {
+    public void println(@GuardSatisfied PrintWriter this, char x[]) {
         synchronized (lock) {
             print(x);
             println();
@@ -815,7 +825,7 @@ public class PrintWriter extends Writer {
      *
      * @param x the {@code String} value to be printed
      */
-    public void println(String x) {
+    public void println(@GuardSatisfied PrintWriter this, @Nullable String x) {
         synchronized (lock) {
             print(x);
             println();
@@ -831,7 +841,7 @@ public class PrintWriter extends Writer {
      *
      * @param x  The {@code Object} to be printed.
      */
-    public void println(Object x) {
+    public void println(@GuardSatisfied PrintWriter this, @Nullable Object x) {
         String s = String.valueOf(x);
         synchronized (lock) {
             print(s);
@@ -883,7 +893,8 @@ public class PrintWriter extends Writer {
      *
      * @since  1.5
      */
-    public PrintWriter printf(String format, Object ... args) {
+    @FormatMethod
+    public @MustCallAlias PrintWriter printf(@GuardSatisfied @MustCallAlias PrintWriter this, String format, @Nullable Object ... args) {
         return format(format, args);
     }
 
@@ -936,7 +947,8 @@ public class PrintWriter extends Writer {
      *
      * @since  1.5
      */
-    public PrintWriter printf(Locale l, String format, Object ... args) {
+    @FormatMethod
+    public @MustCallAlias PrintWriter printf(@GuardSatisfied @MustCallAlias PrintWriter this, @Nullable Locale l, String format, @Nullable Object ... args) {
         return format(l, format, args);
     }
 
@@ -980,7 +992,8 @@ public class PrintWriter extends Writer {
      *
      * @since  1.5
      */
-    public PrintWriter format(String format, Object ... args) {
+    @FormatMethod
+    public @MustCallAlias PrintWriter format(@GuardSatisfied @MustCallAlias PrintWriter this, String format, @Nullable Object ... args) {
         try {
             synchronized (lock) {
                 ensureOpen();
@@ -1040,7 +1053,8 @@ public class PrintWriter extends Writer {
      *
      * @since  1.5
      */
-    public PrintWriter format(Locale l, String format, Object ... args) {
+    @FormatMethod
+    public @MustCallAlias PrintWriter format(@GuardSatisfied @MustCallAlias PrintWriter this, @Nullable Locale l, String format, @Nullable Object ... args) {
         try {
             synchronized (lock) {
                 ensureOpen();
@@ -1083,7 +1097,7 @@ public class PrintWriter extends Writer {
      *
      * @since  1.5
      */
-    public PrintWriter append(CharSequence csq) {
+    public @MustCallAlias PrintWriter append(@GuardSatisfied @MustCallAlias PrintWriter this, @Nullable CharSequence csq) {
         write(String.valueOf(csq));
         return this;
     }
@@ -1122,7 +1136,7 @@ public class PrintWriter extends Writer {
      *
      * @since  1.5
      */
-    public PrintWriter append(CharSequence csq, int start, int end) {
+    public @MustCallAlias PrintWriter append(@GuardSatisfied @MustCallAlias PrintWriter this, @Nullable CharSequence csq, @IndexOrHigh({"#1"}) int start, @IndexOrHigh({"#1"}) int end) {
         if (csq == null) csq = "null";
         return append(csq.subSequence(start, end));
     }
@@ -1144,7 +1158,7 @@ public class PrintWriter extends Writer {
      *
      * @since 1.5
      */
-    public PrintWriter append(char c) {
+    public @MustCallAlias PrintWriter append(@GuardSatisfied @MustCallAlias PrintWriter this, char c) {
         write(c);
         return this;
     }

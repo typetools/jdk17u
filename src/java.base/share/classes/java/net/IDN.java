@@ -24,6 +24,9 @@
  */
 package java.net;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.InputStream;
 import java.io.IOException;
 import java.security.AccessController;
@@ -72,8 +75,9 @@ import jdk.internal.icu.text.UCharacterIterator;
  * @since 1.6
  *
  */
+@AnnotatedFor({"interning"})
 @SuppressWarnings("removal")
-public final class IDN {
+public final @UsesObjectEquals class IDN {
     /**
      * Flag to allow processing of unassigned code points
      */

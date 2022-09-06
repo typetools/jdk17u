@@ -25,7 +25,12 @@
 
 package java.lang;
 
-abstract class CharacterData {
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.common.value.qual.IntRange;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
+@AnnotatedFor({"index", "interning"})
+abstract @UsesObjectEquals class CharacterData {
     abstract int getProperties(int ch);
     abstract int getType(int ch);
     abstract boolean isDigit(int ch);
@@ -41,7 +46,7 @@ abstract class CharacterData {
     abstract int toLowerCase(int ch);
     abstract int toUpperCase(int ch);
     abstract int toTitleCase(int ch);
-    abstract int digit(int ch, int radix);
+    abstract int digit(int ch, @IntRange(from = 2, to = 36) int radix);
     abstract int getNumericValue(int ch);
     abstract byte getDirectionality(int ch);
 

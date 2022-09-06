@@ -25,6 +25,9 @@
 
 package java.security;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -278,8 +281,9 @@ import jdk.internal.vm.annotation.ReservedStackAccess;
  *       the Security Manager or this class.
  */
 
+@AnnotatedFor({"interning"})
 @Deprecated(since="17", forRemoval=true)
-public final class AccessController {
+public final @UsesObjectEquals class AccessController {
 
     /**
      * Don't allow anyone to instantiate an AccessController

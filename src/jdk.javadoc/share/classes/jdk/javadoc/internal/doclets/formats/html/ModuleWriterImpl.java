@@ -25,6 +25,8 @@
 
 package jdk.javadoc.internal.doclets.formats.html;
 
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -631,16 +633,19 @@ public class ModuleWriterImpl extends HtmlDocletWriter implements ModuleSummaryW
         }
     }
 
+    @Pure
     private boolean isExported(Element e) {
         PackageEntry entry = packages.get((PackageElement) e);
         return (entry != null) && (entry.exportedTo != null);
     }
 
+    @Pure
     private boolean isOpened(Element e) {
         PackageEntry entry = packages.get((PackageElement) e);
         return (entry != null) && (entry.openedTo != null);
     }
 
+    @Pure
     private boolean isConcealed(Element e) {
         PackageEntry entry = packages.get((PackageElement) e);
         return (entry != null) && (entry.exportedTo == null) && (entry.openedTo == null);

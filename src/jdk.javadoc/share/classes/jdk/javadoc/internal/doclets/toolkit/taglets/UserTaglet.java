@@ -25,6 +25,8 @@
 
 package jdk.javadoc.internal.doclets.toolkit.taglets;
 
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.util.List;
 import java.util.Set;
 
@@ -94,6 +96,7 @@ public final class UserTaglet implements Taglet {
         return userTaglet.getAllowedLocations().contains(TYPE);
     }
 
+    @Pure
     @Override
     public boolean isInlineTag() {
         return userTaglet.isInlineTag();

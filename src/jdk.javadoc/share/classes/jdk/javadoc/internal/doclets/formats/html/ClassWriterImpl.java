@@ -25,6 +25,8 @@
 
 package jdk.javadoc.internal.doclets.formats.html;
 
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -403,6 +405,7 @@ public class ClassWriterImpl extends SubWriterHolderWriter implements ClassWrite
         }
     }
 
+    @Pure
     public boolean isFunctionalInterface() {
         List<? extends AnnotationMirror> annotationMirrors = ((Element) typeElement).getAnnotationMirrors();
         for (AnnotationMirror anno : annotationMirrors) {

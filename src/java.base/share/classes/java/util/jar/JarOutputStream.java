@@ -25,6 +25,8 @@
 
 package java.util.jar;
 
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+
 import java.util.zip.*;
 import java.io.*;
 
@@ -53,7 +55,7 @@ public class JarOutputStream extends ZipOutputStream {
      * @param man the optional {@code Manifest}
      * @throws    IOException if an I/O error has occurred
      */
-    public JarOutputStream(OutputStream out, Manifest man) throws IOException {
+    public @MustCallAlias JarOutputStream(@MustCallAlias OutputStream out, Manifest man) throws IOException {
         super(out);
         if (man == null) {
             throw new NullPointerException("man");
@@ -69,7 +71,7 @@ public class JarOutputStream extends ZipOutputStream {
      * @param out the actual output stream
      * @throws    IOException if an I/O error has occurred
      */
-    public JarOutputStream(OutputStream out) throws IOException {
+    public @MustCallAlias JarOutputStream(@MustCallAlias OutputStream out) throws IOException {
         super(out);
     }
 

@@ -25,6 +25,8 @@
 
 package jdk.javadoc.internal.doclets.toolkit.util;
 
+import org.checkerframework.dataflow.qual.Pure;
+
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -454,6 +456,7 @@ public class VisibleMemberTable {
         return isInherited(e) && !isMemberHidden(e, kind, lmt);
     }
 
+    @Pure
     private boolean isInherited(Element e) {
         if (utils.isPrivate(e))
             return false;
@@ -465,6 +468,7 @@ public class VisibleMemberTable {
         return true;
     }
 
+    @Pure
     private boolean isMemberHidden(Element inheritedMember, Kind kind, LocalMemberTable lmt) {
         Elements elementUtils = config.docEnv.getElementUtils();
         switch(kind) {
@@ -554,6 +558,7 @@ public class VisibleMemberTable {
         overriddenMethodTable = Collections.unmodifiableMap(overriddenMethodTable);
     }
 
+    @Pure
     boolean isEnclosureInterface(Element e) {
         TypeElement enclosing = utils.getEnclosingTypeElement(e);
         return utils.isInterface(enclosing);

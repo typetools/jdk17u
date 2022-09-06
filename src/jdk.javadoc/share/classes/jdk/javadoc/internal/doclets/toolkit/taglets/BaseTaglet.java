@@ -25,6 +25,7 @@
 
 package jdk.javadoc.internal.doclets.toolkit.taglets;
 
+import org.checkerframework.dataflow.qual.Pure;
 import java.util.Set;
 import javax.lang.model.element.Element;
 
@@ -103,6 +104,7 @@ public class BaseTaglet implements Taglet {
         return sites.contains(Location.TYPE);
     }
 
+    @Pure
     @Override
     public final boolean isInlineTag() {
         return inline;

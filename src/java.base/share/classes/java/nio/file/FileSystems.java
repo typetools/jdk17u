@@ -25,6 +25,9 @@
 
 package java.nio.file;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.nio.file.spi.FileSystemProvider;
 import java.net.URI;
 import java.io.IOException;
@@ -86,7 +89,8 @@ import sun.nio.fs.DefaultFileSystemProvider;
  * @since 1.7
  */
 
-public final class FileSystems {
+@AnnotatedFor({"interning"})
+public final @UsesObjectEquals class FileSystems {
     private FileSystems() { }
 
     // lazy initialization of default file system

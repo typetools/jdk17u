@@ -24,6 +24,9 @@
  */
 package java.util;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import jdk.internal.access.JavaLangAccess;
 import jdk.internal.access.SharedSecrets;
 
@@ -65,6 +68,7 @@ import jdk.internal.access.SharedSecrets;
  * @see java.util.stream.Collectors#joining(CharSequence, CharSequence, CharSequence)
  * @since  1.8
 */
+@AnnotatedFor({"nullness"})
 public final class StringJoiner {
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -182,7 +186,7 @@ public final class StringJoiner {
      * @param  newElement The element to add
      * @return a reference to this {@code StringJoiner}
      */
-    public StringJoiner add(CharSequence newElement) {
+    public StringJoiner add(@Nullable CharSequence newElement) {
         final String elt = String.valueOf(newElement);
         if (elts == null) {
             elts = new String[8];

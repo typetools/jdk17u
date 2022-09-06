@@ -25,6 +25,12 @@
 
 package java.util.zip;
 
+import org.checkerframework.checker.index.qual.GTENegativeOne;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.EOFException;
@@ -44,6 +50,7 @@ import static java.util.zip.ZipUtils.*;
  * @author      David Connelly
  * @since 1.1
  */
+@AnnotatedFor({"index"})
 public class ZipInputStream extends InflaterInputStream implements ZipConstants {
     private ZipEntry entry;
     private int flag;
@@ -78,7 +85,7 @@ public class ZipInputStream extends InflaterInputStream implements ZipConstants 
      *
      * @param in the actual input stream
      */
-    public ZipInputStream(InputStream in) {
+    public @MustCallAlias ZipInputStream(@MustCallAlias InputStream in) {
         this(in, UTF_8.INSTANCE);
     }
 
@@ -96,7 +103,7 @@ public class ZipInputStream extends InflaterInputStream implements ZipConstants 
      *
      * @since 1.7
      */
-    public ZipInputStream(InputStream in, Charset charset) {
+    public @MustCallAlias ZipInputStream(@MustCallAlias InputStream in, Charset charset) {
         super(new PushbackInputStream(in, 512), new Inflater(true), 512);
         usesDefaultInflater = true;
         if (in == null) {
@@ -180,7 +187,7 @@ public class ZipInputStream extends InflaterInputStream implements ZipConstants 
      * @throws    ZipException if a ZIP file error has occurred
      * @throws    IOException if an I/O error has occurred
      */
-    public int read(byte[] b, int off, int len) throws IOException {
+    public @GTENegativeOne @LTEqLengthOf({"#1"}) int read(byte[] b, @IndexOrHigh({"#1"}) int off, @IndexOrHigh({"#1"}) int len) throws IOException {
         ensureOpen();
         if (off < 0 || len < 0 || off > b.length - len) {
             throw new IndexOutOfBoundsException();

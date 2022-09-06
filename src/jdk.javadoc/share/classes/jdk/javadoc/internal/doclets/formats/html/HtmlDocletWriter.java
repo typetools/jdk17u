@@ -25,6 +25,8 @@
 
 package jdk.javadoc.internal.doclets.formats.html;
 
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -1766,6 +1768,7 @@ public class HtmlDocletWriter {
      * <cite>The Java Language Specification</cite>,
      * all the outer classes and static nested classes are core classes.
      */
+    @Pure
     public boolean isCoreClass(TypeElement typeElement) {
         return utils.getEnclosingTypeElement(typeElement) == null || utils.isStatic(typeElement);
     }

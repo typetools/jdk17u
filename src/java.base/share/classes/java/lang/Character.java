@@ -25,6 +25,24 @@
 
 package java.lang;
 
+import org.checkerframework.checker.index.qual.GTENegativeOne;
+import org.checkerframework.checker.index.qual.IndexFor;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.index.qual.Positive;
+import org.checkerframework.checker.interning.qual.Interned;
+import org.checkerframework.checker.lock.qual.NewObject;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.common.value.qual.ArrayLen;
+import org.checkerframework.common.value.qual.IntRange;
+import org.checkerframework.common.value.qual.IntVal;
+import org.checkerframework.common.value.qual.PolyValue;
+import org.checkerframework.common.value.qual.StaticallyExecutable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import jdk.internal.misc.CDS;
 import jdk.internal.vm.annotation.IntrinsicCandidate;
 
@@ -171,6 +189,7 @@ import static java.lang.constant.ConstantDescs.DEFAULT_NAME;
  * @author  Ulf Zibis
  * @since   1.0
  */
+@AnnotatedFor({"index", "interning", "nullness", "value"})
 @jdk.internal.ValueBased
 public final
 class Character implements java.io.Serializable, Comparable<Character>, Constable {
@@ -186,7 +205,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Integer#toString(int, int)
      * @see     Integer#valueOf(String)
      */
-    public static final int MIN_RADIX = 2;
+    public static final @Positive @IntVal(2) int MIN_RADIX = 2;
 
     /**
      * The maximum radix available for conversion to and from strings.
@@ -200,7 +219,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Integer#toString(int, int)
      * @see     Integer#valueOf(String)
      */
-    public static final int MAX_RADIX = 36;
+    public static final @Positive @IntVal(36) int MAX_RADIX = 36;
 
     /**
      * The constant value of this field is the smallest value of type
@@ -208,7 +227,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since   1.0.2
      */
-    public static final char MIN_VALUE = '\u0000';
+    public static final @IntVal(0) char MIN_VALUE = '\u0000';
 
     /**
      * The constant value of this field is the largest value of type
@@ -216,7 +235,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since   1.0.2
      */
-    public static final char MAX_VALUE = '\uFFFF';
+    public static final @IntVal(65535) char MAX_VALUE = '\uFFFF';
 
     /**
      * The {@code Class} instance representing the primitive type
@@ -239,186 +258,186 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * General category "Cn" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte UNASSIGNED = 0;
+    public static final @IntVal(0) byte UNASSIGNED = 0;
 
     /**
      * General category "Lu" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte UPPERCASE_LETTER = 1;
+    public static final @IntVal(1) byte UPPERCASE_LETTER = 1;
 
     /**
      * General category "Ll" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte LOWERCASE_LETTER = 2;
+    public static final @IntVal(2) byte LOWERCASE_LETTER = 2;
 
     /**
      * General category "Lt" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte TITLECASE_LETTER = 3;
+    public static final @IntVal(3) byte TITLECASE_LETTER = 3;
 
     /**
      * General category "Lm" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte MODIFIER_LETTER = 4;
+    public static final @IntVal(4) byte MODIFIER_LETTER = 4;
 
     /**
      * General category "Lo" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte OTHER_LETTER = 5;
+    public static final @IntVal(5) byte OTHER_LETTER = 5;
 
     /**
      * General category "Mn" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte NON_SPACING_MARK = 6;
+    public static final @IntVal(6) byte NON_SPACING_MARK = 6;
 
     /**
      * General category "Me" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte ENCLOSING_MARK = 7;
+    public static final @IntVal(7) byte ENCLOSING_MARK = 7;
 
     /**
      * General category "Mc" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte COMBINING_SPACING_MARK = 8;
+    public static final @IntVal(8) byte COMBINING_SPACING_MARK = 8;
 
     /**
      * General category "Nd" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte DECIMAL_DIGIT_NUMBER = 9;
+    public static final @IntVal(9) byte DECIMAL_DIGIT_NUMBER = 9;
 
     /**
      * General category "Nl" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte LETTER_NUMBER = 10;
+    public static final @IntVal(10) byte LETTER_NUMBER = 10;
 
     /**
      * General category "No" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte OTHER_NUMBER = 11;
+    public static final @IntVal(11) byte OTHER_NUMBER = 11;
 
     /**
      * General category "Zs" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte SPACE_SEPARATOR = 12;
+    public static final @IntVal(12) byte SPACE_SEPARATOR = 12;
 
     /**
      * General category "Zl" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte LINE_SEPARATOR = 13;
+    public static final @IntVal(13) byte LINE_SEPARATOR = 13;
 
     /**
      * General category "Zp" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte PARAGRAPH_SEPARATOR = 14;
+    public static final @IntVal(14) byte PARAGRAPH_SEPARATOR = 14;
 
     /**
      * General category "Cc" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte CONTROL = 15;
+    public static final @IntVal(15) byte CONTROL = 15;
 
     /**
      * General category "Cf" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte FORMAT = 16;
+    public static final @IntVal(16) byte FORMAT = 16;
 
     /**
      * General category "Co" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte PRIVATE_USE = 18;
+    public static final @IntVal(18) byte PRIVATE_USE = 18;
 
     /**
      * General category "Cs" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte SURROGATE = 19;
+    public static final @IntVal(19) byte SURROGATE = 19;
 
     /**
      * General category "Pd" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte DASH_PUNCTUATION = 20;
+    public static final @IntVal(20) byte DASH_PUNCTUATION = 20;
 
     /**
      * General category "Ps" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte START_PUNCTUATION = 21;
+    public static final @IntVal(21) byte START_PUNCTUATION = 21;
 
     /**
      * General category "Pe" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte END_PUNCTUATION = 22;
+    public static final @IntVal(22) byte END_PUNCTUATION = 22;
 
     /**
      * General category "Pc" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte CONNECTOR_PUNCTUATION = 23;
+    public static final @IntVal(23) byte CONNECTOR_PUNCTUATION = 23;
 
     /**
      * General category "Po" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte OTHER_PUNCTUATION = 24;
+    public static final @IntVal(24) byte OTHER_PUNCTUATION = 24;
 
     /**
      * General category "Sm" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte MATH_SYMBOL = 25;
+    public static final @IntVal(25) byte MATH_SYMBOL = 25;
 
     /**
      * General category "Sc" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte CURRENCY_SYMBOL = 26;
+    public static final @IntVal(26) byte CURRENCY_SYMBOL = 26;
 
     /**
      * General category "Sk" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte MODIFIER_SYMBOL = 27;
+    public static final @IntVal(27) byte MODIFIER_SYMBOL = 27;
 
     /**
      * General category "So" in the Unicode specification.
      * @since   1.1
      */
-    public static final byte OTHER_SYMBOL = 28;
+    public static final @IntVal(28) byte OTHER_SYMBOL = 28;
 
     /**
      * General category "Pi" in the Unicode specification.
      * @since   1.4
      */
-    public static final byte INITIAL_QUOTE_PUNCTUATION = 29;
+    public static final @IntVal(29) byte INITIAL_QUOTE_PUNCTUATION = 29;
 
     /**
      * General category "Pf" in the Unicode specification.
      * @since   1.4
      */
-    public static final byte FINAL_QUOTE_PUNCTUATION = 30;
+    public static final @IntVal(30) byte FINAL_QUOTE_PUNCTUATION = 30;
 
     /**
      * Error flag. Use int (code point) to avoid confusion with U+FFFF.
      */
-    static final int ERROR = 0xFFFFFFFF;
+    static final @IntVal(0xFFFFFFFF) int ERROR = 0xFFFFFFFF;
 
 
     /**
@@ -426,145 +445,145 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * values have undefined directionality in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_UNDEFINED = -1;
+    public static final @IntVal(-1) byte DIRECTIONALITY_UNDEFINED = -1;
 
     /**
      * Strong bidirectional character type "L" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_LEFT_TO_RIGHT = 0;
+    public static final @IntVal(0) byte DIRECTIONALITY_LEFT_TO_RIGHT = 0;
 
     /**
      * Strong bidirectional character type "R" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_RIGHT_TO_LEFT = 1;
+    public static final @IntVal(1) byte DIRECTIONALITY_RIGHT_TO_LEFT = 1;
 
     /**
      * Strong bidirectional character type "AL" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC = 2;
+    public static final @IntVal(2) byte DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC = 2;
 
     /**
      * Weak bidirectional character type "EN" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_EUROPEAN_NUMBER = 3;
+    public static final @IntVal(3) byte DIRECTIONALITY_EUROPEAN_NUMBER = 3;
 
     /**
      * Weak bidirectional character type "ES" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_EUROPEAN_NUMBER_SEPARATOR = 4;
+    public static final @IntVal(4) byte DIRECTIONALITY_EUROPEAN_NUMBER_SEPARATOR = 4;
 
     /**
      * Weak bidirectional character type "ET" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_EUROPEAN_NUMBER_TERMINATOR = 5;
+    public static final @IntVal(5) byte DIRECTIONALITY_EUROPEAN_NUMBER_TERMINATOR = 5;
 
     /**
      * Weak bidirectional character type "AN" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_ARABIC_NUMBER = 6;
+    public static final @IntVal(6) byte DIRECTIONALITY_ARABIC_NUMBER = 6;
 
     /**
      * Weak bidirectional character type "CS" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_COMMON_NUMBER_SEPARATOR = 7;
+    public static final @IntVal(7) byte DIRECTIONALITY_COMMON_NUMBER_SEPARATOR = 7;
 
     /**
      * Weak bidirectional character type "NSM" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_NONSPACING_MARK = 8;
+    public static final @IntVal(8) byte DIRECTIONALITY_NONSPACING_MARK = 8;
 
     /**
      * Weak bidirectional character type "BN" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_BOUNDARY_NEUTRAL = 9;
+    public static final @IntVal(9) byte DIRECTIONALITY_BOUNDARY_NEUTRAL = 9;
 
     /**
      * Neutral bidirectional character type "B" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_PARAGRAPH_SEPARATOR = 10;
+    public static final @IntVal(10) byte DIRECTIONALITY_PARAGRAPH_SEPARATOR = 10;
 
     /**
      * Neutral bidirectional character type "S" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_SEGMENT_SEPARATOR = 11;
+    public static final @IntVal(11) byte DIRECTIONALITY_SEGMENT_SEPARATOR = 11;
 
     /**
      * Neutral bidirectional character type "WS" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_WHITESPACE = 12;
+    public static final @IntVal(12) byte DIRECTIONALITY_WHITESPACE = 12;
 
     /**
      * Neutral bidirectional character type "ON" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_OTHER_NEUTRALS = 13;
+    public static final @IntVal(13) byte DIRECTIONALITY_OTHER_NEUTRALS = 13;
 
     /**
      * Strong bidirectional character type "LRE" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING = 14;
+    public static final @IntVal(14) byte DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING = 14;
 
     /**
      * Strong bidirectional character type "LRO" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE = 15;
+    public static final @IntVal(15) byte DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE = 15;
 
     /**
      * Strong bidirectional character type "RLE" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING = 16;
+    public static final @IntVal(16) byte DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING = 16;
 
     /**
      * Strong bidirectional character type "RLO" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE = 17;
+    public static final @IntVal(17) byte DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE = 17;
 
     /**
      * Weak bidirectional character type "PDF" in the Unicode specification.
      * @since 1.4
      */
-    public static final byte DIRECTIONALITY_POP_DIRECTIONAL_FORMAT = 18;
+    public static final @IntVal(18) byte DIRECTIONALITY_POP_DIRECTIONAL_FORMAT = 18;
 
     /**
      * Weak bidirectional character type "LRI" in the Unicode specification.
      * @since 9
      */
-    public static final byte DIRECTIONALITY_LEFT_TO_RIGHT_ISOLATE = 19;
+    public static final @IntVal(19) byte DIRECTIONALITY_LEFT_TO_RIGHT_ISOLATE = 19;
 
     /**
      * Weak bidirectional character type "RLI" in the Unicode specification.
      * @since 9
      */
-    public static final byte DIRECTIONALITY_RIGHT_TO_LEFT_ISOLATE = 20;
+    public static final @IntVal(20) byte DIRECTIONALITY_RIGHT_TO_LEFT_ISOLATE = 20;
 
     /**
      * Weak bidirectional character type "FSI" in the Unicode specification.
      * @since 9
      */
-    public static final byte DIRECTIONALITY_FIRST_STRONG_ISOLATE = 21;
+    public static final @IntVal(21) byte DIRECTIONALITY_FIRST_STRONG_ISOLATE = 21;
 
     /**
      * Weak bidirectional character type "PDI" in the Unicode specification.
      * @since 9
      */
-    public static final byte DIRECTIONALITY_POP_DIRECTIONAL_ISOLATE = 22;
+    public static final @IntVal(22) byte DIRECTIONALITY_POP_DIRECTIONAL_ISOLATE = 22;
 
     /**
      * The minimum value of a
@@ -575,7 +594,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.5
      */
-    public static final char MIN_HIGH_SURROGATE = '\uD800';
+    public static final @IntVal('\uD800') char MIN_HIGH_SURROGATE = '\uD800';
 
     /**
      * The maximum value of a
@@ -586,7 +605,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.5
      */
-    public static final char MAX_HIGH_SURROGATE = '\uDBFF';
+    public static final @IntVal('\uDBFF') char MAX_HIGH_SURROGATE = '\uDBFF';
 
     /**
      * The minimum value of a
@@ -597,7 +616,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.5
      */
-    public static final char MIN_LOW_SURROGATE  = '\uDC00';
+    public static final @IntVal('\uDC00') char MIN_LOW_SURROGATE  = '\uDC00';
 
     /**
      * The maximum value of a
@@ -608,7 +627,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.5
      */
-    public static final char MAX_LOW_SURROGATE  = '\uDFFF';
+    public static final @IntVal('\uDFFF') char MAX_LOW_SURROGATE  = '\uDFFF';
 
     /**
      * The minimum value of a Unicode surrogate code unit in the
@@ -616,7 +635,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.5
      */
-    public static final char MIN_SURROGATE = MIN_HIGH_SURROGATE;
+    public static final @IntVal(MIN_HIGH_SURROGATE) char MIN_SURROGATE = MIN_HIGH_SURROGATE;
 
     /**
      * The maximum value of a Unicode surrogate code unit in the
@@ -624,7 +643,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.5
      */
-    public static final char MAX_SURROGATE = MAX_LOW_SURROGATE;
+    public static final @IntVal(MAX_LOW_SURROGATE) char MAX_SURROGATE = MAX_LOW_SURROGATE;
 
     /**
      * The minimum value of a
@@ -633,7 +652,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.5
      */
-    public static final int MIN_SUPPLEMENTARY_CODE_POINT = 0x010000;
+    public static final @IntVal(0x010000) int MIN_SUPPLEMENTARY_CODE_POINT = 0x010000;
 
     /**
      * The minimum value of a
@@ -642,7 +661,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.5
      */
-    public static final int MIN_CODE_POINT = 0x000000;
+    public static final @IntVal(0x000000) int MIN_CODE_POINT = 0x000000;
 
     /**
      * The maximum value of a
@@ -651,7 +670,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.5
      */
-    public static final int MAX_CODE_POINT = 0X10FFFF;
+    public static final @IntVal(0x000000) int MAX_CODE_POINT = 0X10FFFF;
 
     /**
      * Returns an {@link Optional} containing the nominal descriptor for this
@@ -698,7 +717,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
          * object; since this method is {@code final}, this
          * guarantee holds for all subclasses.
          */
-        public final boolean equals(Object obj) {
+        @Pure
+        @StaticallyExecutable
+        public final boolean equals(@Nullable Object obj) {
             return (this == obj);
         }
 
@@ -709,6 +730,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
          * {@code equals} and {@code hashCode} methods will
          * be consistent in all subclasses.
          */
+        @Pure
         public final int hashCode() {
             return super.hashCode();
         }
@@ -716,6 +738,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
         /**
          * Returns the name of this subset.
          */
+        @SideEffectFree
         public final String toString() {
             return name;
         }
@@ -732,7 +755,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.2
      */
-    public static final class UnicodeBlock extends Subset {
+    public static final @Interned class UnicodeBlock extends Subset {
         /**
          * 684 - the expected number of entities
          * 0.75 - the default load factor of HashMap
@@ -4170,7 +4193,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
          *          {@code null} if the character is not a member of any
          *          Unicode block
          */
-        public static UnicodeBlock of(char c) {
+        @Pure
+        public static @Nullable UnicodeBlock of(char c) {
             return of((int)c);
         }
 
@@ -4190,7 +4214,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
          * @see Character#isValidCodePoint(int)
          * @since   1.5
          */
-        public static UnicodeBlock of(int codePoint) {
+        @Pure
+        public static @Nullable UnicodeBlock of(int codePoint) {
             if (!isValidCodePoint(codePoint)) {
                 throw new IllegalArgumentException(
                     String.format("Not a valid Unicode code point: 0x%X", codePoint));
@@ -4249,6 +4274,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
          * @throws NullPointerException if {@code blockName} is null
          * @since 1.5
          */
+        @Pure
         public static final UnicodeBlock forName(String blockName) {
             UnicodeBlock block = map.get(blockName.toUpperCase(Locale.US));
             if (block == null) {
@@ -8477,6 +8503,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
          * @see Character#isValidCodePoint(int)
          *
          */
+        @Pure
         public static UnicodeScript of(int codePoint) {
             if (!isValidCodePoint(codePoint))
                 throw new IllegalArgumentException(
@@ -8511,6 +8538,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
          *         invalid name
          * @throws NullPointerException if {@code scriptName} is null
          */
+        @Pure
         public static final UnicodeScript forName(String scriptName) {
             scriptName = scriptName.toUpperCase(Locale.ENGLISH);
                                  //.replace(' ', '_'));
@@ -8544,8 +8572,10 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * {@link #valueOf(char)} is generally a better choice, as it is
      * likely to yield significantly better space and time performance.
      */
+    @Pure
+    @StaticallyExecutable
     @Deprecated(since="9", forRemoval = true)
-    public Character(char value) {
+    public @PolyValue Character(@PolyValue char value) {
         this.value = value;
     }
 
@@ -8589,7 +8619,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @since  1.5
      */
     @IntrinsicCandidate
-    public static Character valueOf(char c) {
+    public static @NewObject @PolyValue Character valueOf(@PolyValue char c) {
         if (c <= 127) { // must cache
             return CharacterCache.cache[(int)c];
         }
@@ -8601,8 +8631,10 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @return  the primitive {@code char} value represented by
      *          this object.
      */
+    @Pure
+    @StaticallyExecutable
     @IntrinsicCandidate
-    public char charValue() {
+    public @PolyValue @NonNegative char charValue(@PolyValue Character this) {
         return value;
     }
 
@@ -8612,6 +8644,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @return a hash code value for this {@code Character}
      */
+    @Pure
+    @StaticallyExecutable
     @Override
     public int hashCode() {
         return Character.hashCode(value);
@@ -8626,6 +8660,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @param value The {@code char} for which to return a hash code.
      * @return a hash code value for a {@code char} value.
      */
+    @Pure
+    @StaticallyExecutable
     public static int hashCode(char value) {
         return (int)value;
     }
@@ -8640,7 +8676,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @return  {@code true} if the objects are the same;
      *          {@code false} otherwise.
      */
-    public boolean equals(Object obj) {
+    @Pure
+    @StaticallyExecutable
+    public boolean equals(@Nullable Object obj) {
         if (obj instanceof Character) {
             return value == ((Character)obj).charValue();
         }
@@ -8656,7 +8694,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @return  a string representation of this object.
      */
-    public String toString() {
+    @SideEffectFree
+    @StaticallyExecutable
+    public @ArrayLen(1) String toString() {
         return String.valueOf(value);
     }
 
@@ -8674,7 +8714,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @return the string representation of the specified {@code char}
      * @since 1.4
      */
-    public static String toString(char c) {
+    @SideEffectFree
+    @StaticallyExecutable
+    public static @ArrayLen(1) String toString(char c) {
         return String.valueOf(c);
     }
 
@@ -8690,7 +8732,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *      valid Unicode code point}.
      * @since 11
      */
-    public static String toString(int codePoint) {
+    @SideEffectFree
+    @StaticallyExecutable
+    public static @ArrayLen(1) String toString(int codePoint) {
         return String.valueOfCodePoint(codePoint);
     }
 
@@ -8706,6 +8750,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *         {@code false} otherwise.
      * @since  1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isValidCodePoint(int codePoint) {
         // Optimized form of:
         //     codePoint >= MIN_CODE_POINT && codePoint <= MAX_CODE_POINT
@@ -8724,6 +8770,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *         {@code false} otherwise.
      * @since  1.7
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isBmpCodePoint(int codePoint) {
         return codePoint >>> 16 == 0;
         // Optimized form of:
@@ -8743,6 +8791,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *         {@code false} otherwise.
      * @since  1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isSupplementaryCodePoint(int codePoint) {
         return codePoint >= MIN_SUPPLEMENTARY_CODE_POINT
             && codePoint <  MAX_CODE_POINT + 1;
@@ -8768,6 +8818,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see    Character.UnicodeBlock#of(int)
      * @since  1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isHighSurrogate(char ch) {
         // Help VM constant-fold; MAX_HIGH_SURROGATE + 1 == MIN_LOW_SURROGATE
         return ch >= MIN_HIGH_SURROGATE && ch < (MAX_HIGH_SURROGATE + 1);
@@ -8792,6 +8844,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see    Character#isHighSurrogate(char)
      * @since  1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isLowSurrogate(char ch) {
         return ch >= MIN_LOW_SURROGATE && ch < (MAX_LOW_SURROGATE + 1);
     }
@@ -8816,6 +8870,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *         {@code false} otherwise.
      * @since  1.7
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isSurrogate(char ch) {
         return ch >= MIN_SURROGATE && ch < (MAX_SURROGATE + 1);
     }
@@ -8838,6 +8894,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * {@code false} otherwise.
      * @since  1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isSurrogatePair(char high, char low) {
         return isHighSurrogate(high) && isLowSurrogate(low);
     }
@@ -8858,7 +8916,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isSupplementaryCodePoint(int)
      * @since   1.5
      */
-    public static int charCount(int codePoint) {
+    @Pure
+    @StaticallyExecutable
+    public static @Positive int charCount(int codePoint) {
         return codePoint >= MIN_SUPPLEMENTARY_CODE_POINT ? 2 : 1;
     }
 
@@ -8874,6 +8934,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *         specified surrogate pair.
      * @since  1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static int toCodePoint(char high, char low) {
         // Optimized form of:
         // return ((high - MIN_HIGH_SURROGATE) << 10)
@@ -8906,7 +8968,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * {@link CharSequence#length() seq.length()}.
      * @since  1.5
      */
-    public static int codePointAt(CharSequence seq, int index) {
+    @Pure
+    @StaticallyExecutable
+    public static int codePointAt(CharSequence seq, @IndexFor({"#1"}) int index) {
         char c1 = seq.charAt(index);
         if (isHighSurrogate(c1) && ++index < seq.length()) {
             char c2 = seq.charAt(index);
@@ -8938,7 +9002,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * the length of the {@code char} array.
      * @since  1.5
      */
-    public static int codePointAt(char[] a, int index) {
+    @Pure
+    @StaticallyExecutable
+    public static int codePointAt(char[] a, @IndexFor({"#1"}) int index) {
         return codePointAtImpl(a, index, a.length);
     }
 
@@ -8967,13 +9033,17 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * greater than the length of the {@code char} array.
      * @since  1.5
      */
-    public static int codePointAt(char[] a, int index, int limit) {
+    @Pure
+    @StaticallyExecutable
+    public static int codePointAt(char[] a, @IndexFor({"#1"}) int index, @IndexOrHigh({"#1"}) int limit) {
         if (index >= limit || limit < 0 || limit > a.length) {
             throw new IndexOutOfBoundsException();
         }
         return codePointAtImpl(a, index, limit);
     }
 
+    @Pure
+    @StaticallyExecutable
     // throws ArrayIndexOutOfBoundsException if index out of bounds
     static int codePointAtImpl(char[] a, int index, int limit) {
         char c1 = a[index];
@@ -9007,7 +9077,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * CharSequence#length() seq.length()}.
      * @since  1.5
      */
-    public static int codePointBefore(CharSequence seq, int index) {
+    @Pure
+    @StaticallyExecutable
+    public static int codePointBefore(CharSequence seq, @LTEqLengthOf({"#1"}) @Positive int index) {
         char c2 = seq.charAt(--index);
         if (isLowSurrogate(c2) && index > 0) {
             char c1 = seq.charAt(--index);
@@ -9039,7 +9111,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * {@code char} array
      * @since  1.5
      */
-    public static int codePointBefore(char[] a, int index) {
+    @Pure
+    @StaticallyExecutable
+    public static int codePointBefore(char[] a, @LTEqLengthOf({"#1"}) @Positive int index) {
         return codePointBeforeImpl(a, index, 0);
     }
 
@@ -9070,13 +9144,17 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * the length of the {@code char} array.
      * @since  1.5
      */
-    public static int codePointBefore(char[] a, int index, int start) {
+    @Pure
+    @StaticallyExecutable
+    public static int codePointBefore(char[] a, @LTEqLengthOf({"#1"}) @Positive int index, @IndexOrHigh({"#1"}) int start) {
         if (index <= start || start < 0 || start >= a.length) {
             throw new IndexOutOfBoundsException();
         }
         return codePointBeforeImpl(a, index, start);
     }
 
+    @Pure
+    @StaticallyExecutable
     // throws ArrayIndexOutOfBoundsException if index-1 out of bounds
     static int codePointBeforeImpl(char[] a, int index, int start) {
         char c2 = a[--index];
@@ -9113,6 +9191,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *          character in the UTF-16 encoding
      * @since   1.7
      */
+    @Pure
+    @StaticallyExecutable
     public static char highSurrogate(int codePoint) {
         return (char) ((codePoint >>> 10)
             + (MIN_HIGH_SURROGATE - (MIN_SUPPLEMENTARY_CODE_POINT >>> 10)));
@@ -9142,6 +9222,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *          character in the UTF-16 encoding
      * @since   1.7
      */
+    @Pure
+    @StaticallyExecutable
     public static char lowSurrogate(int codePoint) {
         return (char) ((codePoint & 0x3ff) + MIN_LOW_SURROGATE);
     }
@@ -9177,7 +9259,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * {@code dst[dstIndex]}.)
      * @since  1.5
      */
-    public static int toChars(int codePoint, char[] dst, int dstIndex) {
+    @Pure
+    @StaticallyExecutable
+    public static int toChars(int codePoint, char[] dst, @IndexFor({"#2"}) int dstIndex) {
         if (isBmpCodePoint(codePoint)) {
             dst[dstIndex] = (char) codePoint;
             return 1;
@@ -9206,6 +9290,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * {@code codePoint} is not a valid Unicode code point.
      * @since  1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static char[] toChars(int codePoint) {
         if (isBmpCodePoint(codePoint)) {
             return new char[] { (char) codePoint };
@@ -9248,7 +9334,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * {@code beginIndex} is larger than {@code endIndex}.
      * @since  1.5
      */
-    public static int codePointCount(CharSequence seq, int beginIndex, int endIndex) {
+    @Pure
+    @StaticallyExecutable
+    public static @NonNegative int codePointCount(CharSequence seq, @IndexOrHigh({"#1"}) int beginIndex, @IndexOrHigh({"#1"}) int endIndex) {
         int length = seq.length();
         if (beginIndex < 0 || endIndex > length || beginIndex > endIndex) {
             throw new IndexOutOfBoundsException();
@@ -9283,13 +9371,17 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * count} is larger than the length of the given array.
      * @since  1.5
      */
-    public static int codePointCount(char[] a, int offset, int count) {
+    @Pure
+    @StaticallyExecutable
+    public static @NonNegative int codePointCount(char[] a, @IndexOrHigh({"#1"}) int offset, @IndexOrHigh({"#1"}) int count) {
         if (count > a.length - offset || offset < 0 || count < 0) {
             throw new IndexOutOfBoundsException();
         }
         return codePointCountImpl(a, offset, count);
     }
 
+    @Pure
+    @StaticallyExecutable
     static int codePointCountImpl(char[] a, int offset, int count) {
         int endIndex = offset + count;
         int n = count;
@@ -9325,7 +9417,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *   of {@code codePointOffset} code points.
      * @since 1.5
      */
-    public static int offsetByCodePoints(CharSequence seq, int index,
+    @Pure
+    @StaticallyExecutable
+    public static int offsetByCodePoints(CharSequence seq, @IndexOrHigh({"#1"}) int index,
                                          int codePointOffset) {
         int length = seq.length();
         if (index < 0 || index > length) {
@@ -9392,8 +9486,10 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *   {@code codePointOffset} code points.
      * @since 1.5
      */
-    public static int offsetByCodePoints(char[] a, int start, int count,
-                                         int index, int codePointOffset) {
+    @Pure
+    @StaticallyExecutable
+    public static @IndexOrHigh({"#1"}) int offsetByCodePoints(char[] a, @IndexOrHigh({"#1"}) int start, @IndexOrHigh({"#1"}) int count,
+                                         @IndexOrHigh({"#1"}) int index, int codePointOffset) {
         if (count > a.length-start || start < 0 || count < 0
             || index < start || index > start+count) {
             throw new IndexOutOfBoundsException();
@@ -9401,6 +9497,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
         return offsetByCodePointsImpl(a, start, count, index, codePointOffset);
     }
 
+    @Pure
+    @StaticallyExecutable
     static int offsetByCodePointsImpl(char[]a, int start, int count,
                                       int index, int codePointOffset) {
         int x = index;
@@ -9462,6 +9560,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#toLowerCase(char)
      * @see     Character#getType(char)
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isLowerCase(char ch) {
         return isLowerCase((int)ch);
     }
@@ -9494,6 +9594,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#getType(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isLowerCase(int codePoint) {
         return CharacterData.of(codePoint).isLowerCase(codePoint);
     }
@@ -9529,6 +9631,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#getType(char)
      * @since   1.0
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isUpperCase(char ch) {
         return isUpperCase((int)ch);
     }
@@ -9559,6 +9663,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#getType(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isUpperCase(int codePoint) {
         return CharacterData.of(codePoint).isUpperCase(codePoint);
     }
@@ -9600,6 +9706,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#getType(char)
      * @since   1.0.2
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isTitleCase(char ch) {
         return isTitleCase((int)ch);
     }
@@ -9636,6 +9744,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#getType(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isTitleCase(int codePoint) {
         return getType(codePoint) == Character.TITLECASE_LETTER;
     }
@@ -9675,6 +9785,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#forDigit(int, int)
      * @see     Character#getType(char)
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isDigit(char ch) {
         return isDigit((int)ch);
     }
@@ -9709,6 +9821,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#getType(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isDigit(int codePoint) {
         return CharacterData.of(codePoint).isDigit(codePoint);
     }
@@ -9738,6 +9852,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUpperCase(char)
      * @since   1.0.2
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isDefined(char ch) {
         return isDefined((int)ch);
     }
@@ -9762,6 +9878,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUpperCase(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isDefined(int codePoint) {
         return getType(codePoint) != Character.UNASSIGNED;
     }
@@ -9801,6 +9919,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUnicodeIdentifierStart(char)
      * @see     Character#isUpperCase(char)
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isLetter(char ch) {
         return isLetter((int)ch);
     }
@@ -9834,6 +9954,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUpperCase(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isLetter(int codePoint) {
         return ((((1 << Character.UPPERCASE_LETTER) |
             (1 << Character.LOWERCASE_LETTER) |
@@ -9867,6 +9989,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUnicodeIdentifierPart(char)
      * @since   1.0.2
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isLetterOrDigit(char ch) {
         return isLetterOrDigit((int)ch);
     }
@@ -9888,6 +10012,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUnicodeIdentifierPart(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isLetterOrDigit(int codePoint) {
         return ((((1 << Character.UPPERCASE_LETTER) |
             (1 << Character.LOWERCASE_LETTER) |
@@ -9923,6 +10049,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @since   1.0.2
      * @deprecated Replaced by isJavaIdentifierStart(char).
      */
+    @Pure
+    @StaticallyExecutable
     @Deprecated(since="1.1")
     public static boolean isJavaLetter(char ch) {
         return isJavaIdentifierStart(ch);
@@ -9959,6 +10087,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @since   1.0.2
      * @deprecated Replaced by isJavaIdentifierPart(char).
      */
+    @Pure
+    @StaticallyExecutable
     @Deprecated(since="1.1")
     public static boolean isJavaLetterOrDigit(char ch) {
         return isJavaIdentifierPart(ch);
@@ -9986,6 +10116,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *          character, {@code false} otherwise.
      * @since   1.7
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isAlphabetic(int codePoint) {
         return (((((1 << Character.UPPERCASE_LETTER) |
             (1 << Character.LOWERCASE_LETTER) |
@@ -10006,6 +10138,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *          character, {@code false} otherwise.
      * @since   1.7
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isIdeographic(int codePoint) {
         return CharacterData.of(codePoint).isIdeographic(codePoint);
     }
@@ -10037,6 +10171,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     javax.lang.model.SourceVersion#isIdentifier(CharSequence)
      * @since   1.1
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isJavaIdentifierStart(char ch) {
         return isJavaIdentifierStart((int)ch);
     }
@@ -10066,6 +10202,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     javax.lang.model.SourceVersion#isIdentifier(CharSequence)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isJavaIdentifierStart(int codePoint) {
         return CharacterData.of(codePoint).isJavaIdentifierStart(codePoint);
     }
@@ -10103,6 +10241,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     javax.lang.model.SourceVersion#isIdentifier(CharSequence)
      * @since   1.1
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isJavaIdentifierPart(char ch) {
         return isJavaIdentifierPart((int)ch);
     }
@@ -10136,6 +10276,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     javax.lang.model.SourceVersion#isIdentifier(CharSequence)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isJavaIdentifierPart(int codePoint) {
         return CharacterData.of(codePoint).isJavaIdentifierPart(codePoint);
     }
@@ -10176,6 +10318,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUnicodeIdentifierPart(char)
      * @since   1.1
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isUnicodeIdentifierStart(char ch) {
         return isUnicodeIdentifierStart((int)ch);
     }
@@ -10212,6 +10356,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUnicodeIdentifierPart(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isUnicodeIdentifierStart(int codePoint) {
         return CharacterData.of(codePoint).isUnicodeIdentifierStart(codePoint);
     }
@@ -10262,6 +10408,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUnicodeIdentifierStart(char)
      * @since   1.1
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isUnicodeIdentifierPart(char ch) {
         return isUnicodeIdentifierPart((int)ch);
     }
@@ -10307,6 +10455,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUnicodeIdentifierStart(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isUnicodeIdentifierPart(int codePoint) {
         return CharacterData.of(codePoint).isUnicodeIdentifierPart(codePoint);
     }
@@ -10342,6 +10492,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUnicodeIdentifierPart(char)
      * @since   1.1
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isIdentifierIgnorable(char ch) {
         return isIdentifierIgnorable((int)ch);
     }
@@ -10372,6 +10524,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUnicodeIdentifierPart(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isIdentifierIgnorable(int codePoint) {
         return CharacterData.of(codePoint).isIdentifierIgnorable(codePoint);
     }
@@ -10403,6 +10557,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isLowerCase(char)
      * @see     String#toLowerCase()
      */
+    @Pure
+    @StaticallyExecutable
     public static char toLowerCase(char ch) {
         return (char)toLowerCase((int)ch);
     }
@@ -10432,6 +10588,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static int toLowerCase(int codePoint) {
         return CharacterData.of(codePoint).toLowerCase(codePoint);
     }
@@ -10463,6 +10621,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isUpperCase(char)
      * @see     String#toUpperCase()
      */
+    @Pure
+    @StaticallyExecutable
     public static char toUpperCase(char ch) {
         return (char)toUpperCase((int)ch);
     }
@@ -10492,6 +10652,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static int toUpperCase(int codePoint) {
         return CharacterData.of(codePoint).toUpperCase(codePoint);
     }
@@ -10524,6 +10686,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#toUpperCase(char)
      * @since   1.0.2
      */
+    @Pure
+    @StaticallyExecutable
     public static char toTitleCase(char ch) {
         return (char)toTitleCase((int)ch);
     }
@@ -10551,6 +10715,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#toUpperCase(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static int toTitleCase(int codePoint) {
         return CharacterData.of(codePoint).toTitleCase(codePoint);
     }
@@ -10605,7 +10771,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#forDigit(int, int)
      * @see     Character#isDigit(char)
      */
-    public static int digit(char ch, int radix) {
+    @Pure
+    @StaticallyExecutable
+    public static @GTENegativeOne int digit(char ch, @Positive @IntRange(from = 2, to = 36) int radix) {
         return digit((int)ch, radix);
     }
 
@@ -10657,7 +10825,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isDigit(int)
      * @since   1.5
      */
-    public static int digit(int codePoint, int radix) {
+    @Pure
+    @StaticallyExecutable
+    public static @GTENegativeOne int digit(int codePoint, @Positive @IntRange(from = 2, to = 36) int radix) {
         return CharacterData.of(codePoint).digit(codePoint, radix);
     }
 
@@ -10696,7 +10866,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isDigit(char)
      * @since   1.1
      */
-    public static int getNumericValue(char ch) {
+    @Pure
+    @StaticallyExecutable
+    public static @PolyValue int getNumericValue(@PolyValue char ch) {
         return getNumericValue((int)ch);
     }
 
@@ -10730,6 +10902,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isDigit(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static int getNumericValue(int codePoint) {
         return CharacterData.of(codePoint).getNumericValue(codePoint);
     }
@@ -10766,6 +10940,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see        Character#isWhitespace(char)
      * @deprecated Replaced by isWhitespace(char).
      */
+    @Pure
+    @StaticallyExecutable
     @Deprecated(since="1.1")
     public static boolean isSpace(char ch) {
         return (ch <= 0x0020) &&
@@ -10800,6 +10976,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isWhitespace(char)
      * @since   1.1
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isSpaceChar(char ch) {
         return isSpaceChar((int)ch);
     }
@@ -10823,6 +11001,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isWhitespace(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isSpaceChar(int codePoint) {
         return ((((1 << Character.SPACE_SEPARATOR) |
                   (1 << Character.LINE_SEPARATOR) |
@@ -10861,6 +11041,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isSpaceChar(char)
      * @since   1.1
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isWhitespace(char ch) {
         return isWhitespace((int)ch);
     }
@@ -10892,6 +11074,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isSpaceChar(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isWhitespace(int codePoint) {
         return CharacterData.of(codePoint).isWhitespace(codePoint);
     }
@@ -10916,6 +11100,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isWhitespace(char)
      * @since   1.1
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isISOControl(char ch) {
         return isISOControl((int)ch);
     }
@@ -10934,6 +11120,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#isWhitespace(int)
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isISOControl(int codePoint) {
         // Optimized form of:
         //     (codePoint >= 0x00 && codePoint <= 0x1F) ||
@@ -10985,6 +11173,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#UPPERCASE_LETTER
      * @since   1.1
      */
+    @Pure
+    @StaticallyExecutable
     public static int getType(char ch) {
         return getType((int)ch);
     }
@@ -11027,6 +11217,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#UPPERCASE_LETTER UPPERCASE_LETTER
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static int getType(int codePoint) {
         return CharacterData.of(codePoint).getType(codePoint);
     }
@@ -11055,7 +11247,9 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#MAX_RADIX
      * @see     Character#digit(char, int)
      */
-    public static char forDigit(int digit, int radix) {
+    @Pure
+    @StaticallyExecutable
+    public static char forDigit(int digit, @Positive @IntRange(from = 2, to = 36) int radix) {
         if ((digit >= radix) || (digit < 0)) {
             return '\0';
         }
@@ -11109,6 +11303,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see Character#DIRECTIONALITY_POP_DIRECTIONAL_ISOLATE
      * @since 1.4
      */
+    @Pure
+    @StaticallyExecutable
     public static byte getDirectionality(char ch) {
         return getDirectionality((int)ch);
     }
@@ -11150,6 +11346,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see Character#DIRECTIONALITY_POP_DIRECTIONAL_ISOLATE DIRECTIONALITY_POP_DIRECTIONAL_ISOLATE
      * @since    1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static byte getDirectionality(int codePoint) {
         return CharacterData.of(codePoint).getDirectionality(codePoint);
     }
@@ -11173,6 +11371,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *         if the {@code char} is not mirrored or is not defined.
      * @since 1.4
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isMirrored(char ch) {
         return isMirrored((int)ch);
     }
@@ -11192,6 +11392,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *          if the character is not mirrored or is not defined.
      * @since   1.5
      */
+    @Pure
+    @StaticallyExecutable
     public static boolean isMirrored(int codePoint) {
         return CharacterData.of(codePoint).isMirrored(codePoint);
     }
@@ -11210,6 +11412,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *          locale-dependent.
      * @since   1.2
      */
+    @Pure
+    @StaticallyExecutable
     public int compareTo(Character anotherCharacter) {
         return compare(this.value, anotherCharacter.value);
     }
@@ -11228,6 +11432,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *         a value greater than {@code 0} if {@code x > y}
      * @since 1.7
      */
+    @Pure
+    @StaticallyExecutable
     public static int compare(char x, char y) {
         return x - y;
     }
@@ -11246,6 +11452,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @see     Character#toTitleCase(char)
      * @since 1.4
      */
+    @Pure
+    @StaticallyExecutable
     static int toUpperCaseEx(int codePoint) {
         assert isValidCodePoint(codePoint);
         return CharacterData.of(codePoint).toUpperCaseEx(codePoint);
@@ -11262,6 +11470,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      * @return a {@code char[]} with the uppercased character.
      * @since 1.4
      */
+    @SideEffectFree
+    @StaticallyExecutable
     static char[] toUpperCaseCharArray(int codePoint) {
         // As of Unicode 6.0, 1:M uppercasings only happen in the BMP.
         assert isBmpCodePoint(codePoint);
@@ -11274,7 +11484,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.5
      */
-    public static final int SIZE = 16;
+    public static final @Positive @IntVal(16) int SIZE = 16;
 
     /**
      * The number of bytes used to represent a {@code char} value in unsigned
@@ -11282,7 +11492,7 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.8
      */
-    public static final int BYTES = SIZE / Byte.SIZE;
+    public static final @IntVal(2) int BYTES = SIZE / Byte.SIZE;
 
     /**
      * Returns the value obtained by reversing the order of the bytes in the
@@ -11293,6 +11503,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *     the bytes in the specified {@code char} value.
      * @since 1.5
      */
+    @Pure
+    @StaticallyExecutable
     @IntrinsicCandidate
     public static char reverseBytes(char ch) {
         return (char) (((ch & 0xFF00) >> 8) | (ch << 8));
@@ -11326,6 +11538,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 1.7
      */
+    @Pure
+    @StaticallyExecutable
     public static String getName(int codePoint) {
         if (!isValidCodePoint(codePoint)) {
             throw new IllegalArgumentException(
@@ -11372,6 +11586,8 @@ class Character implements java.io.Serializable, Comparable<Character>, Constabl
      *
      * @since 9
      */
+    @Pure
+    @StaticallyExecutable
     public static int codePointOf(String name) {
         name = name.trim().toUpperCase(Locale.ROOT);
         int cp = CharacterName.getInstance().getCodePoint(name);

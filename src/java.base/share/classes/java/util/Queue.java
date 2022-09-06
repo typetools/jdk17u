@@ -35,6 +35,12 @@
 
 package java.util;
 
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.CFComment;
+
 /**
  * A collection designed for holding elements prior to processing.
  * Besides basic {@link Collection} operations, queues provide
@@ -135,6 +141,8 @@ package java.util;
  * @author Doug Lea
  * @param <E> the type of elements held in this queue
  */
+@CFComment({"lock/nullness: Subclasses of this interface/class may opt to prohibit null elements"})
+@AnnotatedFor({"lock", "nullness"})
 public interface Queue<E> extends Collection<E> {
     /**
      * Inserts the specified element into this queue if it is possible to do so
@@ -153,7 +161,7 @@ public interface Queue<E> extends Collection<E> {
      * @throws IllegalArgumentException if some property of this element
      *         prevents it from being added to this queue
      */
-    boolean add(E e);
+    boolean add(@GuardSatisfied Queue<E> this, E e);
 
     /**
      * Inserts the specified element into this queue if it is possible to do
@@ -182,7 +190,7 @@ public interface Queue<E> extends Collection<E> {
      * @return the head of this queue
      * @throws NoSuchElementException if this queue is empty
      */
-    E remove();
+    E remove(@GuardSatisfied Queue<E> this);
 
     /**
      * Retrieves and removes the head of this queue,
@@ -190,7 +198,7 @@ public interface Queue<E> extends Collection<E> {
      *
      * @return the head of this queue, or {@code null} if this queue is empty
      */
-    E poll();
+    @Nullable E poll(@GuardSatisfied Queue<E> this);
 
     /**
      * Retrieves, but does not remove, the head of this queue.  This method
@@ -208,5 +216,10 @@ public interface Queue<E> extends Collection<E> {
      *
      * @return the head of this queue, or {@code null} if this queue is empty
      */
-    E peek();
+    @Nullable E peek();
+
+    @CFComment("Copied from Collection to make it annotatable")
+    @Pure
+    // @EnsuresNonNullIf(expression={"poll()", "peek()"}, result=true)
+    boolean isEmpty(@GuardSatisfied Queue<E> this);
 }

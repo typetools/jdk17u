@@ -25,6 +25,12 @@
 
 package java.lang;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.CFComment;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
+
 import jdk.internal.util.StaticProperty;
 
 import java.io.*;
@@ -98,7 +104,8 @@ import java.util.stream.Stream;
  *
  * @since   1.0
  */
-public abstract class Process {
+@AnnotatedFor({"interning", "nullness", "mustcall"})
+public abstract @UsesObjectEquals class Process {
 
     // Readers and Writers created for this process; so repeated calls return the same object
     // All updates must be done while synchronized on this Process.
@@ -137,6 +144,11 @@ public abstract class Process {
      * @return the output stream connected to the normal input of the
      *         process
      */
+    @CFComment({"nullness: These three methods return @NonNull values despite being documented as",
+    "possibly returning a \"null stream\".  A \"null stream\" is a non-null",
+    "Stream with particular behavior, not a @Nullable Stream reference."})
+    @SideEffectFree
+    @NotOwning
     public abstract OutputStream getOutputStream();
 
     /**
@@ -168,6 +180,8 @@ public abstract class Process {
      * @return the input stream connected to the normal output of the
      *         process
      */
+    @SideEffectFree
+    @NotOwning
     public abstract InputStream getInputStream();
 
     /**
@@ -194,6 +208,8 @@ public abstract class Process {
      * @return the input stream connected to the error output of
      *         the process
      */
+    @SideEffectFree
+    @NotOwning
     public abstract InputStream getErrorStream();
 
     /**

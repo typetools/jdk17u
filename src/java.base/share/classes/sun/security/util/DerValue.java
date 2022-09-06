@@ -25,6 +25,12 @@
 
 package sun.security.util;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import sun.nio.cs.UTF_32BE;
 import sun.util.calendar.CalendarDate;
 import sun.util.calendar.CalendarSystem;
@@ -296,7 +302,7 @@ public class DerValue {
      *
      * @param tag the tag
      * @param out the DerOutputStream
-     * @returns a new DerValue using out as its content
+     * @return a new DerValue using out as its content
      */
     public static DerValue wrap(byte tag, DerOutputStream out) {
         return new DerValue(tag, out.buf(), 0, out.size(), false);
@@ -1097,7 +1103,9 @@ public class DerValue {
      * @param o the object being compared with this one
      */
     @Override
-    public boolean equals(Object o) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object o) {
         if (this == o) {
             return true;
         }

@@ -35,6 +35,8 @@
 
 package java.util.concurrent;
 
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -957,6 +959,7 @@ public class ForkJoinPool extends AbstractExecutorService {
          * Provides a more conservative estimate of whether this queue
          * has any tasks than does queueSize.
          */
+        @Pure
         final boolean isEmpty() {
             return !((source != 0 && owner == null) || top - base > 0);
         }

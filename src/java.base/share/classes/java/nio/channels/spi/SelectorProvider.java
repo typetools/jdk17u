@@ -25,6 +25,9 @@
 
 package java.nio.channels.spi;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.ProtocolFamily;
@@ -70,7 +73,8 @@ import java.util.ServiceConfigurationError;
  * @since 1.4
  */
 
-public abstract class SelectorProvider {
+@AnnotatedFor({"interning"})
+public abstract @UsesObjectEquals class SelectorProvider {
 
     private static Void checkPermission() {
         @SuppressWarnings("removal")

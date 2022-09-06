@@ -25,6 +25,9 @@
 
 package java.awt.geom;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.io.IOException;
@@ -70,7 +73,8 @@ import sun.awt.geom.Curve;
  * @author Jim Graham
  * @since 1.6
  */
-public abstract class Path2D implements Shape, Cloneable {
+@AnnotatedFor({"interning"})
+public abstract @UsesObjectEquals class Path2D implements Shape, Cloneable {
     /**
      * An even-odd winding rule for determining the interior of
      * a path.

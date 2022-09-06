@@ -25,6 +25,7 @@
 
 package jdk.javadoc.internal.tool;
 
+import org.checkerframework.dataflow.qual.Pure;
 import java.util.Set;
 
 import javax.lang.model.SourceVersion;
@@ -77,6 +78,7 @@ public class DocEnvImpl implements DocletEnvironment {
     }
 
     @Override
+    @Pure
     public boolean isIncluded(Element e) {
         return etable.isIncluded(e);
     }
@@ -117,6 +119,7 @@ public class DocEnvImpl implements DocletEnvironment {
     }
 
     @Override
+    @Pure
     public boolean isSelected(Element e) {
         return etable.isSelected(e);
     }

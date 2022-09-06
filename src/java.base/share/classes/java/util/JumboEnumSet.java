@@ -25,6 +25,16 @@
 
 package java.util;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 /**
  * Private implementation class for EnumSet, for "jumbo" enum types
  * (i.e., those with more than 64 elements).
@@ -33,6 +43,7 @@ package java.util;
  * @since 1.5
  * @serial exclude
  */
+@AnnotatedFor({"index"})
 class JumboEnumSet<E extends Enum<E>> extends EnumSet<E> {
     @java.io.Serial
     private static final long serialVersionUID = 334349849919042784L;
@@ -159,7 +170,8 @@ class JumboEnumSet<E extends Enum<E>> extends EnumSet<E> {
      *
      * @return the number of elements in this set
      */
-    public int size() {
+    @Pure
+    public @NonNegative int size() {
         return size;
     }
 
@@ -168,6 +180,7 @@ class JumboEnumSet<E extends Enum<E>> extends EnumSet<E> {
      *
      * @return {@code true} if this set contains no elements
      */
+    @Pure
     public boolean isEmpty() {
         return size == 0;
     }
@@ -345,7 +358,9 @@ class JumboEnumSet<E extends Enum<E>> extends EnumSet<E> {
      * @param o object to be compared for equality with this set
      * @return {@code true} if the specified object is equal to this set
      */
-    public boolean equals(Object o) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object o) {
         if (!(o instanceof JumboEnumSet<?> es))
             return super.equals(o);
 

@@ -25,6 +25,12 @@
 
 package java.util;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -463,6 +469,7 @@ class ImmutableCollections {
             return root.get(offset + index);
         }
 
+        @Pure
         public int size() {
             return size;
         }
@@ -565,6 +572,7 @@ class ImmutableCollections {
         }
 
         @Override
+        @Pure
         public int size() {
             return e1 != EMPTY ? 2 : 1;
         }
@@ -665,12 +673,14 @@ class ImmutableCollections {
             this.allowNulls = allowNulls;
         }
 
+        @Pure
         @Override
         public boolean isEmpty() {
             return elements.length == 0;
         }
 
         @Override
+        @Pure
         public int size() {
             return elements.length;
         }
@@ -796,6 +806,7 @@ class ImmutableCollections {
         }
 
         @Override
+        @Pure
         public int size() {
             return (e1 == EMPTY) ? 1 : 2;
         }
@@ -923,6 +934,7 @@ class ImmutableCollections {
         }
 
         @Override
+        @Pure
         public int size() {
             return size;
         }
@@ -1065,10 +1077,10 @@ class ImmutableCollections {
     @jdk.internal.ValueBased
     abstract static class AbstractImmutableMap<K,V> extends AbstractMap<K,V> implements Serializable {
         @Override public void clear() { throw uoe(); }
-        @Override public V compute(K key, BiFunction<? super K,? super V,? extends V> rf) { throw uoe(); }
-        @Override public V computeIfAbsent(K key, Function<? super K,? extends V> mf) { throw uoe(); }
-        @Override public V computeIfPresent(K key, BiFunction<? super K,? super V,? extends V> rf) { throw uoe(); }
-        @Override public V merge(K key, V value, BiFunction<? super V,? super V,? extends V> rf) { throw uoe(); }
+        @Override public @PolyNull V compute(K key, BiFunction<? super K,? super V,? extends @PolyNull V> rf) { throw uoe(); }
+        @Override public @PolyNull V computeIfAbsent(K key, Function<? super K,? extends @PolyNull V> mf) { throw uoe(); }
+        @Override public @PolyNull V computeIfPresent(K key, BiFunction<? super K,? super V,? extends @PolyNull V> rf) { throw uoe(); }
+        @Override public @PolyNull V merge(K key, @NonNull V value, BiFunction<? super V,? super V,? extends @PolyNull V> rf) { throw uoe(); }
         @Override public V put(K key, V value) { throw uoe(); }
         @Override public void putAll(Map<? extends K,? extends V> m) { throw uoe(); }
         @Override public V putIfAbsent(K key, V value) { throw uoe(); }
@@ -1106,6 +1118,7 @@ class ImmutableCollections {
         }
 
         @Override
+        @SideEffectFree
         public Set<Map.Entry<K,V>> entrySet() {
             return Set.of(new KeyValueHolder<>(k0, v0));
         }
@@ -1115,12 +1128,14 @@ class ImmutableCollections {
             return o.equals(k0) ? v0 : null; // implicit nullcheck of o
         }
 
+        @Pure
         @Override
         public boolean containsKey(Object o) {
             return o.equals(k0); // implicit nullcheck of o
         }
 
         @Override
+        @Pure
         public boolean containsValue(Object o) {
             return o.equals(v0); // implicit nullcheck of o
         }
@@ -1196,12 +1211,14 @@ class ImmutableCollections {
         }
 
         @Override
+        @Pure
         public boolean containsKey(Object o) {
             Objects.requireNonNull(o);
             return size > 0 && probe(o) >= 0;
         }
 
         @Override
+        @Pure
         public boolean containsValue(Object o) {
             Objects.requireNonNull(o);
             for (int i = 1; i < table.length; i += 2) {
@@ -1241,6 +1258,7 @@ class ImmutableCollections {
         }
 
         @Override
+        @Pure
         public int size() {
             return size;
         }
@@ -1299,9 +1317,11 @@ class ImmutableCollections {
         }
 
         @Override
+        @SideEffectFree
         public Set<Map.Entry<K,V>> entrySet() {
             return new AbstractSet<>() {
                 @Override
+                @Pure
                 public int size() {
                     return MapN.this.size;
                 }

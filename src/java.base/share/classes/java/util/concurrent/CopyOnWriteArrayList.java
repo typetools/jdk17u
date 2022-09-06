@@ -34,6 +34,13 @@
 
 package java.util.concurrent;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -162,6 +169,7 @@ public class CopyOnWriteArrayList<E>
      *
      * @return the number of elements in this list
      */
+    @Pure
     public int size() {
         return getArray().length;
     }
@@ -171,6 +179,7 @@ public class CopyOnWriteArrayList<E>
      *
      * @return {@code true} if this list contains no elements
      */
+    @Pure
     public boolean isEmpty() {
         return size() == 0;
     }
@@ -184,7 +193,7 @@ public class CopyOnWriteArrayList<E>
      * @param to one past last index to search
      * @return index of element, or -1 if absent
      */
-    private static int indexOfRange(Object o, Object[] es, int from, int to) {
+    private static int indexOfRange(@Nullable Object o, Object[] es, int from, int to) {
         if (o == null) {
             for (int i = from; i < to; i++)
                 if (es[i] == null)
@@ -205,7 +214,7 @@ public class CopyOnWriteArrayList<E>
      * @param to one past last element of range, first element to search
      * @return index of element, or -1 if absent
      */
-    private static int lastIndexOfRange(Object o, Object[] es, int from, int to) {
+    private static int lastIndexOfRange(@Nullable Object o, Object[] es, int from, int to) {
         if (o == null) {
             for (int i = to - 1; i >= from; i--)
                 if (es[i] == null)
@@ -226,14 +235,14 @@ public class CopyOnWriteArrayList<E>
      * @param o element whose presence in this list is to be tested
      * @return {@code true} if this list contains the specified element
      */
-    public boolean contains(Object o) {
+    public boolean contains(@Nullable Object o) {
         return indexOf(o) >= 0;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int indexOf(Object o) {
+    public int indexOf(@Nullable Object o) {
         Object[] es = getArray();
         return indexOfRange(o, es, 0, es.length);
     }
@@ -261,7 +270,7 @@ public class CopyOnWriteArrayList<E>
     /**
      * {@inheritDoc}
      */
-    public int lastIndexOf(Object o) {
+    public int lastIndexOf(@Nullable Object o) {
         Object[] es = getArray();
         return lastIndexOfRange(o, es, 0, es.length);
     }
@@ -322,7 +331,7 @@ public class CopyOnWriteArrayList<E>
      *
      * @return an array containing all the elements in this list
      */
-    public Object[] toArray() {
+    public @PolyNull Object[] toArray(CopyOnWriteArrayList<@PolyNull E> this) {
         return getArray().clone();
     }
 
@@ -503,7 +512,7 @@ public class CopyOnWriteArrayList<E>
      * @param o element to be removed from this list, if present
      * @return {@code true} if this list contained the specified element
      */
-    public boolean remove(Object o) {
+    public boolean remove(@Nullable Object o) {
         Object[] snapshot = getArray();
         int index = indexOfRange(o, snapshot, 0, snapshot.length);
         return index >= 0 && remove(o, snapshot, index);
@@ -513,7 +522,7 @@ public class CopyOnWriteArrayList<E>
      * A version of remove(Object) using the strong hint that given
      * recent snapshot contains o at the given index.
      */
-    private boolean remove(Object o, Object[] snapshot, int index) {
+    private boolean remove(@Nullable Object o, Object[] snapshot, int index) {
         synchronized (lock) {
             Object[] current = getArray();
             int len = current.length;
@@ -650,7 +659,7 @@ public class CopyOnWriteArrayList<E>
      *         or if the specified collection is null
      * @see #remove(Object)
      */
-    public boolean removeAll(Collection<?> c) {
+    public boolean removeAll(Collection<? extends @NonNull Object> c) {
         Objects.requireNonNull(c);
         return bulkRemove(e -> c.contains(e));
     }
@@ -671,7 +680,7 @@ public class CopyOnWriteArrayList<E>
      *         or if the specified collection is null
      * @see #remove(Object)
      */
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(Collection<? extends @NonNull Object> c) {
         Objects.requireNonNull(c);
         return bulkRemove(e -> !c.contains(e));
     }
@@ -975,7 +984,9 @@ public class CopyOnWriteArrayList<E>
      * @param o the object to be compared for equality with this list
      * @return {@code true} if the specified object is equal to this list
      */
-    public boolean equals(Object o) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object o) {
         if (o == this)
             return true;
         if (!(o instanceof List))
@@ -1279,11 +1290,11 @@ public class CopyOnWriteArrayList<E>
             return (i == -1) ? -1 : i - offset;
         }
 
-        public boolean contains(Object o) {
+        public boolean contains(@Nullable Object o) {
             return indexOf(o) >= 0;
         }
 
-        public boolean containsAll(Collection<?> c) {
+        public boolean containsAll(Collection<? extends @NonNull Object> c) {
             final Object[] es;
             final int offset;
             final int size;
@@ -1298,6 +1309,7 @@ public class CopyOnWriteArrayList<E>
             return true;
         }
 
+        @Pure
         public boolean isEmpty() {
             return size() == 0;
         }
@@ -1358,6 +1370,7 @@ public class CopyOnWriteArrayList<E>
             }
         }
 
+        @Pure
         public int size() {
             synchronized (lock) {
                 checkForComodification();
@@ -1426,7 +1439,7 @@ public class CopyOnWriteArrayList<E>
             }
         }
 
-        public boolean remove(Object o) {
+        public boolean remove(@Nullable Object o) {
             synchronized (lock) {
                 checkForComodification();
                 int index = indexOf(o);
@@ -1491,12 +1504,12 @@ public class CopyOnWriteArrayList<E>
             }
         }
 
-        public boolean removeAll(Collection<?> c) {
+        public boolean removeAll(Collection<? extends @NonNull Object> c) {
             Objects.requireNonNull(c);
             return bulkRemove(e -> c.contains(e));
         }
 
-        public boolean retainAll(Collection<?> c) {
+        public boolean retainAll(Collection<? extends @NonNull Object> c) {
             Objects.requireNonNull(c);
             return bulkRemove(e -> !c.contains(e));
         }

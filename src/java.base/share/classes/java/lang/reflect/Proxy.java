@@ -25,6 +25,9 @@
 
 package java.lang.reflect;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -294,6 +297,7 @@ import static java.lang.module.ModuleDescriptor.Modifier.SYNTHETIC;
  * @since       1.3
  * @revised 9
  */
+@AnnotatedFor({"nullness"})
 public class Proxy implements java.io.Serializable {
     @java.io.Serial
     private static final long serialVersionUID = -2222568056686623797L;
@@ -386,7 +390,7 @@ public class Proxy implements java.io.Serializable {
      */
     @Deprecated
     @CallerSensitive
-    public static Class<?> getProxyClass(ClassLoader loader,
+    public static Class<?> getProxyClass(@Nullable ClassLoader loader,
                                          Class<?>... interfaces)
         throws IllegalArgumentException
     {
@@ -414,7 +418,7 @@ public class Proxy implements java.io.Serializable {
      * @return  a Constructor of the proxy class taking single
      *          {@code InvocationHandler} parameter
      */
-    private static Constructor<?> getProxyConstructor(Class<?> caller,
+    private static Constructor<?> getProxyConstructor(@Nullable Class<?> caller,
                                                       ClassLoader loader,
                                                       Class<?>... interfaces)
     {
@@ -1021,7 +1025,7 @@ public class Proxy implements java.io.Serializable {
      * @revised 9
      */
     @CallerSensitive
-    public static Object newProxyInstance(ClassLoader loader,
+    public static Object newProxyInstance(@Nullable ClassLoader loader,
                                           Class<?>[] interfaces,
                                           InvocationHandler h) {
         Objects.requireNonNull(h);
@@ -1039,7 +1043,7 @@ public class Proxy implements java.io.Serializable {
         return newProxyInstance(caller, cons, h);
     }
 
-    private static Object newProxyInstance(Class<?> caller, // null if no SecurityManager
+    private static Object newProxyInstance(@Nullable Class<?> caller, // null if no SecurityManager
                                            Constructor<?> cons,
                                            InvocationHandler h) {
         /*

@@ -25,6 +25,10 @@
 
 package java.nio.file;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -92,7 +96,8 @@ import sun.nio.fs.AbstractFileSystemProvider;
  * @since 1.7
  */
 
-public final class Files {
+@AnnotatedFor({"interning", "signedness"})
+public final @UsesObjectEquals class Files {
     // buffer size used for reading and writing
     private static final int BUFFER_SIZE = 8192;
 
@@ -3503,7 +3508,7 @@ public final class Files {
      *          invoked to check delete access if the file is opened with the
      *          {@code DELETE_ON_CLOSE} option.
      */
-    public static Path write(Path path, byte[] bytes, OpenOption... options)
+    public static Path write(Path path, @PolySigned byte[] bytes, OpenOption... options)
         throws IOException
     {
         // ensure bytes is not null before opening file

@@ -25,6 +25,8 @@
 
 package jdk.javadoc.internal.doclets.toolkit.taglets;
 
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -701,6 +703,7 @@ public class TagletManager {
         standardTagsLowercase.add(Utils.toLowerCase(name));
     }
 
+    @Pure
     public boolean isKnownCustomTag(String tagName) {
         return allTaglets.containsKey(tagName);
     }

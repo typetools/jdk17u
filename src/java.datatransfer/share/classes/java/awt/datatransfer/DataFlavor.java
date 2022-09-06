@@ -25,6 +25,12 @@
 
 package java.awt.datatransfer;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import java.io.ByteArrayInputStream;
 import java.io.CharArrayReader;
 import java.io.Externalizable;
@@ -43,6 +49,9 @@ import java.nio.CharBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
+
+import org.checkerframework.checker.interning.qual.Interned;
+import org.checkerframework.framework.qual.AnnotatedFor;
 
 import sun.datatransfer.DataFlavorUtil;
 import sun.reflect.misc.ReflectUtil;
@@ -110,6 +119,7 @@ import sun.reflect.misc.ReflectUtil;
  * @author Jeff Dunn
  * @since 1.1
  */
+@AnnotatedFor({"interning"})
 public class DataFlavor implements Externalizable, Cloneable {
 
     /**
@@ -246,7 +256,7 @@ public class DataFlavor implements Externalizable, Cloneable {
      * identifies the Java type of an object returned as a reference from an
      * invocation {@code java.awt.datatransfer.getTransferData}.
      */
-    public static final String javaSerializedObjectMimeType = "application/x-java-serialized-object";
+    public static final @Interned String javaSerializedObjectMimeType = "application/x-java-serialized-object";
 
     /**
      * To transfer a list of files to/from Java (and the underlying platform) a
@@ -267,7 +277,7 @@ public class DataFlavor implements Externalizable, Cloneable {
      * for a {@code DataFlavor} with this MIME Content-Type is required to be an
      * instance of the representation Class of the {@code DataFlavor}.
      */
-    public static final String javaJVMLocalObjectMimeType = "application/x-java-jvm-local-objectref";
+    public static final @Interned String javaJVMLocalObjectMimeType = "application/x-java-jvm-local-objectref";
 
     /**
      * In order to pass a live link to a Remote object via a Drag and Drop
@@ -276,7 +286,7 @@ public class DataFlavor implements Externalizable, Cloneable {
      * class of the {@code DataFlavor} represents the type of the {@code Remote}
      * interface to be transferred.
      */
-    public static final String javaRemoteObjectMimeType = "application/x-java-remote-object";
+    public static final @Interned String javaRemoteObjectMimeType = "application/x-java-remote-object";
 
     /**
      * Represents a piece of an HTML markup. The markup consists of the part
@@ -922,7 +932,9 @@ public class DataFlavor implements Externalizable, Cloneable {
      *         {@code DataFlavor}; {@code false} otherwise
      * @see #selectBestTextFlavor
      */
-    public boolean equals(Object o) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object o) {
         return ((o instanceof DataFlavor) && equals((DataFlavor)o));
     }
 

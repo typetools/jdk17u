@@ -24,6 +24,13 @@
  */
 package java.util;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -55,6 +62,7 @@ import java.util.stream.DoubleStream;
  *
  * @since 1.8
  */
+@AnnotatedFor({"lock", "nullness"})
 @jdk.internal.ValueBased
 public final class OptionalDouble {
     /**
@@ -148,6 +156,7 @@ public final class OptionalDouble {
      * @return  {@code true} if a value is not present, otherwise {@code false}
      * @since   11
      */
+    @Pure
     public boolean isEmpty() {
         return !isPresent;
     }
@@ -290,7 +299,9 @@ public final class OptionalDouble {
      *         otherwise {@code false}
      */
     @Override
-    public boolean equals(Object obj) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object obj) {
         if (this == obj) {
             return true;
         }

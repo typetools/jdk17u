@@ -25,6 +25,9 @@
 
 package javax.naming.spi;
 
+import org.checkerframework.checker.interning.qual.Interned;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.net.MalformedURLException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -64,6 +67,7 @@ import jdk.internal.loader.ClassLoaderValue;
  * @since 1.3
  */
 
+@AnnotatedFor({"interning"})
 public class NamingManager {
 
     /*
@@ -828,7 +832,7 @@ public class NamingManager {
      * @see #getContinuationContext
      * @since 1.3
      */
-    public static final String CPE = "java.naming.spi.CannotProceedException";
+    public static final @Interned String CPE = "java.naming.spi.CannotProceedException";
 
     /**
      * Creates a context in which to continue a context operation.

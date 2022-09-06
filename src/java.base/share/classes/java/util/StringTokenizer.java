@@ -25,6 +25,12 @@
 
 package java.util;
 
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.common.value.qual.MinLen;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.lang.*;
 
 /**
@@ -98,7 +104,8 @@ import java.lang.*;
  * @see     java.io.StreamTokenizer
  * @since   1.0
  */
-public class StringTokenizer implements Enumeration<Object> {
+@AnnotatedFor({"index", "interning", "lock", "nullness"})
+public @UsesObjectEquals class StringTokenizer implements Enumeration<Object> {
     private int currentPosition;
     private int newPosition;
     private int maxPosition;
@@ -189,7 +196,7 @@ public class StringTokenizer implements Enumeration<Object> {
      *                         as tokens.
      * @throws    NullPointerException if str is {@code null}
      */
-    public StringTokenizer(String str, String delim, boolean returnDelims) {
+    public StringTokenizer(String str, @Nullable String delim, boolean returnDelims) {
         currentPosition = 0;
         newPosition = -1;
         delimsChanged = false;
@@ -215,7 +222,7 @@ public class StringTokenizer implements Enumeration<Object> {
      * @param   delim   the delimiters.
      * @throws    NullPointerException if str is {@code null}
      */
-    public StringTokenizer(String str, String delim) {
+    public StringTokenizer(String str, @Nullable String delim) {
         this(str, delim, false);
     }
 
@@ -329,7 +336,7 @@ public class StringTokenizer implements Enumeration<Object> {
      * @throws     NoSuchElementException  if there are no more tokens in this
      *               tokenizer's string.
      */
-    public String nextToken() {
+    public @MinLen(1) String nextToken() {
         /*
          * If next position already computed in hasMoreElements() and
          * delimiters have changed between the computation and this invocation,
@@ -365,7 +372,7 @@ public class StringTokenizer implements Enumeration<Object> {
      *               tokenizer's string.
      * @throws    NullPointerException if delim is {@code null}
      */
-    public String nextToken(String delim) {
+    public @MinLen(1) String nextToken(String delim) {
         delimiters = delim;
 
         /* delimiter string specified, so set the appropriate flag. */
@@ -414,7 +421,7 @@ public class StringTokenizer implements Enumeration<Object> {
      *          delimiter set.
      * @see     java.util.StringTokenizer#nextToken()
      */
-    public int countTokens() {
+    public @NonNegative int countTokens() {
         int count = 0;
         int currpos = currentPosition;
         while (currpos < maxPosition) {

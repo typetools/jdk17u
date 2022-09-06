@@ -25,6 +25,9 @@
 
 package java.beans.beancontext;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -54,7 +57,8 @@ import java.io.Serializable;
  * @see java.beans.beancontext.BeanContextChild
  */
 
-public class BeanContextChildSupport implements BeanContextChild, BeanContextServicesListener, Serializable {
+@AnnotatedFor({"interning"})
+public @UsesObjectEquals class BeanContextChildSupport implements BeanContextChild, BeanContextServicesListener, Serializable {
 
     /**
      * Use serialVersionUID from JDK 1.2 for interoperability.
