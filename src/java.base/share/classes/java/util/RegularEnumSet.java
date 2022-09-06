@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -43,6 +43,7 @@ import org.checkerframework.framework.qual.AnnotatedFor;
  */
 @AnnotatedFor({"index"})
 class RegularEnumSet<E extends Enum<E>> extends EnumSet<E> {
+    @java.io.Serial
     private static final long serialVersionUID = 3411599620347842686L;
     /**
      * Bit vector representation of this set.  The 2^k bit indicates the
@@ -206,10 +207,9 @@ class RegularEnumSet<E extends Enum<E>> extends EnumSet<E> {
      * @throws NullPointerException if the specified collection is null
      */
     public boolean containsAll(Collection<?> c) {
-        if (!(c instanceof RegularEnumSet))
+        if (!(c instanceof RegularEnumSet<?> es))
             return super.containsAll(c);
 
-        RegularEnumSet<?> es = (RegularEnumSet<?>)c;
         if (es.elementType != elementType)
             return es.isEmpty();
 
@@ -225,10 +225,9 @@ class RegularEnumSet<E extends Enum<E>> extends EnumSet<E> {
      *     of its elements are null
      */
     public boolean addAll(Collection<? extends E> c) {
-        if (!(c instanceof RegularEnumSet))
+        if (!(c instanceof RegularEnumSet<?> es))
             return super.addAll(c);
 
-        RegularEnumSet<?> es = (RegularEnumSet<?>)c;
         if (es.elementType != elementType) {
             if (es.isEmpty())
                 return false;
@@ -251,10 +250,9 @@ class RegularEnumSet<E extends Enum<E>> extends EnumSet<E> {
      * @throws NullPointerException if the specified collection is null
      */
     public boolean removeAll(Collection<?> c) {
-        if (!(c instanceof RegularEnumSet))
+        if (!(c instanceof RegularEnumSet<?> es))
             return super.removeAll(c);
 
-        RegularEnumSet<?> es = (RegularEnumSet<?>)c;
         if (es.elementType != elementType)
             return false;
 
@@ -272,10 +270,9 @@ class RegularEnumSet<E extends Enum<E>> extends EnumSet<E> {
      * @throws NullPointerException if the specified collection is null
      */
     public boolean retainAll(Collection<?> c) {
-        if (!(c instanceof RegularEnumSet))
+        if (!(c instanceof RegularEnumSet<?> es))
             return super.retainAll(c);
 
-        RegularEnumSet<?> es = (RegularEnumSet<?>)c;
         if (es.elementType != elementType) {
             boolean changed = (elements != 0);
             elements = 0;
@@ -306,10 +303,9 @@ class RegularEnumSet<E extends Enum<E>> extends EnumSet<E> {
     @Pure
     @EnsuresNonNullIf(expression="#1", result=true)
     public boolean equals(@Nullable Object o) {
-        if (!(o instanceof RegularEnumSet))
+        if (!(o instanceof RegularEnumSet<?> es))
             return super.equals(o);
 
-        RegularEnumSet<?> es = (RegularEnumSet<?>)o;
         if (es.elementType != elementType)
             return elements == 0 && es.elements == 0;
         return es.elements == elements;
