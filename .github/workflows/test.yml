@@ -45,6 +45,7 @@ env:
 
 jobs:
   test:
+    if: ${{ false }}
     name: test
     runs-on: ${{ inputs.runs-on }}
     defaults:
