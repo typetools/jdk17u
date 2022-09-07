@@ -109,7 +109,7 @@ resolve conflicts.  Then, discard the branch in the fork of jdk17u.
 
 ## Qualifier definitions
 
-The java.base module contains a copy of the Checker Framework qualifiers.
+The java.base module contains a copy of the Checker Framework qualifiers (type annotations).
 To update that copy, run from this directory:
 
 (cd $CHECKERFRAMEWORK && rm -rf checker-qual/build/libs && ./gradlew :checker-qual:sourcesJar) && \
