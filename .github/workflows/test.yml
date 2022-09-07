@@ -58,7 +58,7 @@ jobs:
           - 'jdk/tier1 part 1'
           - 'jdk/tier1 part 2'
           - 'jdk/tier1 part 3'
-          - 'langtools/tier1'
+          # - 'langtools/tier1'
           - 'hs/tier1 common'
           - 'hs/tier1 compiler'
           - 'hs/tier1 gc'
@@ -75,8 +75,8 @@ jobs:
           - test-name: 'jdk/tier1 part 3'
             test-suite: 'test/jdk/:tier1_part3'
 
-          - test-name: 'langtools/tier1'
-            test-suite: 'test/langtools/:tier1'
+          # - test-name: 'langtools/tier1'
+          #   test-suite: 'test/langtools/:tier1'
 
           - test-name: 'hs/tier1 common'
             test-suite: 'test/hotspot/jtreg/:tier1_common'
