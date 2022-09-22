@@ -26,6 +26,7 @@
 package java.nio.file;
 
 import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
@@ -96,7 +97,7 @@ import sun.nio.fs.AbstractFileSystemProvider;
  * @since 1.7
  */
 
-@AnnotatedFor({"interning", "signedness"})
+@AnnotatedFor({"interning", "mustcall", "signedness"})
 public final @UsesObjectEquals class Files {
     // buffer size used for reading and writing
     private static final int BUFFER_SIZE = 8192;
@@ -481,7 +482,7 @@ public final @UsesObjectEquals class Files {
      *          installed, the {@link SecurityManager#checkRead(String) checkRead}
      *          method is invoked to check read access to the directory.
      */
-    public static DirectoryStream<Path> newDirectoryStream(Path dir)
+    public static @MustCall("close") DirectoryStream<Path> newDirectoryStream(Path dir)
         throws IOException
     {
         return provider(dir).newDirectoryStream(dir, AcceptAllFilter.FILTER);
@@ -536,7 +537,7 @@ public final @UsesObjectEquals class Files {
      *          installed, the {@link SecurityManager#checkRead(String) checkRead}
      *          method is invoked to check read access to the directory.
      */
-    public static DirectoryStream<Path> newDirectoryStream(Path dir, String glob)
+    public static @MustCall("close") DirectoryStream<Path> newDirectoryStream(Path dir, String glob)
         throws IOException
     {
         // avoid creating a matcher if all entries are required.
@@ -612,7 +613,7 @@ public final @UsesObjectEquals class Files {
      *          installed, the {@link SecurityManager#checkRead(String) checkRead}
      *          method is invoked to check read access to the directory.
      */
-    public static DirectoryStream<Path> newDirectoryStream(Path dir,
+    public static @MustCall("close") DirectoryStream<Path> newDirectoryStream(Path dir,
                                                            DirectoryStream.Filter<? super Path> filter)
         throws IOException
     {
@@ -3793,7 +3794,7 @@ public final @UsesObjectEquals class Files {
      * @see     #newDirectoryStream(Path)
      * @since   1.8
      */
-    public static Stream<Path> list(Path dir) throws IOException {
+    public static @MustCall("close") Stream<Path> list(Path dir) throws IOException {
         DirectoryStream<Path> ds = Files.newDirectoryStream(dir);
         try {
             final Iterator<Path> delegate = ds.iterator();
@@ -3915,7 +3916,7 @@ public final @UsesObjectEquals class Files {
      *          if an I/O error is thrown when accessing the starting file.
      * @since   1.8
      */
-    public static Stream<Path> walk(Path start,
+    public static @MustCall("close") Stream<Path> walk(Path start,
                                     int maxDepth,
                                     FileVisitOption... options)
         throws IOException
@@ -3974,7 +3975,7 @@ public final @UsesObjectEquals class Files {
      * @see     #walk(Path, int, FileVisitOption...)
      * @since   1.8
      */
-    public static Stream<Path> walk(Path start, FileVisitOption... options) throws IOException {
+    public static @MustCall("close") Stream<Path> walk(Path start, FileVisitOption... options) throws IOException {
         return walk(start, Integer.MAX_VALUE, options);
     }
 
@@ -4032,7 +4033,7 @@ public final @UsesObjectEquals class Files {
      * @see     #walk(Path, int, FileVisitOption...)
      * @since   1.8
      */
-    public static Stream<Path> find(Path start,
+    public static @MustCall("close") Stream<Path> find(Path start,
                                     int maxDepth,
                                     BiPredicate<Path, BasicFileAttributes> matcher,
                                     FileVisitOption... options)
@@ -4126,7 +4127,7 @@ public final @UsesObjectEquals class Files {
      * @see     java.io.BufferedReader#lines()
      * @since   1.8
      */
-    public static Stream<String> lines(Path path, Charset cs) throws IOException {
+    public static @MustCall("close") Stream<String> lines(Path path, Charset cs) throws IOException {
         // Use the good splitting spliterator if:
         // 1) the path is associated with the default file system;
         // 2) the character set is supported; and
@@ -4228,7 +4229,7 @@ public final @UsesObjectEquals class Files {
      *
      * @since 1.8
      */
-    public static Stream<String> lines(Path path) throws IOException {
+    public static @MustCall("close") Stream<String> lines(Path path) throws IOException {
         return lines(path, UTF_8.INSTANCE);
     }
 }

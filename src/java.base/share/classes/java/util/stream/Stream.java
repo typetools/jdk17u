@@ -28,6 +28,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.CFComment;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -166,7 +167,9 @@ import java.util.function.UnaryOperator;
  * @see DoubleStream
  * @see <a href="package-summary.html">java.util.stream</a>
  */
-@AnnotatedFor({"lock", "nullness"})
+@AnnotatedFor({"lock", "mustcall", "nullness"})
+@CFComment({"MustCall: most Streams do not need to be closed.  There is no need for",
+   "`@InheritableMustCall({})` because `AutoCloseable` already has that class annotation."})
 public interface Stream<T> extends BaseStream<T, Stream<T>> {
 
     /**
