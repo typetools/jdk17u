@@ -25,6 +25,8 @@
 
 package sun.util.resources;
 
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 
 import java.util.AbstractSet;
@@ -128,7 +130,7 @@ public abstract class ParallelListResourceBundle extends ResourceBundle {
 
     @Override
     @Pure
-    public boolean containsKey(String key) {
+    public boolean containsKey(@GuardSatisfied @UnknownSignedness String key) {
         return keySet().contains(key);
     }
 

@@ -367,7 +367,7 @@ public class IdentityHashMap<K,V>
      */
     @EnsuresKeyForIf(expression={"#1"}, result=true, map={"this"})
     @Pure
-    public boolean containsKey(@GuardSatisfied IdentityHashMap<K, V> this, @GuardSatisfied @Nullable Object key) {
+    public boolean containsKey(@GuardSatisfied IdentityHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {
         Object k = maskNull(key);
         Object[] tab = table;
         int len = tab.length;
@@ -392,7 +392,7 @@ public class IdentityHashMap<K,V>
      * @see     #containsKey(Object)
      */
     @Pure
-    public boolean containsValue(@GuardSatisfied IdentityHashMap<K, V> this, @GuardSatisfied @Nullable Object value) {
+    public boolean containsValue(@GuardSatisfied IdentityHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object value) {
         Object[] tab = table;
         for (int i = 1; i < tab.length; i += 2)
             if (tab[i] == value && tab[i - 1] != null)
@@ -409,7 +409,7 @@ public class IdentityHashMap<K,V>
      * @return  {@code true} if and only if the specified key-value
      *          mapping is in the map
      */
-    private boolean containsMapping(Object key, Object value) {
+    private boolean containsMapping(@UnknownSignedness @GuardSatisfied @Nullable Object key, @GuardSatisfied @Nullable @UnknownSignedness Object value) {
         Object k = maskNull(key);
         Object[] tab = table;
         int len = tab.length;
@@ -539,7 +539,7 @@ public class IdentityHashMap<K,V>
      *         (A {@code null} return can also indicate that the map
      *         previously associated {@code null} with {@code key}.)
      */
-    public @Nullable V remove(@GuardSatisfied IdentityHashMap<K, V> this, @Nullable Object key) {
+    public @Nullable V remove(@GuardSatisfied IdentityHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {
         Object k = maskNull(key);
         Object[] tab = table;
         int len = tab.length;
@@ -571,7 +571,7 @@ public class IdentityHashMap<K,V>
      * @return  {@code true} if and only if the specified key-value
      *          mapping was in the map
      */
-    private boolean removeMapping(Object key, Object value) {
+    private boolean removeMapping(@UnknownSignedness @GuardSatisfied @Nullable Object key, @GuardSatisfied @Nullable @UnknownSignedness Object value) {
         Object k = maskNull(key);
         Object[] tab = table;
         int len = tab.length;
