@@ -3871,7 +3871,7 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
      * @since 1.5
      * @jls 8.9.1 Enum Constants
      */
-    public @NonNull T @Nullable [] getEnumConstants() {
+    public @NonNull @Interned T @Nullable [] getEnumConstants() {
         T[] values = getEnumConstantsShared();
         return (values != null) ? values.clone() : null;
     }
