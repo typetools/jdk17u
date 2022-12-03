@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2021, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -159,7 +159,7 @@ implements java.io.Serializable
      * Each chain is ordered bottom-to-top (i.e., with the signer certificate
      * first and the (root) certificate authority last). The signer
      * certificates are copied from the array. Subsequent changes to
-     * the array will not affect this UnsolvedPermission.
+     * the array will not affect this UnresolvedPermission.
      */
     public UnresolvedPermission(String type,
                                 String name,
@@ -171,59 +171,63 @@ implements java.io.Serializable
         if (type == null)
                 throw new NullPointerException("type can't be null");
 
+        // Perform a defensive copy and reassign certs if we have a non-null
+        // reference
+        if (certs != null) {
+            certs = certs.clone();
+        }
+
         this.type = type;
         this.name = name;
         this.actions = actions;
+
         if (certs != null) {
             // Extract the signer certs from the list of certificates.
-            for (int i=0; i<certs.length; i++) {
+            for (int i = 0; i < certs.length; i++) {
                 if (!(certs[i] instanceof X509Certificate)) {
                     // there is no concept of signer certs, so we store the
-                    // entire cert array
-                    this.certs = certs.clone();
-                    break;
+                    // entire cert array.  No further processing is necessary.
+                    this.certs = certs;
+                    return;
                 }
             }
 
-            if (this.certs == null) {
-                // Go through the list of certs and see if all the certs are
-                // signer certs.
-                int i = 0;
-                int count = 0;
-                while (i < certs.length) {
-                    count++;
-                    while (((i+1) < certs.length) &&
-                           ((X509Certificate)certs[i]).getIssuerX500Principal().equals(
-                               ((X509Certificate)certs[i+1]).getSubjectX500Principal())) {
-                        i++;
-                    }
+            // Go through the list of certs and see if all the certs are
+            // signer certs.
+            int i = 0;
+            int count = 0;
+            while (i < certs.length) {
+                count++;
+                while (((i + 1) < certs.length) &&
+                       ((X509Certificate)certs[i]).getIssuerX500Principal().equals(
+                           ((X509Certificate)certs[i + 1]).getSubjectX500Principal())) {
                     i++;
                 }
-                if (count == certs.length) {
-                    // All the certs are signer certs, so we store the entire
-                    // array
-                    this.certs = certs.clone();
-                }
-
-                if (this.certs == null) {
-                    // extract the signer certs
-                    ArrayList<java.security.cert.Certificate> signerCerts =
-                        new ArrayList<>();
-                    i = 0;
-                    while (i < certs.length) {
-                        signerCerts.add(certs[i]);
-                        while (((i+1) < certs.length) &&
-                            ((X509Certificate)certs[i]).getIssuerX500Principal().equals(
-                              ((X509Certificate)certs[i+1]).getSubjectX500Principal())) {
-                            i++;
-                        }
-                        i++;
-                    }
-                    this.certs =
-                        new java.security.cert.Certificate[signerCerts.size()];
-                    signerCerts.toArray(this.certs);
-                }
+                i++;
             }
+            if (count == certs.length) {
+                // All the certs are signer certs, so we store the entire
+                // array.  No further processing is needed.
+                this.certs = certs;
+                return;
+            }
+
+            // extract the signer certs
+            ArrayList<java.security.cert.Certificate> signerCerts =
+                new ArrayList<>();
+            i = 0;
+            while (i < certs.length) {
+                signerCerts.add(certs[i]);
+                while (((i + 1) < certs.length) &&
+                    ((X509Certificate)certs[i]).getIssuerX500Principal().equals(
+                      ((X509Certificate)certs[i + 1]).getSubjectX500Principal())) {
+                    i++;
+                }
+                i++;
+            }
+            this.certs =
+                new java.security.cert.Certificate[signerCerts.size()];
+            signerCerts.toArray(this.certs);
         }
     }
 
@@ -316,6 +320,7 @@ implements java.io.Serializable
      *
      * @return false.
      */
+    @Override
     public boolean implies(Permission p) {
         return false;
     }
@@ -338,6 +343,7 @@ implements java.io.Serializable
      */
     @Pure
     @EnsuresNonNullIf(expression="#1", result=true)
+    @Override
     public boolean equals(@Nullable Object obj) {
         if (obj == this)
             return true;
@@ -410,7 +416,7 @@ implements java.io.Serializable
      *
      * @return a hash code value for this object.
      */
-
+    @Override
     public int hashCode() {
         int hash = type.hashCode();
         if (name != null)
@@ -430,6 +436,7 @@ implements java.io.Serializable
      *
      * @return the empty string "".
      */
+    @Override
     public String getActions()
     {
         return "";
@@ -497,6 +504,7 @@ implements java.io.Serializable
      *
      * @return information about this UnresolvedPermission.
      */
+    @Override
     public String toString() {
         return "(unresolved " + type + " " + name + " " + actions + ")";
     }
@@ -508,7 +516,7 @@ implements java.io.Serializable
      * @return a new PermissionCollection object suitable for
      * storing UnresolvedPermissions.
      */
-
+    @Override
     public PermissionCollection newPermissionCollection() {
         return new UnresolvedPermissionCollection();
     }

@@ -28,10 +28,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 
+import static jdk.internal.misc.Unsafe.ADDRESS_SIZE;
 import static jdk.vm.ci.hotspot.HotSpotJVMCIRuntime.runtime;
 import static jdk.vm.ci.hotspot.HotSpotVMConfig.config;
 import static jdk.vm.ci.hotspot.UnsafeAccess.UNSAFE;
-import static jdk.internal.misc.Unsafe.ADDRESS_SIZE;
 
 import java.lang.annotation.Annotation;
 
@@ -51,28 +51,26 @@ class HotSpotResolvedJavaFieldImpl implements HotSpotResolvedJavaField {
     private JavaType type;
 
     /**
-     * Value of {@code fieldDescriptor::access_flags()}.
+     * Offset (in bytes) of field from start of its storage container (i.e. {@code instanceOop} or
+     * {@code Klass*}).
      */
     private final int offset;
 
     /**
      * Value of {@code fieldDescriptor::index()}.
      */
-    private final short index;
+    private final int index;
 
     /**
      * This value contains all flags as stored in the VM including internal ones.
      */
     private final int modifiers;
 
-    HotSpotResolvedJavaFieldImpl(HotSpotResolvedObjectTypeImpl holder, JavaType type, long offset, int modifiers, int index) {
+    HotSpotResolvedJavaFieldImpl(HotSpotResolvedObjectTypeImpl holder, JavaType type, int offset, int modifiers, int index) {
         this.holder = holder;
         this.type = type;
-        this.index = (short) index;
-        assert this.index == index;
-        assert offset != -1;
-        assert offset == (int) offset : "offset larger than int";
-        this.offset = (int) offset;
+        this.index = index;
+        this.offset = offset;
         this.modifiers = modifiers;
     }
 
@@ -151,6 +149,10 @@ class HotSpotResolvedJavaFieldImpl implements HotSpotResolvedJavaField {
 
     }
 
+    /**
+     * Gets the offset (in bytes) of field from start of its storage container (i.e.
+     * {@code instanceOop} or {@code Klass*}).
+     */
     @Override
     public int getOffset() {
         return offset;
@@ -221,5 +223,10 @@ class HotSpotResolvedJavaFieldImpl implements HotSpotResolvedJavaField {
             return null;
         }
         return runtime().reflection.getFieldAnnotation(this, annotationClass);
+    }
+
+    @Override
+    public JavaConstant getConstantValue() {
+        return holder.createFieldInfo(index).getConstantValue();
     }
 }

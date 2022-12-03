@@ -339,7 +339,7 @@ public final class OptionalDouble {
     @Override
     public String toString() {
         return isPresent
-                ? String.format("OptionalDouble[%s]", value)
+                ? ("OptionalDouble[" + value + "]")
                 : "OptionalDouble.empty";
     }
 }
