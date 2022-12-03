@@ -78,18 +78,18 @@ BRANCH=`git rev-parse --abbrev-ref HEAD`
 URL=`git config --get remote.origin.url`
 SLUG=${URL#*:}
 ORG=${SLUG%/*}
-JDK11DIR=../jdk17u-fork-$ORG-branch-$BRANCH
+JDK17DIR=../jdk17u-fork-$ORG-branch-$BRANCH
 JDK17URL=`echo "$URL" | sed 's/jdk/jdk17u/'`
 echo BRANCH=$BRANCH
 echo URL=$URL
-echo JDK11DIR=$JDK11DIR
+echo JDK17DIR=$JDK17DIR
 echo JDK17URL=$JDK17URL
-if [ -d $JDK11DIR ] ; then
-  (cd $JDK11DIR && git pull)
+if [ -d $JDK17DIR ] ; then
+  (cd $JDK17DIR && git pull)
 else
-  git clone $JDK17URL $JDK11DIR && (cd $JDK11DIR && (git checkout $BRANCH || git checkout -b $BRANCH))
+  git clone $JDK17URL $JDK17DIR && (cd $JDK17DIR && (git checkout $BRANCH || git checkout -b $BRANCH))
 fi
-cd $JDK11DIR
+cd $JDK17DIR
 git pull $URL $BRANCH
 ```
 
