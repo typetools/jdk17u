@@ -1277,6 +1277,7 @@ public class Collections {
             @java.io.Serial
             private static final long serialVersionUID = -6291252904449939134L;
 
+            @SideEffectFree
             public EmptyNavigableSet() {
                 super(new TreeSet<>());
             }
@@ -4398,6 +4399,7 @@ public class Collections {
      * @since 1.7
      */
     @SuppressWarnings("unchecked")
+    @SideEffectFree
     public static <T> Iterator<T> emptyIterator() {
         return (Iterator<T>) EmptyIterator.EMPTY_ITERATOR;
     }
@@ -4442,6 +4444,7 @@ public class Collections {
      * @since 1.7
      */
     @SuppressWarnings("unchecked")
+    @SideEffectFree
     public static <T> ListIterator<T> emptyListIterator() {
         return (ListIterator<T>) EmptyListIterator.EMPTY_ITERATOR;
     }
@@ -4479,6 +4482,7 @@ public class Collections {
      * @since 1.7
      */
     @SuppressWarnings("unchecked")
+    @SideEffectFree
     public static <T> Enumeration<T> emptyEnumeration() {
         return (Enumeration<T>) EmptyEnumeration.EMPTY_ENUMERATION;
     }
@@ -4520,6 +4524,7 @@ public class Collections {
      * @since 1.5
      */
     @SuppressWarnings("unchecked")
+    @SideEffectFree
     public static final <T> Set<T> emptySet() {
         return (Set<T>) EMPTY_SET;
     }
@@ -4599,6 +4604,7 @@ public class Collections {
      * @since 1.8
      */
     @SuppressWarnings("unchecked")
+    @SideEffectFree
     public static <E> SortedSet<E> emptySortedSet() {
         return (SortedSet<E>) UnmodifiableNavigableSet.EMPTY_NAVIGABLE_SET;
     }
@@ -4620,6 +4626,7 @@ public class Collections {
      * @since 1.8
      */
     @SuppressWarnings("unchecked")
+    @SideEffectFree
     public static <E> NavigableSet<E> emptyNavigableSet() {
         return (NavigableSet<E>) UnmodifiableNavigableSet.EMPTY_NAVIGABLE_SET;
     }
@@ -4653,6 +4660,7 @@ public class Collections {
      * @since 1.5
      */
     @SuppressWarnings("unchecked")
+    @SideEffectFree
     public static final <T> List<T> emptyList() {
         return (List<T>) EMPTY_LIST;
     }
@@ -4761,6 +4769,7 @@ public class Collections {
      * @since 1.5
      */
     @SuppressWarnings("unchecked")
+    @SideEffectFree
     public static final <K,V> Map<K,V> emptyMap() {
         return (Map<K,V>) EMPTY_MAP;
     }
@@ -4782,6 +4791,7 @@ public class Collections {
      * @since 1.8
      */
     @SuppressWarnings("unchecked")
+    @SideEffectFree
     public static final <K,V> SortedMap<K,V> emptySortedMap() {
         return (SortedMap<K,V>) UnmodifiableNavigableMap.EMPTY_NAVIGABLE_MAP;
     }
@@ -4803,6 +4813,7 @@ public class Collections {
      * @since 1.8
      */
     @SuppressWarnings("unchecked")
+    @SideEffectFree
     public static final <K,V> NavigableMap<K,V> emptyNavigableMap() {
         return (NavigableMap<K,V>) UnmodifiableNavigableMap.EMPTY_NAVIGABLE_MAP;
     }
