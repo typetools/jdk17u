@@ -31,6 +31,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
@@ -908,11 +909,11 @@ public class WeakHashMap<K,V>
             return WeakHashMap.this.size();
         }
 
-        public boolean contains(@Nullable Object o) {
+        public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsKey(o);
         }
 
-        public boolean remove(@Nullable Object o) {
+        public boolean remove(@Nullable @UnknownSignedness Object o) {
             if (containsKey(o)) {
                 WeakHashMap.this.remove(o);
                 return true;
@@ -965,7 +966,7 @@ public class WeakHashMap<K,V>
             return WeakHashMap.this.size();
         }
 
-        public boolean contains(@Nullable Object o) {
+        public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsValue(o);
         }
 
@@ -1005,13 +1006,13 @@ public class WeakHashMap<K,V>
             return new EntryIterator();
         }
 
-        public boolean contains(@Nullable Object o) {
+        public boolean contains(@Nullable @UnknownSignedness Object o) {
             return o instanceof Map.Entry<?, ?> e
                     && getEntry(e.getKey()) != null
                     && getEntry(e.getKey()).equals(e);
         }
 
-        public boolean remove(@Nullable Object o) {
+        public boolean remove(@Nullable @UnknownSignedness Object o) {
             return removeMapping(o);
         }
 
@@ -1037,7 +1038,7 @@ public class WeakHashMap<K,V>
         }
 
         @SideEffectFree
-        public <T> T[] toArray(T[] a) {
+        public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             return deepCopy().toArray(a);
         }
 

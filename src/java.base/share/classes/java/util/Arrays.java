@@ -36,6 +36,7 @@ import org.checkerframework.checker.mustcall.qual.PolyMustCall;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.checker.signedness.qual.Unsigned;
 import org.checkerframework.common.value.qual.MinLen;
 import org.checkerframework.dataflow.qual.Pure;
@@ -1053,7 +1054,7 @@ public class Arrays {
      *         ordering of the array elements is found to violate the
      *         {@link Comparable} contract
      */
-    public static void sort(@PolyInterned Object[] a) {
+    public static void sort(@PolyInterned @PolyNull Object[] a) {
         if (LegacyMergeSort.userRequested)
             legacyMergeSort(a);
         else
@@ -1118,7 +1119,7 @@ public class Arrays {
      *         not <i>mutually comparable</i> (for example, strings and
      *         integers).
      */
-    public static void sort(@PolyInterned Object[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
+    public static void sort(@PolyInterned @PolyNull Object[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         if (LegacyMergeSort.userRequested)
             legacyMergeSort(a, fromIndex, toIndex);
@@ -1193,7 +1194,7 @@ public class Arrays {
     /**
      * Swaps x[a] with x[b].
      */
-    private static void swap(Object[] x, int a, int b) {
+    private static void swap(@UnknownSignedness Object[] x, int a, int b) {
         Object t = x[a];
         x[a] = x[b];
         x[b] = t;
@@ -1242,7 +1243,7 @@ public class Arrays {
      * @throws IllegalArgumentException (optional) if the comparator is
      *         found to violate the {@link Comparator} contract
      */
-    public static <T> void sort(T[] a, @Nullable Comparator<? super T> c) {
+    public static <T> void sort(@PolyNull @UnknownSignedness T[] a, @Nullable Comparator<? super T> c) {
         if (c == null) {
             sort(a);
         } else {
@@ -2993,7 +2994,7 @@ public class Arrays {
      * @return {@code true} if the two arrays are equal
      */
     @Pure
-    public static boolean equals(@PolyNull @PolyInterned Object @GuardSatisfied  @Nullable [] a, @PolyNull @PolyInterned Object @GuardSatisfied  @Nullable [] a2) {
+    public static boolean equals(@PolyNull @PolySigned @PolyInterned Object @GuardSatisfied  @Nullable [] a, @PolyNull @PolySigned @PolyInterned Object @GuardSatisfied  @Nullable [] a2) {
         if (a==a2)
             return true;
         if (a==null || a2==null)
@@ -3453,7 +3454,7 @@ public class Arrays {
      * @throws ArrayStoreException if the specified value is not of a
      *         runtime type that can be stored in the specified array
      */
-    public static void fill(@PolyNull @PolyInterned Object[] a, @PolyNull @PolyInterned Object val) {
+    public static void fill(@PolyNull @PolySigned @PolyInterned Object[] a, @PolyNull @PolySigned @PolyInterned Object val) {
         for (int i = 0, len = a.length; i < len; i++)
             a[i] = val;
     }
@@ -3477,7 +3478,7 @@ public class Arrays {
      * @throws ArrayStoreException if the specified value is not of a
      *         runtime type that can be stored in the specified array
      */
-    public static void fill(@PolyNull @PolyInterned Object[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex, @PolyNull @PolyInterned Object val) {
+    public static void fill(@PolyNull @PolySigned @PolyInterned Object[] a, @IndexOrHigh({"#1"}) int fromIndex, @IndexOrHigh({"#1"}) int toIndex, @PolyNull @PolySigned @PolyInterned Object val) {
         rangeCheck(a.length, fromIndex, toIndex);
         for (int i = fromIndex; i < toIndex; i++)
             a[i] = val;
@@ -3504,6 +3505,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     @SuppressWarnings("unchecked")
     public static <T> @Nullable T[] copyOf(T[] original, @NonNegative int newLength) {
         return (T[]) copyOf(original, newLength, original.getClass());
@@ -3533,6 +3535,7 @@ public class Arrays {
      *     an array of class {@code newType}
      * @since 1.6
      */
+    @SideEffectFree
     @IntrinsicCandidate
     public static <T,U> @Nullable T[] copyOf(U[] original, @NonNegative int newLength, Class<? extends T[]> newType) {
         @SuppressWarnings("unchecked")
@@ -3561,6 +3564,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static @PolySigned byte[] copyOf(@PolySigned byte[] original, @NonNegative int newLength) {
         byte[] copy = new byte[newLength];
         System.arraycopy(original, 0, copy, 0,
@@ -3585,6 +3589,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static @PolySigned short[] copyOf(@PolySigned short[] original, @NonNegative int newLength) {
         short[] copy = new short[newLength];
         System.arraycopy(original, 0, copy, 0,
@@ -3609,6 +3614,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static @PolySigned int[] copyOf(@PolySigned int[] original, @NonNegative int newLength) {
         int[] copy = new int[newLength];
         System.arraycopy(original, 0, copy, 0,
@@ -3633,6 +3639,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static @PolySigned long[] copyOf(@PolySigned long[] original, @NonNegative int newLength) {
         long[] copy = new long[newLength];
         System.arraycopy(original, 0, copy, 0,
@@ -3657,6 +3664,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static @PolySigned char[] copyOf(@PolySigned char[] original, @NonNegative int newLength) {
         char[] copy = new char[newLength];
         System.arraycopy(original, 0, copy, 0,
@@ -3681,6 +3689,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static float[] copyOf(float[] original, @NonNegative int newLength) {
         float[] copy = new float[newLength];
         System.arraycopy(original, 0, copy, 0,
@@ -3705,6 +3714,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static double[] copyOf(double[] original, @NonNegative int newLength) {
         double[] copy = new double[newLength];
         System.arraycopy(original, 0, copy, 0,
@@ -3729,6 +3739,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static boolean[] copyOf(boolean[] original, @NonNegative int newLength) {
         boolean[] copy = new boolean[newLength];
         System.arraycopy(original, 0, copy, 0,
@@ -3766,6 +3777,7 @@ public class Arrays {
      * @since 1.6
      */
     @SuppressWarnings("unchecked")
+    @SideEffectFree
     public static <T> @Nullable T[] copyOfRange(T[] original, @IndexOrHigh({"#1"}) int from, int to) {
         return copyOfRange(original, from, to, (Class<? extends T[]>) original.getClass());
     }
@@ -3804,6 +3816,7 @@ public class Arrays {
      * @since 1.6
      */
     @IntrinsicCandidate
+    @SideEffectFree
     public static <T,U> @Nullable T[] copyOfRange(U[] original, @IndexOrHigh({"#1"}) int from, int to, Class<? extends T[]> newType) {
         int newLength = to - from;
         if (newLength < 0)
@@ -3843,6 +3856,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static @PolySigned byte[] copyOfRange(@PolySigned byte[] original, @IndexOrHigh({"#1"}) int from, int to) {
         int newLength = to - from;
         if (newLength < 0)
@@ -3879,6 +3893,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static @PolySigned short[] copyOfRange(@PolySigned short[] original, @IndexOrHigh({"#1"}) int from, int to) {
         int newLength = to - from;
         if (newLength < 0)
@@ -3915,6 +3930,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static @PolySigned int[] copyOfRange(@PolySigned int[] original, @IndexOrHigh({"#1"}) int from, int to) {
         int newLength = to - from;
         if (newLength < 0)
@@ -3951,6 +3967,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static @PolySigned long[] copyOfRange(@PolySigned long[] original, @IndexOrHigh({"#1"}) int from, int to) {
         int newLength = to - from;
         if (newLength < 0)
@@ -3987,6 +4004,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static @PolySigned char[] copyOfRange(@PolySigned char[] original, @IndexOrHigh({"#1"}) int from, int to) {
         int newLength = to - from;
         if (newLength < 0)
@@ -4023,6 +4041,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static float[] copyOfRange(float[] original, @IndexOrHigh({"#1"}) int from, int to) {
         int newLength = to - from;
         if (newLength < 0)
@@ -4059,6 +4078,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static double[] copyOfRange(double[] original, @IndexOrHigh({"#1"}) int from, int to) {
         int newLength = to - from;
         if (newLength < 0)
@@ -4095,6 +4115,7 @@ public class Arrays {
      * @throws NullPointerException if {@code original} is null
      * @since 1.6
      */
+    @SideEffectFree
     public static boolean[] copyOfRange(boolean[] original, @IndexOrHigh({"#1"}) int from, int to) {
         int newLength = to - from;
         if (newLength < 0)
@@ -4174,7 +4195,7 @@ public class Arrays {
 
         @SideEffectFree
         @Override
-        public @PolyNull Object[] toArray(Arrays.ArrayList<@PolyNull E> this) {
+        public @PolyNull @PolySigned Object[] toArray(Arrays.ArrayList<@PolyNull @PolySigned E> this) {
             return Arrays.copyOf(a, a.length, Object[].class);
         }
 
@@ -4220,7 +4241,7 @@ public class Arrays {
         }
 
         @Override
-        public boolean contains(Object o) {
+        public boolean contains(@UnknownSignedness Object o) {
             return indexOf(o) >= 0;
         }
 
@@ -4531,7 +4552,7 @@ public class Arrays {
      * @since 1.5
      */
     @Pure
-    public static int hashCode(@PolyNull @PolyInterned Object a @GuardSatisfied  @Nullable []) {
+    public static int hashCode(@PolyNull @PolySigned @PolyInterned Object a @GuardSatisfied  @Nullable []) {
         if (a == null)
             return 0;
 
@@ -4573,7 +4594,7 @@ public class Arrays {
      * @since 1.5
      */
     @Pure
-    public static int deepHashCode(@PolyNull @PolyInterned Object a @GuardSatisfied  @Nullable []) {
+    public static int deepHashCode(@PolyNull @PolySigned @PolyInterned Object a @GuardSatisfied  @Nullable []) {
         if (a == null)
             return 0;
 
@@ -4647,7 +4668,7 @@ public class Arrays {
      * @since 1.5
      */
     @Pure
-    public static boolean deepEquals(@PolyNull @PolyInterned Object @GuardSatisfied  @Nullable [] a1, @PolyNull @PolyInterned Object @GuardSatisfied  @Nullable [] a2) {
+    public static boolean deepEquals(@PolyNull @PolySigned @PolyInterned Object @GuardSatisfied  @Nullable [] a1, @PolyNull @PolySigned @PolyInterned Object @GuardSatisfied  @Nullable [] a2) {
         if (a1 == a2)
             return true;
         if (a1 == null || a2==null)
@@ -4969,7 +4990,7 @@ public class Arrays {
     @CFComment({"The @PolyMustCall annotations don't make sense, because toString",
       "shouldn't care about MustCall types, especially of the array.  However,",
       "without these annotations, calls to Arrays.toString yield a MustCall error."})
-    public static @MinLen(2) String toString(@PolyMustCall @PolyNull @PolyInterned Object @PolyMustCall @Nullable [] a) {
+    public static @MinLen(2) String toString(@PolyMustCall @PolyNull @PolySigned @PolyInterned Object @PolyMustCall @Nullable [] a) {
         if (a == null)
             return "null";
 
@@ -5021,7 +5042,7 @@ public class Arrays {
      * @since 1.5
      */
     @SideEffectFree
-    public static @MinLen(2) String deepToString(@PolyMustCall @PolyNull @PolyInterned Object @PolyMustCall @Nullable [] a) {
+    public static @MinLen(2) String deepToString(@PolyMustCall @PolyNull @PolySigned @PolyInterned Object @PolyMustCall @Nullable [] a) {
         if (a == null)
             return "null";
 

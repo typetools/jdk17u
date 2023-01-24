@@ -32,6 +32,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
@@ -418,10 +419,10 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
             return size;
         }
         @Pure
-        public boolean contains(@Nullable Object o) {
+        public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsKey(o);
         }
-        public boolean remove(@Nullable Object o) {
+        public boolean remove(@Nullable @UnknownSignedness Object o) {
             int oldSize = size;
             EnumMap.this.remove(o);
             return size != oldSize;
@@ -460,10 +461,10 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
             return size;
         }
         @Pure
-        public boolean contains(@Nullable Object o) {
+        public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsValue(o);
         }
-        public boolean remove(@Nullable Object o) {
+        public boolean remove(@Nullable @UnknownSignedness Object o) {
             o = maskNull(o);
 
             for (int i = 0; i < vals.length; i++) {
@@ -505,11 +506,11 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
         }
 
         @Pure
-        public boolean contains(@Nullable Object o) {
+        public boolean contains(@Nullable @UnknownSignedness Object o) {
             return o instanceof Map.Entry<?, ?> entry
                     && containsMapping(entry.getKey(), entry.getValue());
         }
-        public boolean remove(@Nullable Object o) {
+        public boolean remove(@Nullable @UnknownSignedness Object o) {
             return o instanceof Map.Entry<?, ?> entry
                     && removeMapping(entry.getKey(), entry.getValue());
         }
@@ -532,7 +533,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
             "nullness:argument",
             "nullness:override.param"
         })
-        public <T> @Nullable T[] toArray(@Nullable T[] a) {
+        public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             int size = size();
             if (a.length < size)
                 a = (T[])java.lang.reflect.Array

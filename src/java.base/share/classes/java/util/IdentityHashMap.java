@@ -31,6 +31,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
@@ -1006,10 +1007,10 @@ public class IdentityHashMap<K,V>
         public @NonNegative int size() {
             return size;
         }
-        public boolean contains(@Nullable Object o) {
+        public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsKey(o);
         }
-        public boolean remove(@Nullable Object o) {
+        public boolean remove(@Nullable @UnknownSignedness Object o) {
             int oldSize = size;
             IdentityHashMap.this.remove(o);
             return size != oldSize;
@@ -1019,7 +1020,7 @@ public class IdentityHashMap<K,V>
          * the former contains an optimization that results in incorrect
          * behavior when c is a smaller "normal" (non-identity-based) Set.
          */
-        public boolean removeAll(Collection<?> c) {
+        public boolean removeAll(Collection<? extends @UnknownSignedness Object> c) {
             Objects.requireNonNull(c);
             boolean modified = false;
             for (Iterator<K> i = iterator(); i.hasNext(); ) {
@@ -1045,7 +1046,7 @@ public class IdentityHashMap<K,V>
         }
         @SuppressWarnings("unchecked")
         @SideEffectFree
-        public <T> T[] toArray(T[] a) {
+        public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             int expectedModCount = modCount;
             int size = size();
             if (a.length < size)
@@ -1118,10 +1119,10 @@ public class IdentityHashMap<K,V>
         public @NonNegative int size() {
             return size;
         }
-        public boolean contains(@Nullable Object o) {
+        public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsValue(o);
         }
-        public boolean remove(@Nullable Object o) {
+        public boolean remove(@Nullable @UnknownSignedness Object o) {
             for (Iterator<V> i = iterator(); i.hasNext(); ) {
                 if (i.next() == o) {
                     i.remove();
@@ -1139,7 +1140,7 @@ public class IdentityHashMap<K,V>
         }
         @SuppressWarnings("unchecked")
         @SideEffectFree
-        public <T> T[] toArray(T[] a) {
+        public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             int expectedModCount = modCount;
             int size = size();
             if (a.length < size)
@@ -1224,11 +1225,11 @@ public class IdentityHashMap<K,V>
         public Iterator<Map.Entry<K,V>> iterator() {
             return new EntryIterator();
         }
-        public boolean contains(@Nullable Object o) {
+        public boolean contains(@Nullable @UnknownSignedness Object o) {
             return o instanceof Entry<?, ?> entry
                     && containsMapping(entry.getKey(), entry.getValue());
         }
-        public boolean remove(@Nullable Object o) {
+        public boolean remove(@Nullable @UnknownSignedness Object o) {
             return o instanceof Entry<?, ?> entry
                     && removeMapping(entry.getKey(), entry.getValue());
         }
@@ -1244,7 +1245,7 @@ public class IdentityHashMap<K,V>
          * the former contains an optimization that results in incorrect
          * behavior when c is a smaller "normal" (non-identity-based) Set.
          */
-        public boolean removeAll(Collection<?> c) {
+        public boolean removeAll(Collection<? extends @UnknownSignedness Object> c) {
             Objects.requireNonNull(c);
             boolean modified = false;
             for (Iterator<Map.Entry<K,V>> i = iterator(); i.hasNext(); ) {
@@ -1263,7 +1264,7 @@ public class IdentityHashMap<K,V>
 
         @SuppressWarnings("unchecked")
         @SideEffectFree
-        public <T> T[] toArray(T[] a) {
+        public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             int expectedModCount = modCount;
             int size = size();
             if (a.length < size)

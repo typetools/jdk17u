@@ -40,6 +40,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
@@ -268,7 +269,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      */
     @SuppressWarnings("unchecked")
     @Pure
-    static final <E> E elementAt(Object[] es, int i) {
+    static final <E> E elementAt(@PolyNull @PolySigned Object[] es, int i) {
         return (E) es[i];
     }
 
@@ -277,7 +278,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * This check doesn't catch all possible comodifications,
      * but does catch ones that corrupt traversal.
      */
-    static final <E> E nonNullElementAt(Object[] es, int i) {
+    static final <E> E nonNullElementAt(@PolyNull @PolySigned Object[] es, int i) {
         @SuppressWarnings("unchecked") E e = (E) es[i];
         if (e == null)
             throw new ConcurrentModificationException();
@@ -922,7 +923,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
     /**
      * @throws NullPointerException {@inheritDoc}
      */
-    public boolean removeAll(Collection<?> c) {
+    public boolean removeAll(Collection<? extends @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
         return bulkRemove(e -> c.contains(e));
     }
@@ -930,7 +931,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
     /**
      * @throws NullPointerException {@inheritDoc}
      */
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(Collection<? extends @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
         return bulkRemove(e -> !c.contains(e));
     }
@@ -1062,7 +1063,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * Nulls out slots starting at array index i, upto index end.
      * Condition i == end means "empty" - nothing to do.
      */
-    private static void circularClear(Object[] es, int i, int end) {
+    private static void circularClear(@PolyNull @PolySigned Object[] es, int i, int end) {
         // assert 0 <= i && i < es.length;
         // assert 0 <= end && end < es.length;
         for (int to = (i <= end) ? end : es.length;
@@ -1086,7 +1087,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @return an array containing all of the elements in this deque
      */
     @SideEffectFree
-    public @PolyNull Object[] toArray(ArrayDeque<@PolyNull E> this) {
+    public @PolyNull @PolySigned Object[] toArray(ArrayDeque<@PolyNull @PolySigned E> this) {
         return toArray(Object[].class);
     }
 
@@ -1145,7 +1146,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      */
     @SideEffectFree
     @SuppressWarnings("unchecked")
-    public <T> @Nullable T @PolyNull [] toArray(T @PolyNull [] a) {
+    public <T> @Nullable T[] toArray(@PolyNull T[] a) {
         final int size;
         if ((size = size()) > a.length)
             return toArray((Class<T[]>) a.getClass());

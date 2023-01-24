@@ -40,6 +40,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
@@ -997,7 +998,7 @@ public class SynchronousQueue<E extends @NonNull Object> extends AbstractQueue<E
      * @return {@code false} unless given collection is empty
      */
     @Pure
-    public boolean containsAll(Collection<?> c) {
+    public boolean containsAll(Collection<? extends @UnknownSignedness Object> c) {
         return c.isEmpty();
     }
 
@@ -1008,7 +1009,7 @@ public class SynchronousQueue<E extends @NonNull Object> extends AbstractQueue<E
      * @param c the collection
      * @return {@code false}
      */
-    public boolean removeAll(Collection<?> c) {
+    public boolean removeAll(Collection<? extends @UnknownSignedness Object> c) {
         return false;
     }
 
@@ -1019,7 +1020,7 @@ public class SynchronousQueue<E extends @NonNull Object> extends AbstractQueue<E
      * @param c the collection
      * @return {@code false}
      */
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(Collection<? extends @UnknownSignedness Object> c) {
         return false;
     }
 
@@ -1062,7 +1063,7 @@ public class SynchronousQueue<E extends @NonNull Object> extends AbstractQueue<E
      * @return a zero-length array
      */
     @SideEffectFree
-    public @PolyNull Object[] toArray(SynchronousQueue<@PolyNull E> this) {
+    public @PolyNull @PolySigned Object[] toArray(SynchronousQueue<@PolyNull @PolySigned E> this) {
         return new Object[0];
     }
 
@@ -1075,7 +1076,7 @@ public class SynchronousQueue<E extends @NonNull Object> extends AbstractQueue<E
      * @throws NullPointerException if the specified array is null
      */
     @SideEffectFree
-    public <T> T[] toArray(T[] a) {
+    public <T> @Nullable T[] toArray(@PolyNull T[] a) {
         if (a.length > 0)
             a[0] = null;
         return a;

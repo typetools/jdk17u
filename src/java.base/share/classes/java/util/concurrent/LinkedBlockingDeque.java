@@ -39,6 +39,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 
@@ -908,7 +909,7 @@ public class LinkedBlockingDeque<E>
      * @return an array containing all of the elements in this deque
      */
     @SuppressWarnings("unchecked")
-    public @PolyNull Object[] toArray(LinkedBlockingDeque<@PolyNull E> this) {
+    public @PolyNull @PolySigned Object[] toArray(LinkedBlockingDeque<@PolyNull @PolySigned E> this) {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
@@ -958,7 +959,7 @@ public class LinkedBlockingDeque<E>
      * @throws NullPointerException if the specified array is null
      */
     @SuppressWarnings("unchecked")
-    public <T> T[] toArray(T[] a) {
+    public <T> @Nullable T[] toArray(@PolyNull T[] a) {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
@@ -1346,7 +1347,7 @@ public class LinkedBlockingDeque<E>
     /**
      * @throws NullPointerException {@inheritDoc}
      */
-    public boolean removeAll(Collection<? extends @NonNull Object> c) {
+    public boolean removeAll(Collection<? extends @NonNull @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
         return bulkRemove(e -> c.contains(e));
     }
@@ -1354,7 +1355,7 @@ public class LinkedBlockingDeque<E>
     /**
      * @throws NullPointerException {@inheritDoc}
      */
-    public boolean retainAll(Collection<? extends @NonNull Object> c) {
+    public boolean retainAll(Collection<? extends @NonNull @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
         return bulkRemove(e -> !c.contains(e));
     }

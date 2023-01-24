@@ -29,6 +29,8 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
@@ -298,9 +300,11 @@ public interface Collection<E> extends Iterable<E> {
      *         collection does not permit null elements
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      */
-    @CFComment({"lock: not true, because map could contain nulls:  AssertParametersNonNull(\"get(#1)\")"})
+    @CFComment({"lock: not true, because map could contain nulls:  AssertParametersNonNull(\"get(#1)\")",
+                "Nullness: `o` is not @Nullable because this collection might forbid null",
+                "(though I think a nicer specification would be to return false in that case)"})
     @Pure
-    boolean contains(@GuardSatisfied Collection<E> this, @GuardSatisfied Object o);
+    boolean contains(@GuardSatisfied Collection<E> this, @GuardSatisfied @UnknownSignedness Object o);
 
     /**
      * Returns an iterator over the elements in this collection.  There are no
@@ -340,7 +344,7 @@ public interface Collection<E> extends Iterable<E> {
     "methods, because the most useful type for toArray is not expressible",
     "in the surface syntax that the nullness annotations support."})
     @SideEffectFree
-    @PolyNull Object[] toArray(Collection<@PolyNull E> this);
+    @PolyNull @PolySigned Object[] toArray(Collection<@PolyNull @PolySigned E> this);
 
     /**
      * Returns an array containing all of the elements in this collection;
@@ -394,7 +398,7 @@ public interface Collection<E> extends Iterable<E> {
      * @throws NullPointerException if the specified array is null
      */
     @SideEffectFree
-    <T> @Nullable T [] toArray(@PolyNull T[] a);
+    <T extends @UnknownSignedness Object> @Nullable T [] toArray(@PolyNull T[] a);
 
     /**
      * Returns an array containing all of the elements in this collection,
@@ -492,7 +496,7 @@ public interface Collection<E> extends Iterable<E> {
      * @throws UnsupportedOperationException if the {@code remove} operation
      *         is not supported by this collection
      */
-    boolean remove(@GuardSatisfied Collection<E> this, Object o);
+    boolean remove(@GuardSatisfied Collection<E> this, @UnknownSignedness Object o);
 
 
     // Bulk Operations
@@ -516,7 +520,7 @@ public interface Collection<E> extends Iterable<E> {
      * @see    #contains(Object)
      */
     @Pure
-    boolean containsAll(@GuardSatisfied Collection<E> this, @GuardSatisfied Collection<?> c);
+    boolean containsAll(@GuardSatisfied Collection<E> this, @GuardSatisfied Collection<? extends @UnknownSignedness Object> c);
 
     /**
      * Adds all of the elements in the specified collection to this collection
@@ -567,7 +571,7 @@ public interface Collection<E> extends Iterable<E> {
      * @see #remove(Object)
      * @see #contains(Object)
      */
-    boolean removeAll(@GuardSatisfied Collection<E> this, Collection<?> c);
+    boolean removeAll(@GuardSatisfied Collection<E> this, Collection<? extends @UnknownSignedness Object> c);
 
     /**
      * Removes all of the elements of this collection that satisfy the given
@@ -626,7 +630,7 @@ public interface Collection<E> extends Iterable<E> {
      * @see #remove(Object)
      * @see #contains(Object)
      */
-    boolean retainAll(@GuardSatisfied Collection<E> this, Collection<?> c);
+    boolean retainAll(@GuardSatisfied Collection<E> this, Collection<? extends @UnknownSignedness Object> c);
 
     /**
      * Removes all of the elements from this collection (optional operation).
@@ -674,7 +678,7 @@ public interface Collection<E> extends Iterable<E> {
      * @see List#equals(Object)
      */
     @Pure
-    boolean equals(@GuardSatisfied Collection<E> this, @GuardSatisfied @Nullable Object o);
+    boolean equals(@GuardSatisfied Collection<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o);
 
     /**
      * Returns the hash code value for this collection.  While the

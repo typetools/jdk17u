@@ -29,6 +29,7 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
@@ -423,7 +424,7 @@ public class LinkedHashMap<K,V>
      *         specified value
      */
     @Pure
-    public boolean containsValue(@GuardSatisfied LinkedHashMap<K, V> this, @GuardSatisfied @Nullable Object value) {
+    public boolean containsValue(@GuardSatisfied LinkedHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object value) {
         for (LinkedHashMap.Entry<K,V> e = head; e != null; e = e.after) {
             V v = e.value;
             if (v == value || (value != null && value.equals(v)))
@@ -579,8 +580,8 @@ public class LinkedHashMap<K,V>
         public final Iterator<K> iterator() {
             return new LinkedKeyIterator();
         }
-        public final boolean contains(@Nullable Object o) { return containsKey(o); }
-        public final boolean remove(@Nullable Object key) {
+        public final boolean contains(@Nullable @UnknownSignedness Object o) { return containsKey(o); }
+        public final boolean remove(@Nullable @UnknownSignedness Object key) {
             return removeNode(hash(key), key, null, false, true) != null;
         }
         @SideEffectFree
@@ -594,7 +595,7 @@ public class LinkedHashMap<K,V>
             return keysToArray(new Object[size]);
         }
 
-        public <T> T[] toArray(T[] a) {
+        public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             return keysToArray(prepareArray(a));
         }
 
@@ -644,7 +645,7 @@ public class LinkedHashMap<K,V>
         public final Iterator<V> iterator() {
             return new LinkedValueIterator();
         }
-        public final boolean contains(@Nullable Object o) { return containsValue(o); }
+        public final boolean contains(@Nullable @UnknownSignedness Object o) { return containsValue(o); }
         @SideEffectFree
         public final Spliterator<V> spliterator() {
             return Spliterators.spliterator(this, Spliterator.SIZED |
@@ -655,7 +656,7 @@ public class LinkedHashMap<K,V>
             return valuesToArray(new Object[size]);
         }
 
-        public <T> T[] toArray(T[] a) {
+        public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             return valuesToArray(prepareArray(a));
         }
 
@@ -703,14 +704,14 @@ public class LinkedHashMap<K,V>
         public final Iterator<Map.Entry<K,V>> iterator() {
             return new LinkedEntryIterator();
         }
-        public final boolean contains(@Nullable Object o) {
+        public final boolean contains(@Nullable @UnknownSignedness Object o) {
             if (!(o instanceof Map.Entry<?, ?> e))
                 return false;
             Object key = e.getKey();
             Node<K,V> candidate = getNode(key);
             return candidate != null && candidate.equals(e);
         }
-        public final boolean remove(@Nullable Object o) {
+        public final boolean remove(@Nullable @UnknownSignedness Object o) {
             if (o instanceof Map.Entry<?, ?> e) {
                 Object key = e.getKey();
                 Object value = e.getValue();
