@@ -25,6 +25,7 @@
 
 package jdk.internal.net.http;
 
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -479,6 +480,7 @@ final class ConnectionPool {
     }
 
     // Used by tests
+    @Pure
     synchronized boolean contains(HttpConnection c) {
         final CacheKey key = c.cacheKey();
         List<HttpConnection> list;

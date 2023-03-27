@@ -146,7 +146,7 @@ import java.util.function.Consumer;
  * @see         java.lang.ref.WeakReference
  */
 @CFComment({"lock: permits null keys and values"})
-@AnnotatedFor({"lock", "index"})
+@AnnotatedFor({"lock", "index", "nullness"})
 public class WeakHashMap<K,V>
     extends AbstractMap<K,V>
     implements Map<K,V> {
@@ -909,6 +909,7 @@ public class WeakHashMap<K,V>
             return WeakHashMap.this.size();
         }
 
+        @Pure
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsKey(o);
         }
@@ -966,6 +967,7 @@ public class WeakHashMap<K,V>
             return WeakHashMap.this.size();
         }
 
+        @Pure
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsValue(o);
         }
@@ -1006,6 +1008,7 @@ public class WeakHashMap<K,V>
             return new EntryIterator();
         }
 
+        @Pure
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return o instanceof Map.Entry<?, ?> e
                     && getEntry(e.getKey()) != null

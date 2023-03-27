@@ -1007,6 +1007,7 @@ public class IdentityHashMap<K,V>
         public @NonNegative int size() {
             return size;
         }
+        @Pure
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsKey(o);
         }
@@ -1119,6 +1120,7 @@ public class IdentityHashMap<K,V>
         public @NonNegative int size() {
             return size;
         }
+        @Pure
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsValue(o);
         }
@@ -1225,6 +1227,7 @@ public class IdentityHashMap<K,V>
         public Iterator<Map.Entry<K,V>> iterator() {
             return new EntryIterator();
         }
+        @Pure
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return o instanceof Entry<?, ?> entry
                     && containsMapping(entry.getKey(), entry.getValue());
