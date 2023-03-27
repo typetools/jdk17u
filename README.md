@@ -71,8 +71,6 @@ update jdk17u from its upstreams, using the directions in section
 If that does not resolve the issue, then do the following in a clone of the
 branch of `jdk` whose pull request is failing.
 
-[[TODO: These instructions need to be updated for JDK 17.]]
-
 ```
 BRANCH=`git rev-parse --abbrev-ref HEAD`
 URL=`git config --get remote.origin.url`
