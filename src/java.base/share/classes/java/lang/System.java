@@ -2477,6 +2477,10 @@ public final @UsesObjectEquals class System {
             public void exit(int statusCode) {
                 Shutdown.exit(statusCode);
             }
+
+            public String getLoaderNameID(ClassLoader loader) {
+                return loader.nameAndId();
+            }
         });
     }
 }

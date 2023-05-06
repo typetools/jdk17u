@@ -391,7 +391,6 @@ import java.io.Serializable;
  *
  * @author Alan Kaminsky
  */
-@SuppressWarnings("removal")
 public class DocFlavor implements Serializable, Cloneable {
 
     /**
@@ -411,13 +410,10 @@ public class DocFlavor implements Serializable, Cloneable {
      * This is the charset for all the "HOST" pre-defined {@code DocFlavors} in
      * the executing VM.
      */
-    public static final String hostEncoding;
-
-    static {
-        hostEncoding =
+    @SuppressWarnings("removal")
+    public static final String hostEncoding =
             java.security.AccessController.doPrivileged(
                   new sun.security.action.GetPropertyAction("file.encoding"));
-    }
 
     /**
      * MIME type.
