@@ -27,6 +27,9 @@ package java.util;
 
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
@@ -144,6 +147,7 @@ public interface Set<E> extends Collection<E> {
      * @return {@code true} if this set contains no elements
      */
     @Pure
+    @EnsuresNonEmptyIf(result = false, expression = "this")
     boolean isEmpty(@GuardSatisfied Set<E> this);
 
     /**
@@ -162,6 +166,7 @@ public interface Set<E> extends Collection<E> {
      * (<a href="Collection.html#optional-restrictions">optional</a>)
      */
     @Pure
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     boolean contains(@GuardSatisfied Set<E> this, @GuardSatisfied @UnknownSignedness Object o);
 
     /**
@@ -271,6 +276,7 @@ public interface Set<E> extends Collection<E> {
      * @throws IllegalArgumentException if some property of the specified element
      *         prevents it from being added to this set
      */
+    @EnsuresNonEmpty("this")
     boolean add(@GuardSatisfied Set<E> this, E e);
 
 

@@ -27,6 +27,7 @@ package java.util;
 
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
@@ -102,6 +103,7 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * This implementation returns {@code size() == 0}.
      */
     @Pure
+    @EnsuresNonEmptyIf(result = false, expression = "this")
     public boolean isEmpty(@GuardSatisfied AbstractCollection<E> this) {
         return size() == 0;
     }
@@ -117,6 +119,7 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @throws NullPointerException {@inheritDoc}
      */
     @Pure
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     public boolean contains(@GuardSatisfied AbstractCollection<E> this, @GuardSatisfied @UnknownSignedness Object o) {
         Iterator<E> it = iterator();
         if (o==null) {

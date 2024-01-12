@@ -27,6 +27,8 @@ package java.util;
 
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.KeyFor;
@@ -392,6 +394,7 @@ public class WeakHashMap<K,V>
      * because they are no longer referenced.
      */
     @Pure
+    @EnsuresNonEmptyIf(result = false, expression = "this")
     public boolean isEmpty(@GuardSatisfied WeakHashMap<K, V> this) {
         return size() == 0;
     }
@@ -804,6 +807,7 @@ public class WeakHashMap<K,V>
             index = isEmpty() ? 0 : table.length;
         }
 
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasNext() {
             Entry<K,V>[] t = table;
 
@@ -854,19 +858,19 @@ public class WeakHashMap<K,V>
     }
 
     private class ValueIterator extends HashIterator<V> {
-        public V next() {
+        public V next(@NonEmpty ValueIterator this) {
             return nextEntry().value;
         }
     }
 
     private class KeyIterator extends HashIterator<K> {
-        public K next() {
+        public K next(@NonEmpty KeyIterator this) {
             return nextEntry().getKey();
         }
     }
 
     private class EntryIterator extends HashIterator<Map.Entry<K,V>> {
-        public Map.Entry<K,V> next() {
+        public Map.Entry<K,V> next(@NonEmpty EntryIterator this) {
             return nextEntry();
         }
     }
@@ -910,6 +914,7 @@ public class WeakHashMap<K,V>
         }
 
         @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsKey(o);
         }
@@ -968,6 +973,7 @@ public class WeakHashMap<K,V>
         }
 
         @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsValue(o);
         }
@@ -1009,6 +1015,7 @@ public class WeakHashMap<K,V>
         }
 
         @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return o instanceof Map.Entry<?, ?> e
                     && getEntry(e.getKey()) != null

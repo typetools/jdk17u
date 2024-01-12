@@ -45,6 +45,7 @@ class IntHashSet {
     }
 
     @Pure
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     public boolean contains(int i) {
         int h = hashes[i % hashes.length];
         while (h != -1) {

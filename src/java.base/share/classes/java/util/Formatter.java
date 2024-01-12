@@ -4603,6 +4603,7 @@ public final class Formatter implements Closeable, Flushable {
         }
 
         @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean contains(Flags f) {
             return (flags & f.valueOf()) == f.valueOf();
         }

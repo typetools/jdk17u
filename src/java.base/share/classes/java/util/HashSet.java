@@ -27,6 +27,9 @@ package java.util;
 
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
@@ -201,6 +204,7 @@ public class HashSet<E>
      * @return {@code true} if this set contains no elements
      */
     @Pure
+    @EnsuresNonEmptyIf(result = false, expression = "this")
     public boolean isEmpty(@GuardSatisfied HashSet<E> this) {
         return map.isEmpty();
     }
@@ -215,6 +219,7 @@ public class HashSet<E>
      * @return {@code true} if this set contains the specified element
      */
     @Pure
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     public boolean contains(@GuardSatisfied HashSet<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
         return map.containsKey(o);
     }
@@ -231,6 +236,7 @@ public class HashSet<E>
      * @return {@code true} if this set did not already contain the specified
      * element
      */
+    @EnsuresNonEmpty("this")
     public boolean add(@GuardSatisfied HashSet<E> this, E e) {
         return map.put(e, PRESENT)==null;
     }

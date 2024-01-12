@@ -31,6 +31,9 @@ import org.checkerframework.checker.index.qual.IndexOrHigh;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.lock.qual.ReleasesNoLocks;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
@@ -175,6 +178,7 @@ public interface List<E> extends Collection<E> {
      * @return {@code true} if this list contains no elements
      */
     @Pure
+    @EnsuresNonEmptyIf(result = false, expression = "this")
     boolean isEmpty(@GuardSatisfied List<E> this);
 
     /**
@@ -193,6 +197,7 @@ public interface List<E> extends Collection<E> {
      * (<a href="Collection.html#optional-restrictions">optional</a>)
      */
     @Pure
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     boolean contains(@GuardSatisfied List<E> this, @UnknownSignedness Object o);
 
     /**
@@ -290,6 +295,7 @@ public interface List<E> extends Collection<E> {
      *         prevents it from being added to this list
      */
     @ReleasesNoLocks
+    @EnsuresNonEmpty("this")
     boolean add(@GuardSatisfied List<E> this, E e);
 
     /**

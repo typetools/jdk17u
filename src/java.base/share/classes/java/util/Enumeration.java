@@ -25,6 +25,8 @@
 
 package java.util;
 
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
@@ -74,6 +76,7 @@ public interface Enumeration<E> {
      *          {@code false} otherwise.
      */
     @Pure
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     boolean hasMoreElements();
 
     /**
@@ -83,7 +86,7 @@ public interface Enumeration<E> {
      * @return     the next element of this enumeration.
      * @throws     NoSuchElementException  if no more elements exist.
      */
-    E nextElement();
+    E nextElement(@GuardSatisfied @NonEmpty Enumeration<E> this);
 
     /**
      * Returns an {@link Iterator} that traverses the remaining elements
@@ -121,10 +124,11 @@ public interface Enumeration<E> {
      */
     default Iterator<E> asIterator() {
         return new Iterator<>() {
+            @EnsuresNonEmptyIf(result = true, expression = "this")
             @Override public boolean hasNext() {
                 return hasMoreElements();
             }
-            @Override public E next() {
+            @Override public E next(@NonEmpty Iterator<E> this) {
                 return nextElement();
             }
         };

@@ -27,6 +27,9 @@ package java.util;
 
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
@@ -228,6 +231,7 @@ public class TreeSet<E> extends AbstractSet<E>
      */
     @EnsuresNonNullIf(expression={"pollFirst()", "pollLast()"}, result=false)
     @Pure
+    @EnsuresNonEmptyIf(result = false, expression = "this")
     public boolean isEmpty(@GuardSatisfied TreeSet<E> this) {
         return m.isEmpty();
     }
@@ -247,6 +251,7 @@ public class TreeSet<E> extends AbstractSet<E>
      *         does not permit null elements
      */
     @Pure
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     public boolean contains(@GuardSatisfied TreeSet<E> this, @GuardSatisfied @UnknownSignedness Object o) {
         return m.containsKey(o);
     }
@@ -268,6 +273,7 @@ public class TreeSet<E> extends AbstractSet<E>
      *         and this set uses natural ordering, or its comparator
      *         does not permit null elements
      */
+    @EnsuresNonEmpty("this")
     public boolean add(@GuardSatisfied TreeSet<E> this, E e) {
         return m.put(e, PRESENT)==null;
     }
@@ -412,7 +418,7 @@ public class TreeSet<E> extends AbstractSet<E>
      * @throws NoSuchElementException {@inheritDoc}
      */
     @SideEffectFree
-    public E first(@GuardSatisfied TreeSet<E> this) {
+    public E first(@GuardSatisfied @NonEmpty TreeSet<E> this) {
         return m.firstKey();
     }
 
@@ -420,7 +426,7 @@ public class TreeSet<E> extends AbstractSet<E>
      * @throws NoSuchElementException {@inheritDoc}
      */
     @SideEffectFree
-    public E last(@GuardSatisfied TreeSet<E> this) {
+    public E last(@GuardSatisfied @NonEmpty TreeSet<E> this) {
         return m.lastKey();
     }
 

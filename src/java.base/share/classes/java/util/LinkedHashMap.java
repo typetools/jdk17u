@@ -27,6 +27,8 @@ package java.util;
 
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
@@ -581,6 +583,7 @@ public class LinkedHashMap<K,V>
             return new LinkedKeyIterator();
         }
         @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public final boolean contains(@Nullable @UnknownSignedness Object o) { return containsKey(o); }
         public final boolean remove(@Nullable @UnknownSignedness Object key) {
             return removeNode(hash(key), key, null, false, true) != null;
@@ -647,6 +650,7 @@ public class LinkedHashMap<K,V>
             return new LinkedValueIterator();
         }
         @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public final boolean contains(@Nullable @UnknownSignedness Object o) { return containsValue(o); }
         @SideEffectFree
         public final Spliterator<V> spliterator() {
@@ -707,6 +711,7 @@ public class LinkedHashMap<K,V>
             return new LinkedEntryIterator();
         }
         @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public final boolean contains(@Nullable @UnknownSignedness Object o) {
             if (!(o instanceof Map.Entry<?, ?> e))
                 return false;
@@ -774,11 +779,12 @@ public class LinkedHashMap<K,V>
             current = null;
         }
 
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public final boolean hasNext() {
             return next != null;
         }
 
-        final LinkedHashMap.Entry<K,V> nextNode() {
+        final LinkedHashMap.Entry<K,V> nextNode(@NonEmpty LinkedHashIterator this) {
             LinkedHashMap.Entry<K,V> e = next;
             if (modCount != expectedModCount)
                 throw new ConcurrentModificationException();
@@ -803,17 +809,17 @@ public class LinkedHashMap<K,V>
 
     final class LinkedKeyIterator extends LinkedHashIterator
         implements Iterator<K> {
-        public final K next() { return nextNode().getKey(); }
+        public final K next(@NonEmpty LinkedKeyIterator this) { return nextNode().getKey(); }
     }
 
     final class LinkedValueIterator extends LinkedHashIterator
         implements Iterator<V> {
-        public final V next() { return nextNode().value; }
+        public final V next(@NonEmpty LinkedValueIterator this) { return nextNode().value; }
     }
 
     final class LinkedEntryIterator extends LinkedHashIterator
         implements Iterator<Map.Entry<K,V>> {
-        public final Map.Entry<K,V> next() { return nextNode(); }
+        public final Map.Entry<K,V> next(@NonEmpty LinkedEntryIterator this) { return nextNode(); }
     }
 
 

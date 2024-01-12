@@ -35,10 +35,12 @@
 
 package java.util;
 
-import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
@@ -297,7 +299,7 @@ public interface Deque<E> extends Queue<E> {
      * @return the head of this deque
      * @throws NoSuchElementException if this deque is empty
      */
-    E removeFirst(@GuardSatisfied Deque<E> this);
+    E removeFirst(@GuardSatisfied @NonEmpty Deque<E> this);
 
     /**
      * Retrieves and removes the last element of this deque.  This method
@@ -307,7 +309,7 @@ public interface Deque<E> extends Queue<E> {
      * @return the tail of this deque
      * @throws NoSuchElementException if this deque is empty
      */
-    E removeLast(@GuardSatisfied Deque<E> this);
+    E removeLast(@GuardSatisfied @NonEmpty Deque<E> this);
 
     /**
      * Retrieves and removes the first element of this deque,
@@ -334,7 +336,7 @@ public interface Deque<E> extends Queue<E> {
      * @return the head of this deque
      * @throws NoSuchElementException if this deque is empty
      */
-    E getFirst(@GuardSatisfied Deque<E> this);
+    E getFirst(@GuardSatisfied @NonEmpty Deque<E> this);
 
     /**
      * Retrieves, but does not remove, the last element of this deque.
@@ -344,7 +346,7 @@ public interface Deque<E> extends Queue<E> {
      * @return the tail of this deque
      * @throws NoSuchElementException if this deque is empty
      */
-    E getLast(@GuardSatisfied Deque<E> this);
+    E getLast(@GuardSatisfied @NonEmpty Deque<E> this);
 
     /**
      * Retrieves, but does not remove, the first element of this deque,
@@ -424,6 +426,7 @@ public interface Deque<E> extends Queue<E> {
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this deque
      */
+    @EnsuresNonEmpty("this")
     boolean add(@GuardSatisfied Deque<E> this, E e);
 
     /**
@@ -460,7 +463,7 @@ public interface Deque<E> extends Queue<E> {
      * @return the head of the queue represented by this deque
      * @throws NoSuchElementException if this deque is empty
      */
-    E remove(@GuardSatisfied Deque<E> this);
+    E remove(@GuardSatisfied @NonEmpty Deque<E> this);
 
     /**
      * Retrieves and removes the head of the queue represented by this deque
@@ -485,7 +488,7 @@ public interface Deque<E> extends Queue<E> {
      * @return the head of the queue represented by this deque
      * @throws NoSuchElementException if this deque is empty
      */
-    E element();
+    E element(@GuardSatisfied @NonEmpty Deque<E> this);
 
     /**
      * Retrieves, but does not remove, the head of the queue represented by
@@ -557,7 +560,7 @@ public interface Deque<E> extends Queue<E> {
      *         of the stack represented by this deque)
      * @throws NoSuchElementException if this deque is empty
      */
-    E pop(@GuardSatisfied Deque<E> this);
+    E pop(@GuardSatisfied @NonEmpty Deque<E> this);
 
 
     // *** Collection methods ***
@@ -598,6 +601,7 @@ public interface Deque<E> extends Queue<E> {
      * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      */
     @Pure
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     boolean contains(@GuardSatisfied Deque<E> this, @UnknownSignedness Object o);
 
     /**

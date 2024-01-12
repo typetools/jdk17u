@@ -574,6 +574,7 @@ final class CryptoPolicyParser {
         }
 
         @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         boolean contains(CryptoPermissionEntry pe)
         {
             return permissionEntries.contains(pe);

@@ -27,6 +27,9 @@ package java.util;
 
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
@@ -282,6 +285,7 @@ public interface Collection<E> extends Iterable<E> {
      * @return {@code true} if this collection contains no elements
      */
     @Pure
+    @EnsuresNonEmptyIf(result = false, expression = "this")
     boolean isEmpty(@GuardSatisfied Collection<E> this);
 
     /**
@@ -304,6 +308,7 @@ public interface Collection<E> extends Iterable<E> {
                 "Nullness: `o` is not @Nullable because this collection might forbid null",
                 "(though I think a nicer specification would be to return false in that case)"})
     @Pure
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     boolean contains(@GuardSatisfied Collection<E> this, @GuardSatisfied @UnknownSignedness Object o);
 
     /**
@@ -474,6 +479,7 @@ public interface Collection<E> extends Iterable<E> {
      * @throws IllegalStateException if the element cannot be added at this
      *         time due to insertion restrictions
      */
+    @EnsuresNonEmpty("this")
     boolean add(@GuardSatisfied Collection<E> this, E e);
 
     /**

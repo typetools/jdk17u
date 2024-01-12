@@ -29,6 +29,9 @@ import org.checkerframework.checker.index.qual.GTENegativeOne;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.lock.qual.ReleasesNoLocks;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
@@ -257,7 +260,7 @@ public class LinkedList<E>
      * @return the first element in this list
      * @throws NoSuchElementException if this list is empty
      */
-    public E getFirst(@GuardSatisfied LinkedList<E> this) {
+    public E getFirst(@GuardSatisfied @NonEmpty LinkedList<E> this) {
         final Node<E> f = first;
         if (f == null)
             throw new NoSuchElementException();
@@ -270,7 +273,7 @@ public class LinkedList<E>
      * @return the last element in this list
      * @throws NoSuchElementException if this list is empty
      */
-    public E getLast(@GuardSatisfied LinkedList<E> this) {
+    public E getLast(@GuardSatisfied @NonEmpty LinkedList<E> this) {
         final Node<E> l = last;
         if (l == null)
             throw new NoSuchElementException();
@@ -283,7 +286,7 @@ public class LinkedList<E>
      * @return the first element from this list
      * @throws NoSuchElementException if this list is empty
      */
-    public E removeFirst(@GuardSatisfied LinkedList<E> this) {
+    public E removeFirst(@GuardSatisfied @NonEmpty LinkedList<E> this) {
         final Node<E> f = first;
         if (f == null)
             throw new NoSuchElementException();
@@ -296,7 +299,7 @@ public class LinkedList<E>
      * @return the last element from this list
      * @throws NoSuchElementException if this list is empty
      */
-    public E removeLast(@GuardSatisfied LinkedList<E> this) {
+    public E removeLast(@GuardSatisfied @NonEmpty LinkedList<E> this) {
         final Node<E> l = last;
         if (l == null)
             throw new NoSuchElementException();
@@ -333,6 +336,7 @@ public class LinkedList<E>
      * @return {@code true} if this list contains the specified element
      */
     @Pure
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     public boolean contains(@GuardSatisfied LinkedList<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
         return indexOf(o) >= 0;
     }
@@ -356,6 +360,7 @@ public class LinkedList<E>
      * @return {@code true} (as specified by {@link Collection#add})
      */
     @ReleasesNoLocks
+    @EnsuresNonEmpty("this")
     public boolean add(@GuardSatisfied LinkedList<E> this, E e) {
         linkLast(e);
         return true;
@@ -685,7 +690,7 @@ public class LinkedList<E>
      * @throws NoSuchElementException if this list is empty
      * @since 1.5
      */
-    public E element() {
+    public E element(@GuardSatisfied @NonEmpty LinkedList<E> this) {
         return getFirst();
     }
 
@@ -707,7 +712,7 @@ public class LinkedList<E>
      * @throws NoSuchElementException if this list is empty
      * @since 1.5
      */
-    public E remove(@GuardSatisfied LinkedList<E> this) {
+    public E remove(@GuardSatisfied @NonEmpty LinkedList<E> this) {
         return removeFirst();
     }
 
@@ -823,7 +828,7 @@ public class LinkedList<E>
      * @throws NoSuchElementException if this list is empty
      * @since 1.6
      */
-    public E pop(@GuardSatisfied LinkedList<E> this) {
+    public E pop(@GuardSatisfied @NonEmpty LinkedList<E> this) {
         return removeFirst();
     }
 
@@ -906,11 +911,12 @@ public class LinkedList<E>
             nextIndex = index;
         }
 
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasNext() {
             return nextIndex < size;
         }
 
-        public E next() {
+        public E next(@NonEmpty ListItr this) {
             checkForComodification();
             if (!hasNext())
                 throw new NoSuchElementException();
@@ -1017,10 +1023,11 @@ public class LinkedList<E>
      */
     private class DescendingIterator implements Iterator<E> {
         private final ListItr itr = new ListItr(size());
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasNext() {
             return itr.hasPrevious();
         }
-        public E next() {
+        public E next(@NonEmpty DescendingIterator this) {
             return itr.previous();
         }
         public void remove() {

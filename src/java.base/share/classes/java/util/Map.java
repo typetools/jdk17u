@@ -28,6 +28,7 @@ package java.util;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.lock.qual.ReleasesNoLocks;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.KeyFor;
@@ -195,6 +196,7 @@ public interface Map<K, V> {
      * @return {@code true} if this map contains no key-value mappings
      */
     @Pure
+    @EnsuresNonEmptyIf(result = false, expression = "this")
     boolean isEmpty(@GuardSatisfied Map<K, V> this);
 
     /**
