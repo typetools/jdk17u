@@ -34,6 +34,7 @@ import org.checkerframework.checker.lock.qual.ReleasesNoLocks;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.UnknownNonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
@@ -42,6 +43,8 @@ import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
+import org.checkerframework.framework.qual.EnsuresQualifier;
+import org.checkerframework.framework.qual.EnsuresQualifierIf;
 
 import java.util.function.UnaryOperator;
 
@@ -158,7 +161,7 @@ import java.util.function.UnaryOperator;
  */
 
 @CFComment({"lock/nullness: Subclasses of this interface/class may opt to prohibit null elements"})
-@AnnotatedFor({"lock", "nullness", "index"})
+@AnnotatedFor({"lock", "nullness", "index", "nonempty"})
 public interface List<E> extends Collection<E> {
     // Query Operations
 
@@ -319,6 +322,7 @@ public interface List<E> extends Collection<E> {
      * @throws UnsupportedOperationException if the {@code remove} operation
      *         is not supported by this list
      */
+    @EnsuresQualifierIf(result = true, expression = "this", qualifier = UnknownNonEmpty.class)
     boolean remove(@GuardSatisfied List<E> this, @UnknownSignedness Object o);
 
 
@@ -665,6 +669,7 @@ public interface List<E> extends Collection<E> {
      *         ({@code index < 0 || index >= size()})
      */
     @ReleasesNoLocks
+    @EnsuresQualifier(expression = "this", qualifier = UnknownNonEmpty.class)
     E remove(@GuardSatisfied List<E> this, @IndexFor({"this"}) int index);
 
 
