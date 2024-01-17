@@ -351,6 +351,7 @@ public interface Set<E> extends Collection<E> {
      *         specified collection prevents it from being added to this set
      * @see #add(Object)
      */
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     boolean addAll(@GuardSatisfied Set<E> this, Collection<? extends E> c);
 
     /**
