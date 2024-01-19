@@ -320,7 +320,7 @@ public interface List<E> extends Collection<E> {
      * @throws UnsupportedOperationException if the {@code remove} operation
      *         is not supported by this list
      */
-    boolean remove(@GuardSatisfied List<E> this, @UnknownSignedness Object o);
+    boolean remove(@GuardSatisfied @NonEmpty List<E> this, @UnknownSignedness Object o);
 
 
     // Bulk Modification Operations
