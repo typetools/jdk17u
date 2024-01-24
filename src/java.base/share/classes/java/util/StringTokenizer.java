@@ -321,6 +321,7 @@ public @UsesObjectEquals class StringTokenizer implements Enumeration<Object> {
      *          in the string after the current position; {@code false}
      *          otherwise.
      */
+    @EnsuresNonEmptyIf(result = true, expression = "this")
     public boolean hasMoreTokens() {
         /*
          * Temporarily store this position and use it in the following
