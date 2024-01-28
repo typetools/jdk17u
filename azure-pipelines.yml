@@ -39,6 +39,13 @@ jobs:
     displayName: show environment
   - bash: |
       set -ex
+      if [ -d /tmp/$USER/git-scripts ]; \
+        then git -C /tmp/$USER/git-scripts pull -q > /dev/null 2>&1 ; \
+        else mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/git-scripts.git ; \
+      fi
+    displayName: git-scripts
+  - bash: |
+      set -ex
       if [ -d /tmp/$USER/plume-scripts ]; \
         then git -C /tmp/$USER/plume-scripts pull -q > /dev/null 2>&1 ; \
         else mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/plume-scripts.git ; \
@@ -49,7 +56,7 @@ jobs:
   # because that leads to "fatal: remote error: filter 'combine' not supported".
   - bash: |
       set -ex
-      /tmp/$USER/plume-scripts/git-clone-related typetools jdk17u ../jdk17u -q --depth 999
+      /tmp/$USER/git-scripts/git-clone-related typetools jdk17u ../jdk17u -q --depth 999
     displayName: clone-related-jdk17u
   - bash: |
       set -ex
@@ -84,9 +91,9 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 25
-  - bash: mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/plume-scripts.git
-    displayName: clone plume-scripts
-  - bash: /tmp/$USER/plume-scripts/git-clone-related typetools checker-framework
+  - bash: mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/git-scripts.git
+    displayName: clone git-scripts
+  - bash: /tmp/$USER/git-scripts/git-clone-related typetools checker-framework
     displayName: clone checker-framework
 # test-cftests-all.sh sometimes runs out of memory, but running its component parts in sequence does not.
 #   - bash: (cd ../checker-framework && checker/bin-devel/test-cftests-all.sh)
@@ -116,9 +123,9 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 25
-  - bash: mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/plume-scripts.git
-    displayName: clone plume-scripts
-  - bash: /tmp/$USER/plume-scripts/git-clone-related typetools checker-framework
+  - bash: mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/git-scripts.git
+    displayName: clone git-scripts
+  - bash: /tmp/$USER/git-scripts/git-clone-related typetools checker-framework
     displayName: clone checker-framework
   - bash: (cd ../checker-framework && checker/bin-devel/test-cftests-all.sh)
     displayName: test-cftests-all.sh
@@ -131,9 +138,9 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 25
-  - bash: mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/plume-scripts.git
-    displayName: clone plume-scripts
-  - bash: /tmp/$USER/plume-scripts/git-clone-related typetools checker-framework
+  - bash: mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/git-scripts.git
+    displayName: clone git-scripts
+  - bash: /tmp/$USER/git-scripts/git-clone-related typetools checker-framework
     displayName: clone checker-framework
   - bash: (cd ../checker-framework && checker/bin-devel/test-cftests-all.sh)
     displayName: test-cftests-all.sh
@@ -146,9 +153,9 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 25
-  - bash: mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/plume-scripts.git
-    displayName: clone plume-scripts
-  - bash: /tmp/$USER/plume-scripts/git-clone-related typetools checker-framework
+  - bash: mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/git-scripts.git
+    displayName: clone git-scripts
+  - bash: /tmp/$USER/git-scripts/git-clone-related typetools checker-framework
     displayName: clone checker-framework
   - bash: (cd ../checker-framework && checker/bin-devel/test-daikon.sh)
     displayName: test-daikon.sh
@@ -160,9 +167,9 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 25
-  - bash: mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/plume-scripts.git
-    displayName: clone plume-scripts
-  - bash: /tmp/$USER/plume-scripts/git-clone-related typetools checker-framework
+  - bash: mkdir -p /tmp/$USER && git -C /tmp/$USER clone --filter=blob:none -q https://github.com/plume-lib/git-scripts.git
+    displayName: clone git-scripts
+  - bash: /tmp/$USER/git-scripts/git-clone-related typetools checker-framework
     displayName: clone checker-framework
   - bash: (cd ../checker-framework && checker/bin-devel/test-plume-lib.sh)
     displayName: test-plume-lib.sh
