@@ -30,6 +30,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
@@ -193,7 +194,7 @@ public class TreeSet<E> extends AbstractSet<E>
      * @return an iterator over the elements in this set in ascending order
      */
     @SideEffectFree
-    public Iterator<E> iterator() {
+    public @PolyNonEmpty Iterator<E> iterator(@PolyNonEmpty TreeSet<E> this) {
         return m.navigableKeySet().iterator();
     }
 
@@ -203,7 +204,7 @@ public class TreeSet<E> extends AbstractSet<E>
      * @return an iterator over the elements in this set in descending order
      * @since 1.6
      */
-    public Iterator<E> descendingIterator() {
+    public @PolyNonEmpty Iterator<E> descendingIterator(@PolyNonEmpty TreeSet<E> this) {
         return m.descendingKeySet().iterator();
     }
 
