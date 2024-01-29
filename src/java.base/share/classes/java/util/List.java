@@ -207,7 +207,7 @@ public interface List<E> extends Collection<E> {
      * @return an iterator over the elements in this list in proper sequence
      */
     @SideEffectFree
-    Iterator<E> iterator();
+    @PolyNonEmpty Iterator<E> iterator(@PolyNonEmpty List<E> this);
 
     /**
      * Returns an array containing all of the elements in this list in proper

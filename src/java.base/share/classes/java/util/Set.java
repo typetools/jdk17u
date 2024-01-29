@@ -178,7 +178,7 @@ public interface Set<E> extends Collection<E> {
      * @return an iterator over the elements in this set
      */
     @SideEffectFree
-    Iterator<E> iterator();
+    @PolyNonEmpty Iterator<E> iterator(@PolyNonEmpty Set<E> this);
 
     /**
      * Returns an array containing all of the elements in this set.

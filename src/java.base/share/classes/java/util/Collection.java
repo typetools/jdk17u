@@ -320,7 +320,7 @@ public interface Collection<E> extends Iterable<E> {
      * @return an {@code Iterator} over the elements in this collection
      */
     @SideEffectFree
-    Iterator<E> iterator();
+    @NonEmpty Iterator<E> iterator(@NonEmpty Collection<E> this);
 
     /**
      * Returns an array containing all of the elements in this collection.

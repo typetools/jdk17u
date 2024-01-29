@@ -39,6 +39,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -690,11 +691,11 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @return an iterator over the elements in this deque
      */
     @SideEffectFree
-    public Iterator<E> iterator() {
+    public @PolyNonEmpty Iterator<E> iterator(@PolyNonEmpty ArrayDeque<E> this) {
         return new DeqIterator();
     }
 
-    public Iterator<E> descendingIterator() {
+    public @PolyNonEmpty Iterator<E> descendingIterator(@PolyNonEmpty ArrayDeque<E> this) {
         return new DescendingIterator();
     }
 
