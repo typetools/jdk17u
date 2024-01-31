@@ -29,6 +29,7 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.KeyFor;
@@ -495,7 +496,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @param   m the map whose mappings are to be placed in this map
      * @throws  NullPointerException if the specified map is null
      */
-    public HashMap(Map<? extends K, ? extends V> m) {
+    public @PolyNonEmpty HashMap(@PolyNonEmpty Map<? extends K, ? extends V> m) {
         this.loadFactor = DEFAULT_LOAD_FACTOR;
         putMapEntries(m, false);
     }

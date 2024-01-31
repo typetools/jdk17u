@@ -29,6 +29,7 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.KeyFor;
@@ -267,7 +268,7 @@ public class WeakHashMap<K,V>
      * @throws  NullPointerException if the specified map is null
      * @since   1.3
      */
-    public WeakHashMap(Map<? extends K, ? extends V> m) {
+    public @PolyNonEmpty WeakHashMap(@PolyNonEmpty Map<? extends K, ? extends V> m) {
         this(Math.max((int) ((float)m.size() / DEFAULT_LOAD_FACTOR + 1.0F),
                 DEFAULT_INITIAL_CAPACITY),
              DEFAULT_LOAD_FACTOR);

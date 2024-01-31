@@ -31,6 +31,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
@@ -195,7 +196,7 @@ public class Vector<E>
      * @throws NullPointerException if the specified collection is null
      * @since   1.2
      */
-    public Vector(Collection<? extends E> c) {
+    public @PolyNonEmpty Vector(@PolyNonEmpty Collection<? extends E> c) {
         Object[] a = c.toArray();
         elementCount = a.length;
         if (c.getClass() == ArrayList.class) {

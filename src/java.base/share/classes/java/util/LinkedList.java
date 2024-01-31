@@ -32,6 +32,7 @@ import org.checkerframework.checker.lock.qual.ReleasesNoLocks;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
@@ -136,7 +137,7 @@ public class LinkedList<E>
      * @param  c the collection whose elements are to be placed into this list
      * @throws NullPointerException if the specified collection is null
      */
-    public LinkedList(Collection<? extends E> c) {
+    public @PolyNonEmpty LinkedList(@PolyNonEmpty Collection<? extends E> c) {
         this();
         addAll(c);
     }

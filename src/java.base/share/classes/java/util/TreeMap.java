@@ -29,6 +29,7 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.KeyFor;
@@ -198,7 +199,7 @@ public class TreeMap<K,V>
      *         or are not mutually comparable
      * @throws NullPointerException if the specified map is null
      */
-    public TreeMap(Map<? extends K, ? extends V> m) {
+    public @PolyNonEmpty TreeMap(@PolyNonEmpty Map<? extends K, ? extends V> m) {
         comparator = null;
         putAll(m);
     }
@@ -212,7 +213,7 @@ public class TreeMap<K,V>
      *         and whose comparator is to be used to sort this map
      * @throws NullPointerException if the specified map is null
      */
-    public TreeMap(SortedMap<K, ? extends V> m) {
+    public @PolyNonEmpty TreeMap(@PolyNonEmpty SortedMap<K, ? extends V> m) {
         comparator = m.comparator();
         try {
             buildFromSorted(m.size(), m.entrySet().iterator(), null, null);

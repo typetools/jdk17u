@@ -222,7 +222,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @param c the collection whose elements are to be placed into the deque
      * @throws NullPointerException if the specified collection is null
      */
-    public ArrayDeque(Collection<? extends E> c) {
+    public @PolyNonEmpty ArrayDeque(@PolyNonEmpty Collection<? extends E> c) {
         this(c.size());
         copyElements(c);
     }

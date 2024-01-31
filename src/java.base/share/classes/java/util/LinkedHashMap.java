@@ -29,6 +29,7 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
@@ -392,7 +393,7 @@ public class LinkedHashMap<K,V>
      * @param  m the map whose mappings are to be placed in this map
      * @throws NullPointerException if the specified map is null
      */
-    public LinkedHashMap(Map<? extends K, ? extends V> m) {
+    public @PolyNonEmpty LinkedHashMap(@PolyNonEmpty Map<? extends K, ? extends V> m) {
         super();
         accessOrder = false;
         putMapEntries(m, false);

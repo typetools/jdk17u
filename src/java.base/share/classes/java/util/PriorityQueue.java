@@ -31,6 +31,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
@@ -210,7 +211,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws NullPointerException if the specified collection or any
      *         of its elements are null
      */
-    public PriorityQueue(Collection<? extends E> c) {
+    public @PolyNonEmpty PriorityQueue(@PolyNonEmpty Collection<? extends E> c) {
         if (c instanceof SortedSet<?>) {
             SortedSet<? extends E> ss = (SortedSet<? extends E>) c;
             this.comparator = (Comparator<? super E>) ss.comparator();
