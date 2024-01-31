@@ -274,7 +274,7 @@ public interface Map<K, V> {
      * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      */
     @Pure
-    @Nullable V get(@GuardSatisfied @NonEmpty Map<K, V> this, @UnknownSignedness @GuardSatisfied Object key);
+    @Nullable V get(@GuardSatisfied Map<K, V> this, @UnknownSignedness @GuardSatisfied Object key);
 
     // Modification Operations
 

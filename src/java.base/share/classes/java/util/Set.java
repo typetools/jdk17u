@@ -302,7 +302,7 @@ public interface Set<E> extends Collection<E> {
      * @throws UnsupportedOperationException if the {@code remove} operation
      *         is not supported by this set
      */
-    boolean remove(@GuardSatisfied @NonEmpty Set<E> this, @UnknownSignedness Object o);
+    boolean remove(@GuardSatisfied Set<E> this, @UnknownSignedness Object o);
 
 
     // Bulk Operations
