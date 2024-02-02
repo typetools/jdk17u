@@ -336,6 +336,7 @@ public interface Deque<E> extends Queue<E> {
      * @return the head of this deque
      * @throws NoSuchElementException if this deque is empty
      */
+    @EnsuresNonEmpty("this")
     E getFirst(@GuardSatisfied @NonEmpty Deque<E> this);
 
     /**
@@ -346,6 +347,7 @@ public interface Deque<E> extends Queue<E> {
      * @return the tail of this deque
      * @throws NoSuchElementException if this deque is empty
      */
+    @EnsuresNonEmpty("this")
     E getLast(@GuardSatisfied @NonEmpty Deque<E> this);
 
     /**
