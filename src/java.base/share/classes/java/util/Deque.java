@@ -232,6 +232,7 @@ public interface Deque<E> extends Queue<E> {
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this deque
      */
+    @EnsuresNonEmpty("this")
     void addFirst(@GuardSatisfied Deque<E> this, E e);
 
     /**
@@ -253,6 +254,7 @@ public interface Deque<E> extends Queue<E> {
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this deque
      */
+    @EnsuresNonEmpty("this")
     void addLast(@GuardSatisfied Deque<E> this, E e);
 
     /**
