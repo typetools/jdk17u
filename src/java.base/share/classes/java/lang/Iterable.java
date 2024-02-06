@@ -24,6 +24,7 @@
  */
 package java.lang;
 
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
 import java.util.Iterator;
@@ -48,7 +49,7 @@ public interface Iterable<T> {
      *
      * @return an Iterator.
      */
-    Iterator<T> iterator();
+    @PolyNonEmpty Iterator<T> iterator(@PolyNonEmpty Iterable<T> this);
 
     /**
      * Performs the given action for each element of the {@code Iterable}
