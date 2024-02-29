@@ -31,6 +31,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -1056,7 +1057,7 @@ public class Collections {
         @SuppressWarnings("serial") // Conditionally serializable
         final Collection<? extends E> c;
 
-        UnmodifiableCollection(Collection<? extends E> c) {
+        @PolyNonEmpty UnmodifiableCollection(@PolyNonEmpty Collection<? extends E> c) {
             if (c==null)
                 throw new NullPointerException();
             this.c = c;
@@ -1078,7 +1079,7 @@ public class Collections {
         public String toString()                   {return c.toString();}
 
         @SideEffectFree
-        public Iterator<E> iterator() {
+        public @PolyNonEmpty Iterator<E> iterator(@PolyNonEmpty Collection<? extends E> this) {
             return new Iterator<E>() {
                 private final Iterator<? extends E> i = c.iterator();
 
@@ -1353,7 +1354,7 @@ public class Collections {
      * @return an unmodifiable view of the specified list.
      */
     @SuppressWarnings("unchecked")
-    public static <T> List<T> unmodifiableList(List<? extends T> list) {
+    public static <T> @PolyNonEmpty List<T> unmodifiableList(@PolyNonEmpty List<? extends T> list) {
         if (list.getClass() == UnmodifiableList.class || list.getClass() == UnmodifiableRandomAccessList.class) {
            return (List<T>) list;
         }
@@ -1372,9 +1373,9 @@ public class Collections {
         private static final long serialVersionUID = -283967356065247728L;
 
         @SuppressWarnings("serial") // Conditionally serializable
-        final List<? extends E> list;
+        final @PolyNonEmpty List<? extends E> list;
 
-        UnmodifiableList(List<? extends E> list) {
+        @PolyNonEmpty UnmodifiableList(@PolyNonEmpty List<? extends E> list) {
             super(list);
             this.list = list;
         }
@@ -1407,7 +1408,7 @@ public class Collections {
             throw new UnsupportedOperationException();
         }
 
-        public ListIterator<E> listIterator()   {return listIterator(0);}
+        public @PolyNonEmpty ListIterator<E> listIterator(@PolyNonEmpty UnmodifiableList<E> this)   {return listIterator(0);}
 
         public ListIterator<E> listIterator(final int index) {
             return new ListIterator<E>() {
@@ -1469,7 +1470,7 @@ public class Collections {
     static class UnmodifiableRandomAccessList<E> extends UnmodifiableList<E>
                                               implements RandomAccess
     {
-        UnmodifiableRandomAccessList(List<? extends E> list) {
+        @PolyNonEmpty UnmodifiableRandomAccessList(@PolyNonEmpty List<? extends E> list) {
             super(list);
         }
 
