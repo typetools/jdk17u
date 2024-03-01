@@ -32,7 +32,6 @@ import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
-import org.checkerframework.checker.nonempty.qual.UnknownNonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -1374,7 +1373,7 @@ public class Collections {
         private static final long serialVersionUID = -283967356065247728L;
 
         @SuppressWarnings("serial") // Conditionally serializable
-        final @PolyNonEmpty List<? extends E> list;
+        final List<? extends E> list;
 
         @PolyNonEmpty UnmodifiableList(@PolyNonEmpty List<? extends E> list) {
             super(list);
@@ -4438,12 +4437,12 @@ public class Collections {
      */
     @SuppressWarnings("unchecked")
     @SideEffectFree
-    public static <T> @UnknownNonEmpty Iterator<T> emptyIterator() {
+    public static <T> Iterator<T> emptyIterator() {
         return (Iterator<T>) EmptyIterator.EMPTY_ITERATOR;
     }
 
-    private static class @UnknownNonEmpty EmptyIterator<E> implements Iterator<E> {
-        static final @UnknownNonEmpty EmptyIterator<Object> EMPTY_ITERATOR
+    private static class EmptyIterator<E> implements Iterator<E> {
+        static final EmptyIterator<Object> EMPTY_ITERATOR
             = new EmptyIterator<>();
 
         @EnsuresNonEmptyIf(result = true, expression = "this")
@@ -4488,11 +4487,11 @@ public class Collections {
         return (ListIterator<T>) EmptyListIterator.EMPTY_ITERATOR;
     }
 
-    private static @UnknownNonEmpty class EmptyListIterator<E>
+    private static class EmptyListIterator<E>
         extends EmptyIterator<E>
         implements ListIterator<E>
     {
-        static final @UnknownNonEmpty EmptyListIterator<Object> EMPTY_ITERATOR
+        static final EmptyListIterator<Object> EMPTY_ITERATOR
             = new EmptyListIterator<>();
 
         public boolean hasPrevious() { return false; }
@@ -4522,11 +4521,11 @@ public class Collections {
      */
     @SuppressWarnings("unchecked")
     @SideEffectFree
-    public static <T> @UnknownNonEmpty Enumeration<T> emptyEnumeration() {
+    public static <T> Enumeration<T> emptyEnumeration() {
         return (Enumeration<T>) EmptyEnumeration.EMPTY_ENUMERATION;
     }
 
-    private static class @UnknownNonEmpty EmptyEnumeration<E> implements Enumeration<E> {
+    private static class EmptyEnumeration<E> implements Enumeration<E> {
         static final EmptyEnumeration<Object> EMPTY_ENUMERATION
             = new EmptyEnumeration<>();
 
