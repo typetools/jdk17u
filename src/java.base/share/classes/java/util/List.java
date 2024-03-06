@@ -1076,7 +1076,7 @@ public interface List<E> extends Collection<E> {
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
-    static <E extends Object> List<E> of(E... elements) {
+    static <E extends Object> @PolyNonEmpty List<E> of(E @PolyNonEmpty... elements) {
         switch (elements.length) { // implicit null check of elements
             case 0:
                 @SuppressWarnings("unchecked")

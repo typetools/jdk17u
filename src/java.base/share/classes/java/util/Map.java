@@ -1703,7 +1703,7 @@ public interface Map<K, V> {
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
-    static <K extends @NonNull Object, V extends @NonNull Object> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
+    static <K extends @NonNull Object, V extends @NonNull Object> @PolyNonEmpty Map<K, V> ofEntries(Entry<? extends K, ? extends V> @PolyNonEmpty... entries) {
         if (entries.length == 0) { // implicit null check of entries array
             @SuppressWarnings("unchecked")
             var map = (Map<K,V>) ImmutableCollections.EMPTY_MAP;
