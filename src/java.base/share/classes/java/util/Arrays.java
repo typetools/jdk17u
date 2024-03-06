@@ -35,6 +35,7 @@ import org.checkerframework.checker.mustcall.qual.MustCallUnknown;
 import org.checkerframework.checker.mustcall.qual.PolyMustCall;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
@@ -4170,7 +4171,7 @@ public class Arrays {
     @SafeVarargs
     @SideEffectFree
     @SuppressWarnings("varargs")
-    public static <T> List<T> asList(T... a) {
+    public static <T> @PolyNonEmpty List<T> asList(T @PolyNonEmpty... a) {
         return new ArrayList<>(a);
     }
 
