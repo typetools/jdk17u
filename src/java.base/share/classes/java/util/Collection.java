@@ -776,7 +776,7 @@ public interface Collection<E> extends Iterable<E> {
      * @return a sequential {@code Stream} over the elements in this collection
      * @since 1.8
      */
-    default Stream<E> stream() {
+    default @PolyNonEmpty Stream<E> stream(@PolyNonEmpty Collection<E> this) {
         return StreamSupport.stream(spliterator(), false);
     }
 
