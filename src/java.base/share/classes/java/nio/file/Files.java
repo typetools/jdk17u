@@ -30,6 +30,8 @@ import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
 import java.io.BufferedReader;
@@ -1545,6 +1547,7 @@ public final @UsesObjectEquals class Files {
      *
      * @see java.nio.file.attribute.BasicFileAttributes#fileKey
      */
+    @SideEffectFree
     public static boolean isSameFile(Path path, Path path2) throws IOException {
         return provider(path).isSameFile(path, path2);
     }
@@ -1647,6 +1650,7 @@ public final @UsesObjectEquals class Files {
      *          installed, the {@link SecurityManager#checkRead(String) checkRead}
      *          method is invoked to check read access to the file.
      */
+    @SideEffectFree
     public static boolean isHidden(Path path) throws IOException {
         return provider(path).isHidden(path);
     }
@@ -2280,6 +2284,7 @@ public final @UsesObjectEquals class Files {
      *          installed, its {@link SecurityManager#checkRead(String) checkRead}
      *          method denies read access to the file.
      */
+    @SideEffectFree
     public static boolean isSymbolicLink(Path path) {
         try {
             return readAttributes(path,
@@ -2319,6 +2324,7 @@ public final @UsesObjectEquals class Files {
      *          installed, its {@link SecurityManager#checkRead(String) checkRead}
      *          method denies read access to the file.
      */
+    @SideEffectFree
     public static boolean isDirectory(Path path, LinkOption... options) {
         if (options.length == 0) {
             FileSystemProvider provider = provider(path);
@@ -2362,6 +2368,7 @@ public final @UsesObjectEquals class Files {
      *          installed, its {@link SecurityManager#checkRead(String) checkRead}
      *          method denies read access to the file.
      */
+    @SideEffectFree
     public static boolean isRegularFile(Path path, LinkOption... options) {
         if (options.length == 0) {
             FileSystemProvider provider = provider(path);
@@ -2523,6 +2530,7 @@ public final @UsesObjectEquals class Files {
      *
      * @see #notExists
      */
+    @SideEffectFree
     public static boolean exists(Path path, LinkOption... options) {
         if (options.length == 0) {
             FileSystemProvider provider = provider(path);
@@ -2578,6 +2586,7 @@ public final @UsesObjectEquals class Files {
      *          SecurityManager#checkRead(String)} is invoked to check
      *          read access to the file.
      */
+    @SideEffectFree
     public static boolean notExists(Path path, LinkOption... options) {
         try {
             if (followLinks(options)) {
@@ -2636,6 +2645,7 @@ public final @UsesObjectEquals class Files {
      *          installed, the {@link SecurityManager#checkRead(String) checkRead}
      *          is invoked to check read access to the file.
      */
+    @SideEffectFree
     public static boolean isReadable(Path path) {
         return isAccessible(path, AccessMode.READ);
     }
@@ -2667,6 +2677,7 @@ public final @UsesObjectEquals class Files {
      *          installed, the {@link SecurityManager#checkWrite(String) checkWrite}
      *          is invoked to check write access to the file.
      */
+    @SideEffectFree
     public static boolean isWritable(Path path) {
         return isAccessible(path, AccessMode.WRITE);
     }
@@ -2702,6 +2713,7 @@ public final @UsesObjectEquals class Files {
      *          installed, the {@link SecurityManager#checkExec(String)
      *          checkExec} is invoked to check execute access to the file.
      */
+    @SideEffectFree
     public static boolean isExecutable(Path path) {
         return isAccessible(path, AccessMode.EXECUTE);
     }
