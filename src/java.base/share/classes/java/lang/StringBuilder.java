@@ -34,6 +34,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.regex.qual.PolyRegex;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
 import jdk.internal.vm.annotation.IntrinsicCandidate;
@@ -177,12 +178,14 @@ public final class StringBuilder
     }
 
     @Override
+    @SideEffectsOnly("this")
     public StringBuilder append(@GuardSatisfied @Nullable Object obj) {
         return append(String.valueOf(obj));
     }
 
     @Override
     @IntrinsicCandidate
+    @SideEffectsOnly("this")
     public StringBuilder append(@Nullable String str) {
         super.append(str);
         return this;
@@ -453,6 +456,7 @@ public final class StringBuilder
     }
 
     @Override
+    @SideEffectsOnly("this")
     public StringBuilder reverse() {
         super.reverse();
         return this;
