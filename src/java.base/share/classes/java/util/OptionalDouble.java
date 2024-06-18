@@ -27,6 +27,11 @@ package java.util;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.optional.qual.EnsuresPresent;
+import org.checkerframework.checker.optional.qual.EnsuresPresentIf;
+import org.checkerframework.checker.optional.qual.OptionalCreator;
+import org.checkerframework.checker.optional.qual.OptionalEliminator;
+import org.checkerframework.checker.optional.qual.Present;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
@@ -62,9 +67,9 @@ import java.util.stream.DoubleStream;
  *
  * @since 1.8
  */
-@AnnotatedFor({"lock", "nullness"})
+@AnnotatedFor({"lock", "nullness", "optional"})
 @jdk.internal.ValueBased
-public final class OptionalDouble {
+public final @NonNull class OptionalDouble {
     /**
      * Common instance for {@code empty()}.
      */
@@ -99,6 +104,7 @@ public final class OptionalDouble {
      *
      *  @return an empty {@code OptionalDouble}.
      */
+    @OptionalCreator
     @SideEffectFree
     public static OptionalDouble empty() {
         return EMPTY;
@@ -120,7 +126,9 @@ public final class OptionalDouble {
      * @param value the value to describe
      * @return an {@code OptionalDouble} with the value present
      */
-    public static OptionalDouble of(double value) {
+    @OptionalCreator
+    @SideEffectFree
+    public static @Present OptionalDouble of(double value) {
         return new OptionalDouble(value);
     }
 
@@ -134,7 +142,9 @@ public final class OptionalDouble {
      * @return the value described by this {@code OptionalDouble}
      * @throws NoSuchElementException if no value is present
      */
-    public double getAsDouble() {
+    @OptionalEliminator
+    @Pure
+    public double getAsDouble(@Present OptionalDouble this) {
         if (!isPresent) {
             throw new NoSuchElementException("No value present");
         }
@@ -146,6 +156,9 @@ public final class OptionalDouble {
      *
      * @return {@code true} if a value is present, otherwise {@code false}
      */
+    @OptionalEliminator
+    @Pure
+    @EnsuresPresentIf(result = true, expression = "this")
     public boolean isPresent() {
         return isPresent;
     }
@@ -158,6 +171,7 @@ public final class OptionalDouble {
      * @since   11
      */
     @Pure
+    @EnsuresPresentIf(result = false, expression = "this")
     public boolean isEmpty() {
         return !isPresent;
     }
@@ -170,6 +184,7 @@ public final class OptionalDouble {
      * @throws NullPointerException if value is present and the given action is
      *         {@code null}
      */
+    @OptionalEliminator
     public void ifPresent(DoubleConsumer action) {
         if (isPresent) {
             action.accept(value);
@@ -188,6 +203,7 @@ public final class OptionalDouble {
      *         action is {@code null}.
      * @since 9
      */
+    @OptionalEliminator
     public void ifPresentOrElse(DoubleConsumer action, Runnable emptyAction) {
         if (isPresent) {
             action.accept(value);
@@ -212,6 +228,7 @@ public final class OptionalDouble {
      * @return the optional value as a {@code DoubleStream}
      * @since 9
      */
+    @SideEffectFree
     public DoubleStream stream() {
         if (isPresent) {
             return DoubleStream.of(value);
@@ -227,6 +244,7 @@ public final class OptionalDouble {
      * @param other the value to be returned, if no value is present
      * @return the value, if present, otherwise {@code other}
      */
+    @OptionalEliminator
     public double orElse(double other) {
         return isPresent ? value : other;
     }
@@ -241,6 +259,7 @@ public final class OptionalDouble {
      * @throws NullPointerException if no value is present and the supplying
      *         function is {@code null}
      */
+    @OptionalEliminator
     public double orElseGet(DoubleSupplier supplier) {
         return isPresent ? value : supplier.getAsDouble();
     }
@@ -253,7 +272,10 @@ public final class OptionalDouble {
      * @throws NoSuchElementException if no value is present
      * @since 10
      */
-    public double orElseThrow() {
+    @OptionalEliminator
+    @Pure
+    @EnsuresPresent("this")
+    public double orElseThrow(@Present OptionalDouble this) {
         if (!isPresent) {
             throw new NoSuchElementException("No value present");
         }
@@ -277,6 +299,8 @@ public final class OptionalDouble {
      * @throws NullPointerException if no value is present and the exception
      *         supplying function is {@code null}
      */
+    @OptionalEliminator
+    @EnsuresPresent("this")
     public<X extends Throwable> double orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
         if (isPresent) {
             return value;
@@ -320,6 +344,8 @@ public final class OptionalDouble {
      * @return hash code value of the present value or {@code 0} if no value is
      *         present
      */
+    @OptionalEliminator
+    @Pure
     @Override
     public int hashCode() {
         return isPresent ? Double.hashCode(value) : 0;
