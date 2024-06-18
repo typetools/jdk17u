@@ -61,7 +61,7 @@
 #include "runtime/os.hpp"
 #include "runtime/osThread.hpp"
 #include "runtime/perfMemory.hpp"
-#include "runtime/safefetch.inline.hpp"
+#include "runtime/safefetch.hpp"
 #include "runtime/sharedRuntime.hpp"
 #include "runtime/statSampler.hpp"
 #include "runtime/thread.inline.hpp"
@@ -1146,10 +1146,9 @@ bool os::dll_address_to_library_name(address addr, char* buf,
 
 // Loads .dll/.so and in case of error it checks if .dll/.so was built
 // for the same architecture as Hotspot is running on.
-void *os::dll_load(const char *filename, char *ebuf, int ebuflen) {
+static void* dll_load_library(const char *filename, char *ebuf, int ebuflen) {
 
   log_info(os)("attempting shared library load of %s", filename);
-
   if (ebuf && ebuflen > 0) {
     ebuf[0] = '\0';
     ebuf[ebuflen - 1] = '\0';
@@ -1182,6 +1181,26 @@ void *os::dll_load(const char *filename, char *ebuf, int ebuflen) {
     log_info(os)("shared library load of %s failed, %s", filename, error_report);
   }
   return NULL;
+}
+// Load library named <filename>
+// If filename matches <name>.so, and loading fails, repeat with <name>.a.
+void *os::dll_load(const char *filename, char *ebuf, int ebuflen) {
+  void* result = nullptr;
+  char* const file_path = strdup(filename);
+  char* const pointer_to_dot = strrchr(file_path, '.');
+  const char old_extension[] = ".so";
+  const char new_extension[] = ".a";
+  STATIC_ASSERT(sizeof(old_extension) >= sizeof(new_extension));
+  // First try to load the existing file.
+  result = dll_load_library(filename, ebuf, ebuflen);
+  // If the load fails,we try to reload by changing the extension to .a for .so files only.
+  // Shared object in .so format dont have braces, hence they get removed for archives with members.
+  if (result == nullptr && pointer_to_dot != nullptr && strcmp(pointer_to_dot, old_extension) == 0) {
+    snprintf(pointer_to_dot, sizeof(old_extension), "%s", new_extension);
+    result = dll_load_library(file_path, ebuf, ebuflen);
+  }
+  FREE_C_HEAP_ARRAY(char, file_path);
+  return result;
 }
 
 void os::print_dll_info(outputStream *st) {
@@ -2067,36 +2086,33 @@ static bool checked_mprotect(char* addr, size_t size, int prot) {
   //
   if (!os::Aix::xpg_sus_mode()) {
 
-    if (CanUseSafeFetch32()) {
+    const bool read_protected =
+      (SafeFetch32((int*)addr, 0x12345678) == 0x12345678 &&
+       SafeFetch32((int*)addr, 0x76543210) == 0x76543210) ? true : false;
 
-      const bool read_protected =
-        (SafeFetch32((int*)addr, 0x12345678) == 0x12345678 &&
-         SafeFetch32((int*)addr, 0x76543210) == 0x76543210) ? true : false;
+    if (prot & PROT_READ) {
+      rc = !read_protected;
+    } else {
+      rc = read_protected;
+    }
 
-      if (prot & PROT_READ) {
-        rc = !read_protected;
-      } else {
-        rc = read_protected;
-      }
+    if (!rc) {
+      if (os::Aix::on_pase()) {
+        // There is an issue on older PASE systems where mprotect() will return success but the
+        // memory will not be protected.
+        // This has nothing to do with the problem of using mproect() on SPEC1170 incompatible
+        // machines; we only see it rarely, when using mprotect() to protect the guard page of
+        // a stack. It is an OS error.
+        //
+        // A valid strategy is just to try again. This usually works. :-/
 
-      if (!rc) {
-        if (os::Aix::on_pase()) {
-          // There is an issue on older PASE systems where mprotect() will return success but the
-          // memory will not be protected.
-          // This has nothing to do with the problem of using mproect() on SPEC1170 incompatible
-          // machines; we only see it rarely, when using mprotect() to protect the guard page of
-          // a stack. It is an OS error.
-          //
-          // A valid strategy is just to try again. This usually works. :-/
-
-          ::usleep(1000);
-          Events::log(NULL, "Protecting memory [" INTPTR_FORMAT "," INTPTR_FORMAT "] with protection modes %x", p2i(addr), p2i(addr+size), prot);
-          if (::mprotect(addr, size, prot) == 0) {
-            const bool read_protected_2 =
-              (SafeFetch32((int*)addr, 0x12345678) == 0x12345678 &&
-              SafeFetch32((int*)addr, 0x76543210) == 0x76543210) ? true : false;
-            rc = true;
-          }
+        ::usleep(1000);
+        Events::log(NULL, "Protecting memory [" INTPTR_FORMAT "," INTPTR_FORMAT "] with protection modes %x", p2i(addr), p2i(addr+size), prot);
+        if (::mprotect(addr, size, prot) == 0) {
+          const bool read_protected_2 =
+            (SafeFetch32((int*)addr, 0x12345678) == 0x12345678 &&
+            SafeFetch32((int*)addr, 0x76543210) == 0x76543210) ? true : false;
+          rc = true;
         }
       }
     }

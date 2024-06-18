@@ -3851,12 +3851,13 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
     // Fetches the factory for reflective objects
     @SuppressWarnings("removal")
     private static ReflectionFactory getReflectionFactory() {
-        if (reflectionFactory == null) {
-            reflectionFactory =
-                java.security.AccessController.doPrivileged
-                    (new ReflectionFactory.GetReflectionFactoryAction());
+        var factory = reflectionFactory;
+        if (factory != null) {
+            return factory;
         }
-        return reflectionFactory;
+        return reflectionFactory =
+                java.security.AccessController.doPrivileged
+                        (new ReflectionFactory.GetReflectionFactoryAction());
     }
     private static ReflectionFactory reflectionFactory;
 

@@ -1706,7 +1706,8 @@ public class HtmlDocletWriter {
         if (lower.startsWith("mailto:")
                 || lower.startsWith("http:")
                 || lower.startsWith("https:")
-                || lower.startsWith("file:")) {
+                || lower.startsWith("file:")
+                || lower.startsWith("ftp:")) {
             return text;
         }
         if (text.startsWith("#")) {

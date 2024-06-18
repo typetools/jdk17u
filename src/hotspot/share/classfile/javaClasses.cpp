@@ -819,8 +819,13 @@ void java_lang_String::print(oop java_string, outputStream* st) {
 
   st->print("\"");
   for (int index = 0; index < length; index++) {
-    st->print("%c", (!is_latin1) ?  value->char_at(index) :
-                           ((jchar) value->byte_at(index)) & 0xff );
+    jchar c = (!is_latin1) ?  value->char_at(index) :
+                             ((jchar) value->byte_at(index)) & 0xff;
+    if (c < ' ') {
+      st->print("\\x%02X", c); // print control characters e.g. \x0A
+    } else {
+      st->print("%c", c);
+    }
   }
   st->print("\"");
 }
@@ -1793,9 +1798,16 @@ JavaThread* java_lang_Thread::thread(oop java_thread) {
   return (JavaThread*)java_thread->address_field(_eetop_offset);
 }
 
+JavaThread* java_lang_Thread::thread_acquire(oop java_thread) {
+  return reinterpret_cast<JavaThread*>(java_thread->address_field_acquire(_eetop_offset));
+}
 
 void java_lang_Thread::set_thread(oop java_thread, JavaThread* thread) {
   java_thread->address_field_put(_eetop_offset, (address)thread);
+}
+
+void java_lang_Thread::release_set_thread(oop java_thread, JavaThread* thread) {
+  java_thread->release_address_field_put(_eetop_offset, (address)thread);
 }
 
 bool java_lang_Thread::interrupted(oop java_thread) {
@@ -2064,18 +2076,17 @@ oop java_lang_Throwable::message(oop throwable) {
   return throwable->obj_field(_detailMessage_offset);
 }
 
-oop java_lang_Throwable::cause(oop throwable) {
-  return throwable->obj_field(_cause_offset);
+const char* java_lang_Throwable::message_as_utf8(oop throwable) {
+  oop msg = java_lang_Throwable::message(throwable);
+  const char* msg_utf8 = nullptr;
+  if (msg != nullptr) {
+    msg_utf8 = java_lang_String::as_utf8_string(msg);
+  }
+  return msg_utf8;
 }
 
-// Return Symbol for detailed_message or NULL
-Symbol* java_lang_Throwable::detail_message(oop throwable) {
-  PreserveExceptionMark pm(Thread::current());
-  oop detailed_message = java_lang_Throwable::message(throwable);
-  if (detailed_message != NULL) {
-    return java_lang_String::as_symbol(detailed_message);
-  }
-  return NULL;
+oop java_lang_Throwable::cause(oop throwable) {
+  return throwable->obj_field(_cause_offset);
 }
 
 void java_lang_Throwable::set_message(oop throwable, oop value) {
@@ -2727,15 +2738,19 @@ Handle java_lang_Throwable::create_initialization_error(JavaThread* current, Han
   assert(throwable.not_null(), "shouldn't be");
 
   // Now create the message from the original exception and thread name.
-  Symbol* message = java_lang_Throwable::detail_message(throwable());
   ResourceMark rm(current);
   stringStream st;
+  const char *message = nullptr;
+  oop detailed_message = java_lang_Throwable::message(throwable());
+  if (detailed_message != nullptr) {
+    message = java_lang_String::as_utf8_string(detailed_message);
+  }
   st.print("Exception %s%s ", throwable()->klass()->name()->as_klass_external_name(),
              message == nullptr ? "" : ":");
-  if (message == NULL) {
+  if (message == nullptr) {
     st.print("[in thread \"%s\"]", current->name());
   } else {
-    st.print("%s [in thread \"%s\"]", message->as_C_string(), current->name());
+    st.print("%s [in thread \"%s\"]", message, current->name());
   }
 
   Symbol* exception_name = vmSymbols::java_lang_ExceptionInInitializerError();

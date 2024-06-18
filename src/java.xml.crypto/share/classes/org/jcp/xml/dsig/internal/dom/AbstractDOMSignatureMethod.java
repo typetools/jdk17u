@@ -24,25 +24,26 @@
 package org.jcp.xml.dsig.internal.dom;
 
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
-import org.checkerframework.dataflow.qual.SideEffectFree;
 
 import java.security.Key;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.SignatureException;
 import java.security.spec.AlgorithmParameterSpec;
+
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dom.DOMCryptoContext;
 import javax.xml.crypto.dsig.SignatureMethod;
 import javax.xml.crypto.dsig.SignedInfo;
+import javax.xml.crypto.dsig.XMLSignContext;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
-import javax.xml.crypto.dsig.XMLSignContext;
 import javax.xml.crypto.dsig.XMLValidateContext;
 import javax.xml.crypto.dsig.spec.SignatureMethodParameterSpec;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -55,7 +56,7 @@ abstract class AbstractDOMSignatureMethod extends DOMStructure
     implements SignatureMethod {
 
     // denotes the type of signature algorithm
-    enum Type { DSA, RSA, ECDSA, HMAC }
+    enum Type { DSA, RSA, ECDSA, EDDSA, HMAC }
 
     /**
      * Verifies the passed-in signature with the specified key, using the
