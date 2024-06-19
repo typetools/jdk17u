@@ -183,7 +183,6 @@ public abstract class BranchInstruction extends Instruction implements Instructi
      * @param position the position to set
      * @since 6.0
      */
-    @Override
     @Pure
     protected void setPosition(final int position) {
         this.position = position;
