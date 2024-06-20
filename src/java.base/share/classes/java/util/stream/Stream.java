@@ -1697,7 +1697,7 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
          * @throws IllegalStateException if the builder has already transitioned to
          * the built state
          */
-        @PolyNonEmpty Stream<T> build(@PolyNonEmpty Stream.Builder<T> this);
+        @PolyNonEmpty Stream<T> build(Stream.@PolyNonEmpty Builder<T> this);
 
     }
 }

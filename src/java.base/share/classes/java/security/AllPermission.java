@@ -236,7 +236,7 @@ final class AllPermissionCollection
                 return hasMore;
             }
 
-            public Permission nextElement(@NonEmpty Enumeration<Permission> this) {
+            public Permission nextElement(/*@NonEmpty Enumeration<Permission> this*/) {
                 hasMore = false;
                 return SecurityConstants.ALL_PERMISSION;
             }
