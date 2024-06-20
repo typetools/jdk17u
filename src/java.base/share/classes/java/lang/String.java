@@ -45,6 +45,7 @@ import org.checkerframework.checker.regex.qual.PolyRegex;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.PolySignature;
 import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.common.aliasing.qual.Unique;
 import org.checkerframework.common.value.qual.ArrayLen;
 import org.checkerframework.common.value.qual.ArrayLenRange;
 import org.checkerframework.common.value.qual.EnsuresMinLenIf;
@@ -56,7 +57,6 @@ import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
-import org.checkerframework.common.aliasing.qual.Unique;
 
 import java.io.ObjectStreamField;
 import java.io.UnsupportedEncodingException;
@@ -615,9 +615,9 @@ public final class String
                     }
                 }
                 if (dp == 0 || dst == null) {
-                    dst = new byte[length << 1];
+                    dst = StringUTF16.newBytesFor(length);
                 } else {
-                    byte[] buf = new byte[length << 1];
+                    byte[] buf = StringUTF16.newBytesFor(length);
                     StringLatin1.inflate(dst, 0, buf, 0, dp);
                     dst = buf;
                 }
@@ -641,7 +641,7 @@ public final class String
                 this.value = Arrays.copyOfRange(bytes, offset, offset + length);
                 this.coder = LATIN1;
             } else {
-                byte[] dst = new byte[length << 1];
+                byte[] dst = StringUTF16.newBytesFor(length);
                 int dp = 0;
                 while (dp < length) {
                     int b = bytes[offset++];
@@ -775,9 +775,9 @@ public final class String
                 }
             }
             if (dp == 0 || dst == null) {
-                dst = new byte[length << 1];
+                dst = StringUTF16.newBytesFor(length);
             } else {
-                byte[] buf = new byte[length << 1];
+                byte[] buf = StringUTF16.newBytesFor(length);
                 StringLatin1.inflate(dst, 0, buf, 0, dp);
                 dst = buf;
             }
@@ -1319,7 +1319,7 @@ public final class String
             return Arrays.copyOf(val, val.length);
 
         int dp = 0;
-        byte[] dst = new byte[val.length << 1];
+        byte[] dst = StringUTF16.newBytesFor(val.length);
         for (byte c : val) {
             if (c < 0) {
                 dst[dp++] = (byte) (0xc0 | ((c & 0xff) >> 6));
@@ -4608,7 +4608,7 @@ public final class String
      */
     @Pure
     @StaticallyExecutable
-    public native @Interned @SameLen({"this"}) @PolySignature @PolyRegex @PolyValue String intern(@PolySignature @PolyRegex @PolyValue String this);
+    public native @Interned @SameLen({"this"}) @PolyRegex @PolySignature @PolyValue String intern(@PolyRegex @PolySignature @PolyValue String this);
 
     /**
      * Returns a string whose value is the concatenation of this

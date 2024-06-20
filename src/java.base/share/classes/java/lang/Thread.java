@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1994, 2021, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1994, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -169,7 +169,14 @@ public
 
     /* Fields reserved for exclusive use by the JVM */
     private boolean stillborn = false;
-    private long eetop;
+
+    /*
+     * Reserved for exclusive use by the JVM. The historically named
+     * `eetop` holds the address of the underlying VM JavaThread, and is set to
+     * non-zero when the thread is started, and reset to zero when the thread terminates.
+     * A non-zero value indicates this thread isAlive().
+     */
+    private volatile long eetop;
 
     /* What will be run. */
     private Runnable target;
@@ -1064,7 +1071,9 @@ public
      *          {@code false} otherwise.
      */
     @Pure
-    public final native boolean isAlive(@GuardSatisfied Thread this);
+    public final boolean isAlive(@GuardSatisfied Thread this) {
+        return eetop != 0;
+    }
 
     /**
      * Suspends this thread.

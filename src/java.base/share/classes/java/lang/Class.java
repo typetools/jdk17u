@@ -36,6 +36,7 @@ import org.checkerframework.checker.signature.qual.CanonicalName;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.ClassGetSimpleName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.checkerframework.checker.signedness.qual.Signed;
 import org.checkerframework.common.reflection.qual.ForName;
 import org.checkerframework.common.reflection.qual.GetConstructor;
 import org.checkerframework.common.reflection.qual.GetMethod;
@@ -3851,12 +3852,13 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
     // Fetches the factory for reflective objects
     @SuppressWarnings("removal")
     private static ReflectionFactory getReflectionFactory() {
-        if (reflectionFactory == null) {
-            reflectionFactory =
-                java.security.AccessController.doPrivileged
-                    (new ReflectionFactory.GetReflectionFactoryAction());
+        var factory = reflectionFactory;
+        if (factory != null) {
+            return factory;
         }
-        return reflectionFactory;
+        return reflectionFactory =
+                java.security.AccessController.doPrivileged
+                        (new ReflectionFactory.GetReflectionFactoryAction());
     }
     private static ReflectionFactory reflectionFactory;
 
@@ -3947,7 +3949,7 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
      */
     @SuppressWarnings("unchecked")
     @IntrinsicCandidate
-    public @PolyNull T cast(@PolyNull Object obj) {
+    public @PolyNull @Signed T cast(@PolyNull Object obj) {
         if (obj != null && !isInstance(obj))
             throw new ClassCastException(cannotCastMsg(obj));
         return (T) obj;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,11 +25,12 @@
 
 package com.sun.security.auth;
 
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
-import org.checkerframework.dataflow.qual.SideEffectFree;
 
 import java.security.Principal;
 
@@ -49,6 +50,7 @@ import java.security.Principal;
  */
 public class NTUserPrincipal implements Principal, java.io.Serializable {
 
+    @java.io.Serial
     private static final long serialVersionUID = -8737649811939033735L;
 
     /**
@@ -122,9 +124,7 @@ public class NTUserPrincipal implements Principal, java.io.Serializable {
             return false;
         NTUserPrincipal that = (NTUserPrincipal)o;
 
-            if (name.equals(that.getName()))
-                return true;
-            return false;
+        return name.equals(that.getName());
     }
 
     /**
@@ -134,5 +134,26 @@ public class NTUserPrincipal implements Principal, java.io.Serializable {
      */
     public int hashCode() {
             return this.getName().hashCode();
+    }
+
+
+    /**
+     * Restores the state of this object from the stream.
+     *
+     * @param  stream the {@code ObjectInputStream} from which data is read
+     * @throws IOException if an I/O error occurs
+     * @throws ClassNotFoundException if a serialized class cannot be loaded
+     */
+    @java.io.Serial
+    private void readObject(ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        if (name == null) {
+            java.text.MessageFormat form = new java.text.MessageFormat
+                    (sun.security.util.ResourcesMgr.getAuthResourceString
+                            ("invalid.null.input.value"));
+            Object[] source = {"name"};
+            throw new InvalidObjectException(form.format(source));
+        }
     }
 }
