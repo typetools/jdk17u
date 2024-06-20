@@ -1131,7 +1131,7 @@ public class JarFile extends ZipFile {
                 return false;
             }
 
-            public JarEntry nextElement(@NonEmpty Enumeration<JarEntry> this) {
+            public JarEntry nextElement(/*@NonEmpty Enumeration<JarEntry> this*/) {
                 if (hasMoreElements()) {
                     JarEntry je = entry;
                     entry = null;
@@ -1188,7 +1188,7 @@ public class JarFile extends ZipFile {
                 return false;
             }
 
-            public String nextElement(@NonEmpty Enumeration<String> this) {
+            public String nextElement(/*@NonEmpty Enumeration<String> this*/) {
                 if (hasMoreElements()) {
                     String value = name;
                     name = null;

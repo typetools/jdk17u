@@ -129,7 +129,7 @@ public interface Enumeration<E> {
             @Override public boolean hasNext() {
                 return hasMoreElements();
             }
-            @Override public E next(@NonEmpty Iterator<E> this) {
+            @Override public E next(/*@NonEmpty Iterator<E> this*/) {
                 return nextElement();
             }
         };

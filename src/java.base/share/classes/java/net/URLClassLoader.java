@@ -672,7 +672,7 @@ public class URLClassLoader extends SecureClassLoader implements Closeable {
                 return url != null;
             }
 
-            public URL nextElement(@NonEmpty Enumeration<URL> this) {
+            public URL nextElement(/*@NonEmpty Enumeration<URL> this*/) {
                 if (!next()) {
                     throw new NoSuchElementException();
                 }

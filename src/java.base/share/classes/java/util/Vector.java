@@ -357,7 +357,7 @@ public class Vector<E>
                 return count < elementCount;
             }
 
-            public E nextElement(@NonEmpty Enumeration<E> this) {
+            public E nextElement(/*@NonEmpty Enumeration<E> this*/) {
                 synchronized (Vector.this) {
                     if (count < elementCount) {
                         return elementData(count++);

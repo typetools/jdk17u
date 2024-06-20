@@ -1346,7 +1346,7 @@ public final class URL implements java.io.Serializable {
                 return getNext();
             }
 
-            public URLStreamHandlerProvider next(@NonEmpty Iterator<URLStreamHandlerProvider> this) {
+            public URLStreamHandlerProvider next(/*@NonEmpty Iterator<URLStreamHandlerProvider> this*/) {
                 if (!getNext())
                     throw new NoSuchElementException();
                 URLStreamHandlerProvider n = next;

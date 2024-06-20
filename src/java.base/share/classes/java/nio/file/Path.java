@@ -958,7 +958,7 @@ public interface Path
             }
 
             @Override
-            public Path next(@NonEmpty Iterator<Path> this) {
+            public Path next(/*@NonEmpty Iterator<Path> this*/) {
                 if (i < getNameCount()) {
                     Path result = getName(i);
                     i++;

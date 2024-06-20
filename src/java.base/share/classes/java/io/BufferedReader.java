@@ -595,7 +595,7 @@ public class BufferedReader extends Reader {
             }
 
             @Override
-            public String next(@NonEmpty Iterator<String> this) {
+            public String next(/*@NonEmpty Iterator<String> this*/) {
                 if (nextLine != null || hasNext()) {
                     String line = nextLine;
                     nextLine = null;

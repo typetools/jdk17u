@@ -418,7 +418,7 @@ public final class NetworkInterface {
             int i = 0;
 
             @Override
-            public T nextElement(@NonEmpty Enumeration<T> this) {
+            public T nextElement(/*@NonEmpty Enumeration<T> this*/) {
                 if (i < a.length) {
                     return a[i++];
                 } else {

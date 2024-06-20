@@ -1094,7 +1094,7 @@ public class Collections {
 
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext() {return i.hasNext();}
-                public E next(@NonEmpty Iterator<E> this)          {return i.next();}
+                public E next(/*@NonEmpty Iterator<E> this*/)          {return i.next();}
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
@@ -1426,7 +1426,7 @@ public class Collections {
 
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext()     {return i.hasNext();}
-                public E next(@NonEmpty ListIterator<E> this)              {return i.next();}
+                public E next(/*@NonEmpty ListIterator<E> this*/)              {return i.next();}
                 public boolean hasPrevious() {return i.hasPrevious();}
                 public E previous()          {return i.previous();}
                 public int nextIndex()       {return i.nextIndex();}
@@ -1767,7 +1767,7 @@ public class Collections {
                     public boolean hasNext() {
                         return i.hasNext();
                     }
-                    public Map.Entry<K,V> next(@NonEmpty Iterator<Map.Entry<K,V>> this) {
+                    public Map.Entry<K,V> next(/*@NonEmpty Iterator<Map.Entry<K,V>> this*/) {
                         return new UnmodifiableEntry<>(i.next());
                     }
                     public void remove() {
@@ -3287,7 +3287,7 @@ public class Collections {
             return new Iterator<E>() {
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext() { return it.hasNext(); }
-                public E next(@NonEmpty Iterator<E> this)          { return it.next(); }
+                public E next(/*@NonEmpty Iterator<E> this*/)          { return it.next(); }
                 public void remove()     {        it.remove(); }
                 public void forEachRemaining(Consumer<? super E> action) {
                     it.forEachRemaining(action);
@@ -3681,7 +3681,7 @@ public class Collections {
             return new ListIterator<E>() {
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext()     { return i.hasNext(); }
-                public E next(@NonEmpty ListIterator<E> this)              { return i.next(); }
+                public E next(/*@NonEmpty ListIterator<E> this*/)              { return i.next(); }
                 public boolean hasPrevious() { return i.hasPrevious(); }
                 public E previous()          { return i.previous(); }
                 public int nextIndex()       { return i.nextIndex(); }
@@ -4005,7 +4005,7 @@ public class Collections {
                     public boolean hasNext() { return i.hasNext(); }
                     public void remove()     { i.remove(); }
 
-                    public Map.Entry<K,V> next(@NonEmpty Iterator<Map.Entry<K,V>> this) {
+                    public Map.Entry<K,V> next(/*@NonEmpty Iterator<Map.Entry<K,V>> this*/) {
                         return checkedEntry(i.next(), valueType);
                     }
 
@@ -4998,7 +4998,7 @@ public class Collections {
             public boolean hasNext() {
                 return hasNext;
             }
-            public E next(@NonEmpty Iterator<E> this) {
+            public E next(/*@NonEmpty Iterator<E> this*/) {
                 if (hasNext) {
                     hasNext = false;
                     return e;
@@ -5653,7 +5653,7 @@ public class Collections {
                 return i.hasNext();
             }
 
-            public T nextElement(@NonEmpty Enumeration<T> this) {
+            public T nextElement(/*@NonEmpty Enumeration<T> this*/) {
                 return i.next();
             }
         };

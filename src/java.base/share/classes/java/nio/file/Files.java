@@ -3825,7 +3825,7 @@ public final @UsesObjectEquals class Files {
                     }
                 }
                 @Override
-                public Path next(@NonEmpty Iterator<Path> this) {
+                public Path next(/*@NonEmpty Iterator<Path> this*/) {
                     try {
                         return delegate.next();
                     } catch (DirectoryIteratorException e) {

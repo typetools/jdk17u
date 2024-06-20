@@ -1322,7 +1322,7 @@ public final @UsesObjectEquals class ServiceLoader<S>
                     return (first.hasNext() || second.hasNext());
                 }
                 @Override
-                public Provider<S> next(@NonEmpty Iterator<Provider<S>> this) {
+                public Provider<S> next(/*@NonEmpty Iterator<Provider<S>> this*/) {
                     if (first.hasNext()) {
                         return first.next();
                     } else if (second.hasNext()) {
@@ -1409,7 +1409,7 @@ public final @UsesObjectEquals class ServiceLoader<S>
             }
 
             @Override
-            public S next(@NonEmpty Iterator<S> this) {
+            public S next(/*@NonEmpty Iterator<S> this*/) {
                 checkReloadCount();
                 S next;
                 if (index < instantiatedProviders.size()) {

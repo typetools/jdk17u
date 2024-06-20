@@ -853,7 +853,7 @@ class ImmutableCollections {
 
                 @Override
                 @SuppressWarnings("unchecked")
-                public E next(@NonEmpty Iterator<E> this) {
+                public E next(/*@NonEmpty Iterator<E> this*/) {
                     if (idx == 1) {
                         idx = 0;
                         return (REVERSE || e1 == EMPTY) ? e0 : (E)e1;

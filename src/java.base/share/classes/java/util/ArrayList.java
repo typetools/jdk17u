@@ -1338,7 +1338,7 @@ public class ArrayList<E> extends AbstractList<E>
                 }
 
                 @SuppressWarnings("unchecked")
-                public E next(@NonEmpty ListIterator<E> this) {
+                public E next(/*@NonEmpty ListIterator<E> this*/) {
                     checkForComodification();
                     int i = cursor;
                     if (i >= SubList.this.size)

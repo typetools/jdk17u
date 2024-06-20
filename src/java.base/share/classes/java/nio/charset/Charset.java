@@ -361,7 +361,7 @@ public abstract class Charset
                     return getNext();
                 }
 
-                public CharsetProvider next(@NonEmpty Iterator<CharsetProvider> this) {
+                public CharsetProvider next(/*@NonEmpty Iterator<CharsetProvider> this*/) {
                     if (!getNext())
                         throw new NoSuchElementException();
                     CharsetProvider n = next;

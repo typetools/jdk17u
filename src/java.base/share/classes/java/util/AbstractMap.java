@@ -385,7 +385,7 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
                             return i.hasNext();
                         }
 
-                        public K next(@NonEmpty Iterator<K> this) {
+                        public K next(/*@NonEmpty Iterator<K> this*/) {
                             return i.next().getKey();
                         }
 
@@ -450,7 +450,7 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
                             return i.hasNext();
                         }
 
-                        public V next(@NonEmpty Iterator<V> this) {
+                        public V next(/*@NonEmpty Iterator<V> this*/) {
                             return i.next().getValue();
                         }
 

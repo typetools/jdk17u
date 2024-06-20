@@ -1129,7 +1129,7 @@ public final class Subject implements java.io.Serializable {
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext() {return i.hasNext();}
 
-                public E next(@NonEmpty Iterator<E> this) {
+                public E next(/*@NonEmpty Iterator<E> this*/) {
                     if (which != Subject.PRIV_CREDENTIAL_SET) {
                         return i.next();
                     }

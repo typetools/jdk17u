@@ -871,7 +871,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
                     return nextIndex() < size;
                 }
 
-                public E next(@NonEmpty ListIterator<E> this) {
+                public E next(/*@NonEmpty ListIterator<E> this*/) {
                     if (hasNext())
                         return i.next();
                     else
