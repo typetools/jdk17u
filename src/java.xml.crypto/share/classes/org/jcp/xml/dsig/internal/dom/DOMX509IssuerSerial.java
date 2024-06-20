@@ -26,6 +26,7 @@
 package org.jcp.xml.dsig.internal.dom;
 
 import java.math.BigInteger;
+
 import javax.security.auth.x500.X500Principal;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
