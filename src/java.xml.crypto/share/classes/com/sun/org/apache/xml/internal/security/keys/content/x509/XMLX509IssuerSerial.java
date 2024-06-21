@@ -23,10 +23,8 @@
 package com.sun.org.apache.xml.internal.security.keys.content.x509;
 
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
-import org.checkerframework.dataflow.qual.SideEffectFree;
 
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
