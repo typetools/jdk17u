@@ -27,6 +27,8 @@ package java.util;
 
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyForIf;
 import org.checkerframework.checker.nullness.qual.KeyFor;
@@ -305,6 +307,7 @@ public class IdentityHashMap<K,V>
      *         mappings
      */
     @Pure
+    @EnsuresNonEmptyIf(result = false, expression = "this")
     public boolean isEmpty(@GuardSatisfied IdentityHashMap<K, V> this) {
         return size == 0;
     }
@@ -744,6 +747,7 @@ public class IdentityHashMap<K,V>
         boolean indexValid; // To avoid unnecessary next computation
         Object[] traversalTable = table; // reference to main table or copy
 
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasNext() {
             Object[] tab = traversalTable;
             for (int i = index; i < tab.length; i+=2) {
@@ -757,7 +761,7 @@ public class IdentityHashMap<K,V>
             return false;
         }
 
-        protected int nextIndex() {
+        protected int nextIndex(@NonEmpty IdentityHashMapIterator<T> this) {
             if (modCount != expectedModCount)
                 throw new ConcurrentModificationException();
             if (!indexValid && !hasNext())
@@ -849,14 +853,14 @@ public class IdentityHashMap<K,V>
 
     private class KeyIterator extends IdentityHashMapIterator<K> {
         @SuppressWarnings("unchecked")
-        public K next() {
+        public K next(@NonEmpty KeyIterator this) {
             return (K) unmaskNull(traversalTable[nextIndex()]);
         }
     }
 
     private class ValueIterator extends IdentityHashMapIterator<V> {
         @SuppressWarnings("unchecked")
-        public V next() {
+        public V next(@NonEmpty ValueIterator this) {
             return (V) traversalTable[nextIndex() + 1];
         }
     }
@@ -866,7 +870,7 @@ public class IdentityHashMap<K,V>
     {
         private Entry lastReturnedEntry;
 
-        public Map.Entry<K,V> next() {
+        public Map.Entry<K,V> next(@NonEmpty EntryIterator this) {
             lastReturnedEntry = new Entry(nextIndex());
             return lastReturnedEntry;
         }
@@ -1008,6 +1012,7 @@ public class IdentityHashMap<K,V>
             return size;
         }
         @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsKey(o);
         }
@@ -1121,6 +1126,7 @@ public class IdentityHashMap<K,V>
             return size;
         }
         @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsValue(o);
         }
@@ -1228,6 +1234,7 @@ public class IdentityHashMap<K,V>
             return new EntryIterator();
         }
         @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return o instanceof Entry<?, ?> entry
                     && containsMapping(entry.getKey(), entry.getValue());
