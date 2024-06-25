@@ -26,6 +26,8 @@
 package java.util.jar;
 
 import org.checkerframework.checker.interning.qual.Interned;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.value.qual.StringVal;
 import org.checkerframework.framework.qual.AnnotatedFor;
@@ -1123,6 +1125,7 @@ public class JarFile extends ZipFile {
 
             JarEntry entry;
 
+            @EnsuresNonEmptyIf(result = true, expression = "this")
             public boolean hasMoreElements() {
                 if (entry != null) {
                     return true;
@@ -1138,7 +1141,7 @@ public class JarFile extends ZipFile {
                 return false;
             }
 
-            public JarEntry nextElement() {
+            public JarEntry nextElement(/*@NonEmpty Enumeration<JarEntry> this*/) {
                 if (hasMoreElements()) {
                     JarEntry je = entry;
                     entry = null;
@@ -1177,6 +1180,7 @@ public class JarFile extends ZipFile {
              * Grab entries from ZIP directory but screen out
              * metadata.
              */
+            @EnsuresNonEmptyIf(result = true, expression = "this")
             public boolean hasMoreElements() {
                 if (name != null) {
                     return true;
@@ -1194,7 +1198,7 @@ public class JarFile extends ZipFile {
                 return false;
             }
 
-            public String nextElement() {
+            public String nextElement(/*@NonEmpty Enumeration<String> this*/) {
                 if (hasMoreElements()) {
                     String value = name;
                     name = null;
