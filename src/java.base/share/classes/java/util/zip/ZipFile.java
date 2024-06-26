@@ -145,6 +145,13 @@ public @UsesObjectEquals class ZipFile implements ZipConstants, Closeable {
             getDisableZip64ExtraFieldValidation();
 
     /**
+     * Flag to specify whether the Extra ZIP64 validation should be
+     * disabled.
+     */
+    private static final boolean DISABLE_ZIP64_EXTRA_VALIDATION =
+            getDisableZip64ExtraFieldValidation();
+
+    /**
      * Opens a zip file for reading.
      *
      * <p>First, if there is a security manager, its {@code checkRead}
