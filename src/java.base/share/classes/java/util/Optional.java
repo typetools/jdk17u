@@ -290,7 +290,6 @@ public final @NonNull class Optional<T> {
      * {@code map} returns an {@code Optional<Path>} for the desired
      * URI if one exists.
      *
-     *
      * @param mapper the mapping function to apply to a value, if present
      * @param <U> The type of the value returned from the mapping function
      * @return an {@code Optional} describing the result of applying a mapping
@@ -298,7 +297,7 @@ public final @NonNull class Optional<T> {
      *         present, otherwise an empty {@code Optional}
      * @throws NullPointerException if the mapping function is {@code null}
      */
-    @CFComment({"optional: the mapper should be side-effect free with respect to the function that is applied to the value inside the optional."})
+    @CFComment({"@SideEffectFree: the mapper not have side effects."})
     @OptionalPropagator
     @SideEffectFree
     public <U> Optional<U> map(Function<? super T, ? extends @Nullable U> mapper) {

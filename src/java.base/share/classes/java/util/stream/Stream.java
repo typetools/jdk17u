@@ -1122,6 +1122,7 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
      *                    first result container.
      * @return the result of the reduction
      */
+    @CFComment("@SideEffectFree: the supplied functions should not have side effects")
     @SideEffectFree
     <R> R collect(Supplier<R> supplier,
                   BiConsumer<R, ? super T> accumulator,
@@ -1179,6 +1180,7 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
      * @see #collect(Supplier, BiConsumer, BiConsumer)
      * @see Collectors
      */
+    @CFComment("@SideEffectFree: the collector should not have side effects")
     @SideEffectFree
     <R, A> R collect(Collector<? super T, A, R> collector);
 

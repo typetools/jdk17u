@@ -748,7 +748,6 @@ public interface Map<K, V> {
      * removed during iteration
      * @since 1.8
      */
-    @SideEffectFree
     default void forEach(@NonLeaked BiConsumer<? super K, ? super V> action) {
         Objects.requireNonNull(action);
         for (Map.Entry<K, V> entry : entrySet()) {
