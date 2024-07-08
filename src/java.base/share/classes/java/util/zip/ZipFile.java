@@ -36,6 +36,7 @@ import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.SignedPositive;
 import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
 
@@ -515,18 +516,21 @@ public @UsesObjectEquals class ZipFile implements ZipConstants, Closeable {
         }
 
         @Override
+        @Pure
         @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasNext() {
             return i < entryCount;
         }
 
         @Override
+        @SideEffectsOnly("this")
         public T nextElement(@NonEmpty ZipEntryIterator<T> this) {
             return next();
         }
 
         @Override
         @SuppressWarnings("unchecked")
+        @SideEffectsOnly("this")
         public T next(@NonEmpty ZipEntryIterator<T> this) {
             synchronized (ZipFile.this) {
                 ensureOpen();

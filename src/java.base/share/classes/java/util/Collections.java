@@ -44,6 +44,7 @@ import org.checkerframework.common.value.qual.MinLen;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
 
@@ -1092,8 +1093,10 @@ public class Collections {
             return new Iterator<E>() {
                 private final Iterator<? extends E> i = c.iterator();
 
+                @Pure
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext() {return i.hasNext();}
+                @SideEffectsOnly("this")
                 public E next(/*@NonEmpty Iterator<E> this*/)          {return i.next();}
                 public void remove() {
                     throw new UnsupportedOperationException();
@@ -1424,10 +1427,14 @@ public class Collections {
                 private final ListIterator<? extends E> i
                     = list.listIterator(index);
 
+                @Pure
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext()     {return i.hasNext();}
+                @SideEffectsOnly("this")
                 public E next(/*@NonEmpty ListIterator<E> this*/)              {return i.next();}
+                @Pure
                 public boolean hasPrevious() {return i.hasPrevious();}
+                @SideEffectsOnly("this")
                 public E previous()          {return i.previous();}
                 public int nextIndex()       {return i.nextIndex();}
                 public int previousIndex()   {return i.previousIndex();}
@@ -1763,10 +1770,12 @@ public class Collections {
                 return new Iterator<Map.Entry<K,V>>() {
                     private final Iterator<? extends Map.Entry<? extends K, ? extends V>> i = c.iterator();
 
+                    @Pure
                     @EnsuresNonEmptyIf(result = true, expression = "this")
                     public boolean hasNext() {
                         return i.hasNext();
                     }
+                    @SideEffectsOnly("this")
                     public Map.Entry<K,V> next(/*@NonEmpty Iterator<Map.Entry<K,V>> this*/) {
                         return new UnmodifiableEntry<>(i.next());
                     }
@@ -3285,8 +3294,10 @@ public class Collections {
             // ListIterator with unsafe set()
             final Iterator<E> it = c.iterator();
             return new Iterator<E>() {
+                @Pure
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext() { return it.hasNext(); }
+                @SideEffectsOnly("this")
                 public E next(/*@NonEmpty Iterator<E> this*/)          { return it.next(); }
                 public void remove()     {        it.remove(); }
                 public void forEachRemaining(Consumer<? super E> action) {
@@ -3679,8 +3690,10 @@ public class Collections {
             final ListIterator<E> i = list.listIterator(index);
 
             return new ListIterator<E>() {
+                @Pure
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext()     { return i.hasNext(); }
+                @SideEffectsOnly("this")
                 public E next(/*@NonEmpty ListIterator<E> this*/)              { return i.next(); }
                 public boolean hasPrevious() { return i.hasPrevious(); }
                 public E previous()          { return i.previous(); }
@@ -4001,8 +4014,10 @@ public class Collections {
                 final Iterator<Map.Entry<K, V>> i = s.iterator();
 
                 return new Iterator<Map.Entry<K,V>>() {
+                    @Pure
                     @EnsuresNonEmptyIf(result = true, expression = "this")
                     public boolean hasNext() { return i.hasNext(); }
+                    @SideEffectsOnly("this")
                     public void remove()     { i.remove(); }
 
                     public Map.Entry<K,V> next(/*@NonEmpty Iterator<Map.Entry<K,V>> this*/) {
@@ -4454,8 +4469,10 @@ public class Collections {
         static final EmptyIterator<Object> EMPTY_ITERATOR
             = new EmptyIterator<>();
 
+        @Pure
         @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasNext() { return false; }
+        @SideEffectsOnly("this")
         public E next(@NonEmpty EmptyIterator<E> this) { throw new NoSuchElementException(); }
         public void remove(@NonEmpty EmptyIterator<E> this) { throw new IllegalStateException(); }
         @Override
@@ -4994,10 +5011,12 @@ public class Collections {
     static <E> Iterator<E> singletonIterator(final E e) {
         return new Iterator<E>() {
             private boolean hasNext = true;
+            @Pure
             @EnsuresNonEmptyIf(result = true, expression = "this")
             public boolean hasNext() {
                 return hasNext;
             }
+            @SideEffectsOnly("this")
             public E next(/*@NonEmpty Iterator<E> this*/) {
                 if (hasNext) {
                     hasNext = false;
