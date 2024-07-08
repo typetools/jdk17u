@@ -34,6 +34,7 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -375,11 +376,13 @@ class ImmutableCollections {
             isListIterator = true;
         }
 
+        @Pure
         @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasNext() {
             return cursor != size;
         }
 
+        @SideEffectsOnly("this")
         public E next(@NonEmpty ListItr<E> this) {
             try {
                 int i = cursor;
@@ -846,12 +849,14 @@ class ImmutableCollections {
                 private int idx = (e1 == EMPTY) ? 1 : 2;
 
                 @Override
+                @Pure
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext() {
                     return idx > 0;
                 }
 
                 @Override
+                @SideEffectsOnly("this")
                 @SuppressWarnings("unchecked")
                 public E next(/*@NonEmpty Iterator<E> this*/) {
                     if (idx == 1) {
@@ -982,12 +987,14 @@ class ImmutableCollections {
             }
 
             @Override
+            @Pure
             @EnsuresNonEmptyIf(result = true, expression = "this")
             public boolean hasNext() {
                 return remaining > 0;
             }
 
             @Override
+            @SideEffectsOnly("this")
             public E next(@NonEmpty SetNIterator this) {
                 if (remaining > 0) {
                     E element;
@@ -1303,11 +1310,13 @@ class ImmutableCollections {
             }
 
             @Override
+            @Pure
             @EnsuresNonEmptyIf(result = true, expression = "this")
             public boolean hasNext() {
                 return remaining > 0;
             }
 
+            @SideEffectsOnly("this")
             private int nextIndex() {
                 int idx = this.idx;
                 if (REVERSE) {
