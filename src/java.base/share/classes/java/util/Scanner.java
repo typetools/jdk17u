@@ -2632,7 +2632,7 @@ public final @UsesObjectEquals class Scanner implements Iterator<String>, Closea
      *         {@code BigInteger}
      * @throws IllegalStateException if this scanner is closed
      */
-    @pure
+    @Pure
     public boolean hasNextBigInteger(@GuardSatisfied Scanner this) {
         return hasNextBigInteger(defaultRadix);
     }
