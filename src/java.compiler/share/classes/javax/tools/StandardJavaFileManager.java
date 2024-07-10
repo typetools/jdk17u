@@ -25,9 +25,6 @@
 
 package javax.tools;
 
-import org.checkerframework.dataflow.qual.Pure;
-import org.checkerframework.dataflow.qual.SideEffectsOnly;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -493,13 +490,11 @@ public interface StandardJavaFileManager extends JavaFileManager {
             final Iterator<? extends File> iter = files.iterator();
 
             @Override
-            @Pure
             public boolean hasNext() {
                 return iter.hasNext();
             }
 
             @Override
-            @SideEffectsOnly("this")
             public Path next() {
                 return iter.next().toPath();
             }
@@ -511,13 +506,11 @@ public interface StandardJavaFileManager extends JavaFileManager {
             final Iterator<? extends Path> iter = paths.iterator();
 
             @Override
-            @Pure
             public boolean hasNext() {
                 return iter.hasNext();
             }
 
             @Override
-            @SideEffectsOnly("this")
             public File next() {
                 Path p = iter.next();
                 try {
