@@ -42,6 +42,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
@@ -1343,11 +1344,13 @@ public class ScheduledThreadPoolExecutor
                 this.array = array;
             }
 
+            @Pure
             @EnsuresNonEmptyIf(result = true, expression = "this")
             public boolean hasNext() {
                 return cursor < array.length;
             }
 
+            @SideEffectsOnly("this")
             public Runnable next(@NonEmpty Itr this) {
                 if (cursor >= array.length)
                     throw new NoSuchElementException();

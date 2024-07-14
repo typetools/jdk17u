@@ -36,6 +36,7 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
 import java.io.InvalidObjectException;
@@ -237,6 +238,7 @@ public class HashSet<E>
      * @return {@code true} if this set did not already contain the specified
      * element
      */
+    @SideEffectsOnly("this")
     @EnsuresNonEmpty("this")
     public boolean add(@GuardSatisfied HashSet<E> this, E e) {
         return map.put(e, PRESENT)==null;
@@ -254,6 +256,7 @@ public class HashSet<E>
      * @param o object to be removed from this set, if present
      * @return {@code true} if the set contained the specified element
      */
+    @SideEffectsOnly("this")
     public boolean remove(@GuardSatisfied HashSet<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
         return map.remove(o)==PRESENT;
     }
@@ -262,6 +265,7 @@ public class HashSet<E>
      * Removes all of the elements from this set.
      * The set will be empty after this call returns.
      */
+    @SideEffectsOnly("this")
     public void clear(@GuardSatisfied HashSet<E> this) {
         map.clear();
     }
