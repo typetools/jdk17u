@@ -1003,12 +1003,14 @@ public class ArrayList<E> extends AbstractList<E>
         // prevent creating a synthetic constructor
         Itr() {}
 
+        @Pure
         @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasNext() {
             return cursor != size;
         }
 
         @SuppressWarnings("unchecked")
+        @SideEffectsOnly("this")
         public E next(@NonEmpty Itr this) {
             checkForComodification();
             int i = cursor;
@@ -1339,12 +1341,14 @@ public class ArrayList<E> extends AbstractList<E>
                 int lastRet = -1;
                 int expectedModCount = SubList.this.modCount;
 
+                @Pure
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext() {
                     return cursor != SubList.this.size;
                 }
 
                 @SuppressWarnings("unchecked")
+                @SideEffectsOnly("this")
                 public E next(/*@NonEmpty ListIterator<E> this*/) {
                     checkForComodification();
                     int i = cursor;

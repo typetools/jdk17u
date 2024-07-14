@@ -39,6 +39,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
 
@@ -567,6 +568,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
         // Index of last returned element, or -1 if none
         int lastReturnedIndex = -1;
 
+        @Pure
         @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasNext() {
             while (index < vals.length && vals[index] == null)

@@ -1279,6 +1279,7 @@ public class Vector<E>
         int lastRet = -1; // index of last element returned; -1 if no such
         int expectedModCount = modCount;
 
+        @Pure
         @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasNext() {
             // Racy but within spec, since modifications are checked
@@ -1286,6 +1287,7 @@ public class Vector<E>
             return cursor != elementCount;
         }
 
+        @SideEffectsOnly("this")
         public E next(@NonEmpty Itr this) {
             synchronized (Vector.this) {
                 checkForComodification();

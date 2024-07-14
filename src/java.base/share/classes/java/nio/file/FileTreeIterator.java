@@ -27,6 +27,8 @@ package java.nio.file;
 
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -100,6 +102,7 @@ class FileTreeIterator implements Iterator<Event>, Closeable {
     }
 
     @Override
+    @Pure
     @EnsuresNonEmptyIf(result = true, expression = "this")
     public boolean hasNext() {
         if (!walker.isOpen())
@@ -109,6 +112,7 @@ class FileTreeIterator implements Iterator<Event>, Closeable {
     }
 
     @Override
+    @SideEffectsOnly("this")
     public Event next(@NonEmpty FileTreeIterator this) {
         if (!walker.isOpen())
             throw new IllegalStateException();
