@@ -35,6 +35,8 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import javax.xml.crypto.NodeSetData;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
