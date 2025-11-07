@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2022, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -300,7 +300,7 @@ JNIEXPORT void JNICALL Java_sun_awt_shell_Win32ShellFolderManager2_initializeCom
     HRESULT hr = ::CoInitialize(NULL);
     if (FAILED(hr)) {
         char c[64];
-        sprintf(c, "Could not initialize COM: HRESULT=0x%08X", hr);
+        snprintf(c, sizeof(c), "Could not initialize COM: HRESULT=0x%08X", hr);
         JNU_ThrowInternalError(env, c);
     }
 }
@@ -974,7 +974,7 @@ JNIEXPORT jlong JNICALL Java_sun_awt_shell_Win32ShellFolder2_extractIcon
         return 0;
     }
 
-    HICON hIcon = NULL;
+    HICON hIcon;
 
     HRESULT hres;
     IExtractIconW* pIcon;
@@ -987,13 +987,29 @@ JNIEXPORT jlong JNICALL Java_sun_awt_shell_Win32ShellFolder2_extractIcon
         UINT uFlags = getDefaultIcon ? GIL_DEFAULTICON : GIL_FORSHELL | GIL_ASYNC;
         hres = pIcon->GetIconLocation(uFlags, szBuf, MAX_PATH, &index, &flags);
         if (SUCCEEDED(hres)) {
+            UINT iconSize;
+            HICON hIconSmall;
             if (size < 24) {
-                size = 16;
+                iconSize = (size << 16) + 32;
+            } else {
+                iconSize = (16 << 16) + size;
             }
-            hres = pIcon->Extract(szBuf, index, &hIcon, NULL, size);
+            hres = pIcon->Extract(szBuf, index, &hIcon, &hIconSmall, iconSize);
+            if (SUCCEEDED(hres)) {
+                if (size < 24) {
+                    fn_DestroyIcon((HICON)hIcon);
+                    hIcon = hIconSmall;
+                } else {
+                    fn_DestroyIcon((HICON)hIconSmall);
+                }
+            } else {
+                hIcon = NULL;
+            }
         } else if (hres == E_PENDING) {
             pIcon->Release();
-            return E_PENDING;
+            return (unsigned) E_PENDING;
+        } else {
+            hIcon = NULL;
         }
         pIcon->Release();
     }
@@ -1064,12 +1080,12 @@ JNIEXPORT jintArray JNICALL Java_sun_awt_shell_Win32ShellFolder2_getIconBits
             // Extract the color bitmap
             int nBits = iconSize * iconSize;
 
-            long *colorBits = NULL;
-            long *maskBits = NULL;
+            jint *colorBits = NULL;
+            int *maskBits = NULL;
 
             try {
                 entry_point();
-                colorBits = (long*)safe_Malloc(MAX_ICON_SIZE * MAX_ICON_SIZE * sizeof(long));
+                colorBits = (jint*)safe_Malloc(MAX_ICON_SIZE * MAX_ICON_SIZE * sizeof(jint));
                 GetDIBits(dc, iconInfo.hbmColor, 0, iconSize, colorBits, &bmi, DIB_RGB_COLORS);
                 // XP supports alpha in some icons, and depending on device.
                 // This should take precedence over the icon mask bits.
@@ -1084,7 +1100,7 @@ JNIEXPORT jintArray JNICALL Java_sun_awt_shell_Win32ShellFolder2_getIconBits
                 }
                 if (!hasAlpha) {
                     // Extract the mask bitmap
-                    maskBits = (long*)safe_Malloc(MAX_ICON_SIZE * MAX_ICON_SIZE * sizeof(long));
+                    maskBits = (int*)safe_Malloc(MAX_ICON_SIZE * MAX_ICON_SIZE * sizeof(int));
                     GetDIBits(dc, iconInfo.hbmMask, 0, iconSize, maskBits, &bmi, DIB_RGB_COLORS);
                     // Copy the mask alphas into the color bits
                     for (int i = 0; i < nBits; i++) {

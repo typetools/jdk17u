@@ -552,6 +552,21 @@ void ClassLoaderData::unload() {
   // after erroneous classes are released.
   classes_do(InstanceKlass::unload_class);
 
+  // Method::clear_jmethod_ids only sets the jmethod_ids to NULL without
+  // releasing the memory for related JNIMethodBlocks and JNIMethodBlockNodes.
+  // This is done intentionally because native code (e.g. JVMTI agent) holding
+  // jmethod_ids may access them after the associated classes and class loader
+  // are unloaded. The Java Native Interface Specification says "method ID
+  // does not prevent the VM from unloading the class from which the ID has
+  // been derived. After the class is unloaded, the method or field ID becomes
+  // invalid". In real world usages, the native code may rely on jmethod_ids
+  // being NULL after class unloading. Hence, it is unsafe to free the memory
+  // from the VM side without knowing when native code is going to stop using
+  // them.
+  if (_jmethod_ids != NULL) {
+    Method::clear_jmethod_ids(this);
+  }
+
   // Clean up global class iterator for compiler
   ClassLoaderDataGraph::adjust_saved_class(this);
 }
@@ -696,20 +711,7 @@ ClassLoaderData::~ClassLoaderData() {
     _metaspace = NULL;
     delete m;
   }
-  // Method::clear_jmethod_ids only sets the jmethod_ids to NULL without
-  // releasing the memory for related JNIMethodBlocks and JNIMethodBlockNodes.
-  // This is done intentionally because native code (e.g. JVMTI agent) holding
-  // jmethod_ids may access them after the associated classes and class loader
-  // are unloaded. The Java Native Interface Specification says "method ID
-  // does not prevent the VM from unloading the class from which the ID has
-  // been derived. After the class is unloaded, the method or field ID becomes
-  // invalid". In real world usages, the native code may rely on jmethod_ids
-  // being NULL after class unloading. Hence, it is unsafe to free the memory
-  // from the VM side without knowing when native code is going to stop using
-  // them.
-  if (_jmethod_ids != NULL) {
-    Method::clear_jmethod_ids(this);
-  }
+
   // Delete lock
   delete _metaspace_lock;
 
@@ -983,14 +985,23 @@ void ClassLoaderData::print_on(outputStream* out) const {
   }
   out->print_cr(" - handles             %d", _handles.count());
   out->print_cr(" - dependency count    %d", _dependency_count);
-  out->print   (" - klasses             {");
-  PrintKlassClosure closure(out);
-  ((ClassLoaderData*)this)->classes_do(&closure);
+  out->print   (" - klasses             { ");
+  if (Verbose) {
+    PrintKlassClosure closure(out);
+    ((ClassLoaderData*)this)->classes_do(&closure);
+  } else {
+     out->print("...");
+  }
   out->print_cr(" }");
   out->print_cr(" - packages            " INTPTR_FORMAT, p2i(_packages));
   out->print_cr(" - module              " INTPTR_FORMAT, p2i(_modules));
   out->print_cr(" - unnamed module      " INTPTR_FORMAT, p2i(_unnamed_module));
-  out->print_cr(" - dictionary          " INTPTR_FORMAT, p2i(_dictionary));
+  if (_dictionary != nullptr) {
+    out->print   (" - dictionary          " INTPTR_FORMAT " ", p2i(_dictionary));
+    _dictionary->print_size(out);
+  } else {
+    out->print_cr(" - dictionary          " INTPTR_FORMAT, p2i(_dictionary));
+  }
   if (_jmethod_ids != NULL) {
     out->print   (" - jmethod count       ");
     Method::print_jmethod_ids_count(this, out);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2020, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -60,7 +60,6 @@ static char *isFileIdentical(char* buf, size_t size, char *pathname);
 #endif
 
 #if defined(__linux__) || defined(_ALLBSD_SOURCE)
-static const char *ETC_TIMEZONE_FILE = "/etc/timezone";
 static const char *ZONEINFO_DIR = "/usr/share/zoneinfo";
 static const char *DEFAULT_ZONEINFO_FILE = "/etc/localtime";
 #else
@@ -239,40 +238,13 @@ getPlatformTimeZoneID()
 {
     struct stat64 statbuf;
     char *tz = NULL;
-    FILE *fp;
     int fd;
     char *buf;
     size_t size;
     int res;
 
-#if defined(__linux__)
     /*
-     * Try reading the /etc/timezone file for Debian distros. There's
-     * no spec of the file format available. This parsing assumes that
-     * there's one line of an Olson tzid followed by a '\n', no
-     * leading or trailing spaces, no comments.
-     */
-    if ((fp = fopen(ETC_TIMEZONE_FILE, "r")) != NULL) {
-        char line[256];
-
-        if (fgets(line, sizeof(line), fp) != NULL) {
-            char *p = strchr(line, '\n');
-            if (p != NULL) {
-                *p = '\0';
-            }
-            if (strlen(line) > 0) {
-                tz = strdup(line);
-            }
-        }
-        (void) fclose(fp);
-        if (tz != NULL) {
-            return tz;
-        }
-    }
-#endif /* defined(__linux__) */
-
-    /*
-     * Next, try /etc/localtime to find the zone ID.
+     * Try /etc/localtime to find the zone ID.
      */
     RESTARTABLE(lstat64(DEFAULT_ZONEINFO_FILE, &statbuf), res);
     if (res == -1) {
@@ -559,14 +531,14 @@ getGMTOffsetID()
     // Ignore daylight saving settings to calculate current time difference
     localtm.tm_isdst = 0;
     int gmt_off = (int)(difftime(mktime(&localtm), mktime(&gmt)) / 60.0);
-    sprintf(buf, (const char *)"GMT%c%02.2d:%02.2d",
+    snprintf(buf, sizeof(buf), (const char *)"GMT%c%02.2d:%02.2d",
             gmt_off < 0 ? '-' : '+' , abs(gmt_off / 60), gmt_off % 60);
 #else
     if (strftime(offset, 6, "%z", &localtm) != 5) {
         return strdup("GMT");
     }
 
-    sprintf(buf, (const char *)"GMT%c%c%c:%c%c", offset[0], offset[1], offset[2],
+    snprintf(buf, sizeof(buf), (const char *)"GMT%c%c%c:%c%c", offset[0], offset[1], offset[2],
         offset[3], offset[4]);
 #endif
     return strdup(buf);

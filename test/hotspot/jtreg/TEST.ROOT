@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2005, 2023, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2005, 2025, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -33,7 +33,8 @@
 # randomness:           test uses randomness, test cases differ from run to run
 # cgroups:              test uses cgroups
 # external-dep:         test requires external dependencies to work
-keys=stress headful intermittent randomness cgroups external-dep
+# flag-sensitive:       test is sensitive to certain flags and might fail when flags are passed using -vmoptions and -javaoptions
+keys=stress headful intermittent randomness cgroups external-dep flag-sensitive
 
 groups=TEST.groups TEST.quick-groups
 
@@ -45,7 +46,10 @@ requires.extraPropDefns.bootlibs = ../../lib/jdk/test/whitebox
 requires.extraPropDefns.libs = \
     ../../lib/jdk/test/lib/Platform.java \
     ../../lib/jdk/test/lib/Container.java
-requires.extraPropDefns.vmOpts = -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI
+requires.extraPropDefns.vmOpts = -XX:+UnlockDiagnosticVMOptions \
+    -XX:+LogVMOutput -XX:-DisplayVMOutput -XX:LogFile=vmprops.flags.final.vm.log \
+    -XX:+PrintFlagsFinal \
+    -XX:+WhiteBoxAPI
 requires.properties= \
     sun.arch.data.model \
     vm.simpleArch \
@@ -58,6 +62,7 @@ requires.properties= \
     vm.gc.Epsilon \
     vm.gc.Z \
     vm.jvmci \
+    vm.jvmci.enabled \
     vm.emulatedClient \
     vm.cpu.features \
     vm.pageSize \
@@ -76,7 +81,7 @@ requires.properties= \
     vm.compiler2.enabled \
     vm.musl \
     vm.flagless \
-    docker.support \
+    container.support \
     jdk.containerized
 
 # Minimum jtreg version

@@ -778,18 +778,15 @@ HeapWord* ShenandoahHeap::allocate_from_gclab_slow(Thread* thread, size_t size) 
 
   assert (size <= actual_size, "allocation should fit");
 
+  // ...and clear or zap just allocated TLAB, if needed.
   if (ZeroTLAB) {
-    // ..and clear it.
     Copy::zero_to_words(gclab_buf, actual_size);
-  } else {
-    // ...and zap just allocated object.
-#ifdef ASSERT
+  } else if (ZapTLAB) {
     // Skip mangling the space corresponding to the object header to
     // ensure that the returned space is not considered parsable by
     // any concurrent GC thread.
     size_t hdr_size = oopDesc::header_size();
     Copy::fill_to_words(gclab_buf + hdr_size, actual_size - hdr_size, badHeapWordVal);
-#endif // ASSERT
   }
   gclab->set_buf(gclab_buf, actual_size);
   return gclab->allocate(size);
@@ -897,7 +894,11 @@ HeapWord* ShenandoahHeap::allocate_memory(ShenandoahAllocRequest& req) {
 }
 
 HeapWord* ShenandoahHeap::allocate_memory_under_lock(ShenandoahAllocRequest& req, bool& in_new_region) {
-  ShenandoahHeapLocker locker(lock());
+  // If we are dealing with mutator allocation, then we may need to block for safepoint.
+  // We cannot block for safepoint for GC allocations, because there is a high chance
+  // we are already running at safepoint or from stack watermark machinery, and we cannot
+  // block again.
+  ShenandoahHeapLocker locker(lock(), req.is_mutator_alloc());
   return _free_set->allocate(req, in_new_region);
 }
 
@@ -1038,26 +1039,23 @@ void ShenandoahHeap::print_heap_regions_on(outputStream* st) const {
   }
 }
 
-void ShenandoahHeap::trash_humongous_region_at(ShenandoahHeapRegion* start) {
+size_t ShenandoahHeap::trash_humongous_region_at(ShenandoahHeapRegion* start) const {
   assert(start->is_humongous_start(), "reclaim regions starting with the first one");
-
-  oop humongous_obj = cast_to_oop(start->bottom());
-  size_t size = humongous_obj->size();
-  size_t required_regions = ShenandoahHeapRegion::required_regions(size * HeapWordSize);
-  size_t index = start->index() + required_regions - 1;
-
   assert(!start->has_live(), "liveness must be zero");
 
-  for(size_t i = 0; i < required_regions; i++) {
-    // Reclaim from tail. Otherwise, assertion fails when printing region to trace log,
-    // as it expects that every region belongs to a humongous region starting with a humongous start region.
-    ShenandoahHeapRegion* region = get_region(index --);
-
-    assert(region->is_humongous(), "expect correct humongous start or continuation");
+  // Do not try to get the size of this humongous object. STW collections will
+  // have already unloaded classes, so an unmarked object may have a bad klass pointer.
+  ShenandoahHeapRegion* region = start;
+  size_t index = region->index();
+  do {
+    assert(region->is_humongous(), "Expect correct humongous start or continuation");
     assert(!region->is_cset(), "Humongous region should not be in collection set");
-
     region->make_trash_immediate();
-  }
+    region = get_region(++index);
+  } while (region != nullptr && region->is_humongous_continuation());
+
+  // Return number of regions trashed
+  return index - start->index();
 }
 
 class ShenandoahCheckCleanGCLABClosure : public ThreadClosure {

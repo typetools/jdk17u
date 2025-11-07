@@ -26,6 +26,7 @@
 
 #include "precompiled.hpp"
 #include "asm/macroAssembler.inline.hpp"
+#include "compiler/disassembler.hpp"
 #include "gc/shared/barrierSetAssembler.hpp"
 #include "gc/shared/collectedHeap.hpp"
 #include "gc/shared/tlab_globals.hpp"
@@ -46,7 +47,7 @@
 #include "runtime/synchronizer.hpp"
 #include "utilities/powerOfTwo.hpp"
 
-#define __ _masm->
+#define __ Disassembler::hook<InterpreterMacroAssembler>(__FILE__, __LINE__, _masm)->
 
 // Address computation: local variables
 
@@ -299,12 +300,12 @@ void TemplateTable::sipush()
   }
 }
 
-void TemplateTable::ldc(bool wide)
+void TemplateTable::ldc(LdcType type)
 {
   transition(vtos, vtos);
   Label call_ldc, notFloat, notClass, notInt, Done;
 
-  if (wide) {
+  if (is_ldc_wide(type)) {
    __ get_unsigned_2_byte_index_at_bcp(x11, 1);
   } else {
    __ load_unsigned_byte(x11, at_bcp(1));
@@ -317,7 +318,6 @@ void TemplateTable::ldc(bool wide)
   // get type
   __ addi(x13, x11, tags_offset);
   __ add(x13, x10, x13);
-  __ membar(MacroAssembler::AnyAny);
   __ lbu(x13, Address(x13, 0));
   __ membar(MacroAssembler::LoadLoad | MacroAssembler::LoadStore);
 
@@ -335,7 +335,7 @@ void TemplateTable::ldc(bool wide)
   __ bne(x13, t1, notClass);
 
   __ bind(call_ldc);
-  __ mv(c_rarg1, wide);
+  __ mv(c_rarg1, is_ldc_wide(type) ? 1 : 0);
   call_VM(x10, CAST_FROM_FN_PTR(address, InterpreterRuntime::ldc), c_rarg1);
   __ push_ptr(x10);
   __ verify_oop(x10);
@@ -369,7 +369,7 @@ void TemplateTable::ldc(bool wide)
 }
 
 // Fast path for caching oop constants.
-void TemplateTable::fast_aldc(bool wide)
+void TemplateTable::fast_aldc(LdcType type)
 {
   transition(vtos, atos);
 
@@ -377,7 +377,7 @@ void TemplateTable::fast_aldc(bool wide)
   const Register tmp = x11;
   const Register rarg = x12;
 
-  const int index_size = wide ? sizeof(u2) : sizeof(u1);
+  const int index_size = is_ldc_wide(type) ? sizeof(u2) : sizeof(u1);
 
   Label resolved;
 
@@ -1129,6 +1129,7 @@ void TemplateTable::aastore() {
   // Get the value we will store
   __ ld(x10, at_tos());
   // Now store using the appropriate barrier
+  // Clobbers: x11, x13, x29
   do_oop_store(_masm, element_address, x10, IS_ARRAY);
   __ j(done);
 
@@ -1137,6 +1138,7 @@ void TemplateTable::aastore() {
   __ profile_null_seen(x12);
 
   // Store a NULL
+  // Clobbers: x11, x13, x29
   do_oop_store(_masm, element_address, noreg, IS_ARRAY);
 
   // Pop stack arguments
@@ -2716,6 +2718,7 @@ void TemplateTable::putfield_or_static(int byte_no, bool is_static, RewriteContr
     __ add(off, obj, off); // if static, obj from cache, else obj from stack.
     const Address field(off, 0);
     // Store into the field
+    // Clobbers: x11, x13, x29
     do_oop_store(_masm, field, x10, IN_HEAP);
     if (rc == may_rewrite) {
       patch_bytecode(Bytecodes::_fast_aputfield, bc, x11, true, byte_no);
@@ -2950,8 +2953,8 @@ void TemplateTable::fast_storefield(TosState state)
   // Must prevent reordering of the following cp cache loads with bytecode load
   __ membar(MacroAssembler::LoadLoad);
 
-  // test for volatile with x13
-  __ lwu(x13, Address(x12, in_bytes(base +
+  // test for volatile with x15
+  __ lwu(x15, Address(x12, in_bytes(base +
                                     ConstantPoolCacheEntry::flags_offset())));
 
   // replace index with field offset from cache entry
@@ -2959,7 +2962,7 @@ void TemplateTable::fast_storefield(TosState state)
 
   {
     Label notVolatile;
-    __ test_bit(t0, x13, ConstantPoolCacheEntry::is_volatile_shift);
+    __ test_bit(t0, x15, ConstantPoolCacheEntry::is_volatile_shift);
     __ beqz(t0, notVolatile);
     __ membar(MacroAssembler::StoreStore | MacroAssembler::LoadStore);
     __ bind(notVolatile);
@@ -2975,6 +2978,7 @@ void TemplateTable::fast_storefield(TosState state)
   // access field
   switch (bytecode()) {
     case Bytecodes::_fast_aputfield:
+      // Clobbers: x11, x13, x29
       do_oop_store(_masm, field, x10, IN_HEAP);
       break;
     case Bytecodes::_fast_lputfield:
@@ -3007,7 +3011,7 @@ void TemplateTable::fast_storefield(TosState state)
 
   {
     Label notVolatile;
-    __ test_bit(t0, x13, ConstantPoolCacheEntry::is_volatile_shift);
+    __ test_bit(t0, x15, ConstantPoolCacheEntry::is_volatile_shift);
     __ beqz(t0, notVolatile);
     __ membar(MacroAssembler::StoreLoad | MacroAssembler::StoreStore);
     __ bind(notVolatile);
@@ -3491,7 +3495,6 @@ void TemplateTable::_new() {
   const int tags_offset = Array<u1>::base_offset_in_bytes();
   __ add(t0, x10, x13);
   __ la(t0, Address(t0, tags_offset));
-  __ membar(MacroAssembler::AnyAny);
   __ lbu(t0, t0);
   __ membar(MacroAssembler::LoadLoad | MacroAssembler::LoadStore);
   __ sub(t1, t0, (u1)JVM_CONSTANT_Class);
@@ -3638,7 +3641,6 @@ void TemplateTable::checkcast()
   // See if bytecode has already been quicked
   __ add(t0, x13, Array<u1>::base_offset_in_bytes());
   __ add(x11, t0, x9);
-  __ membar(MacroAssembler::AnyAny);
   __ lbu(x11, x11);
   __ membar(MacroAssembler::LoadLoad | MacroAssembler::LoadStore);
   __ sub(t0, x11, (u1)JVM_CONSTANT_Class);
@@ -3694,7 +3696,6 @@ void TemplateTable::instanceof() {
   // See if bytecode has already been quicked
   __ add(t0, x13, Array<u1>::base_offset_in_bytes());
   __ add(x11, t0, x9);
-  __ membar(MacroAssembler::AnyAny);
   __ lbu(x11, x11);
   __ membar(MacroAssembler::LoadLoad | MacroAssembler::LoadStore);
   __ sub(t0, x11, (u1)JVM_CONSTANT_Class);
