@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2021, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2024, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -279,6 +279,7 @@ static char* reserve_mmapped_memory(size_t bytes, char* requested_addr) {
 }
 
 static int util_posix_fallocate(int fd, off_t offset, off_t len) {
+  static_assert(sizeof(off_t) == 8, "Expected Large File Support in this file");
 #ifdef __APPLE__
   fstore_t store = { F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, len };
   // First we try to get a continuous chunk of disk space
@@ -697,9 +698,20 @@ void* os::dll_lookup(void* handle, const char* name) {
 }
 
 void os::dll_unload(void *lib) {
-  const char* l_path = LINUX_ONLY(os::Linux::dll_path(lib))
-                       NOT_LINUX("<not available>");
-  if (l_path == NULL) l_path = "<not available>";
+  // os::Linux::dll_path returns a pointer to a string that is owned by the dynamic loader. Upon
+  // calling dlclose the dynamic loader may free the memory containing the string, thus we need to
+  // copy the string to be able to reference it after dlclose.
+  const char* l_path = NULL;
+#ifdef LINUX
+  char* l_pathdup = NULL;
+  l_path = os::Linux::dll_path(lib);
+  if (l_path != NULL) {
+    l_path = l_pathdup = os::strdup(l_path);
+  }
+#endif  // LINUX
+  if (l_path == NULL) {
+    l_path = "<not available>";
+  }
   int res = ::dlclose(lib);
 
   if (res == 0) {
@@ -717,10 +729,11 @@ void os::dll_unload(void *lib) {
     log_info(os)("Attempt to unload shared library \"%s\" [" INTPTR_FORMAT "] failed, %s",
                   l_path, p2i(lib), error_report);
   }
+  LINUX_ONLY(os::free(l_pathdup));
 }
 
 jlong os::lseek(int fd, jlong offset, int whence) {
-  return (jlong) BSD_ONLY(::lseek) NOT_BSD(::lseek64)(fd, offset, whence);
+  return (jlong) AIX_ONLY(::lseek64) NOT_AIX(::lseek)(fd, offset, whence);
 }
 
 int os::fsync(int fd) {
@@ -728,7 +741,7 @@ int os::fsync(int fd) {
 }
 
 int os::ftruncate(int fd, jlong length) {
-   return BSD_ONLY(::ftruncate) NOT_BSD(::ftruncate64)(fd, length);
+   return AIX_ONLY(::ftruncate64) NOT_AIX(::ftruncate)(fd, length);
 }
 
 const char* os::get_current_directory(char *buf, size_t buflen) {
@@ -739,9 +752,9 @@ FILE* os::open(int fd, const char* mode) {
   return ::fdopen(fd, mode);
 }
 
-size_t os::write(int fd, const void *buf, unsigned int nBytes) {
-  size_t res;
-  RESTARTABLE((size_t) ::write(fd, buf, (size_t) nBytes), res);
+ssize_t os::pd_write(int fd, const void *buf, size_t nBytes) {
+  ssize_t res;
+  RESTARTABLE(::write(fd, buf, nBytes), res);
   return res;
 }
 

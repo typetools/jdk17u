@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2021, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2017, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -53,17 +53,27 @@ import java.util.function.Consumer;
 import java.util.function.IntBinaryOperator;
 
 /**
- * Implements SSL using two SubscriberWrappers.
+ * Implements SSL using two {@link SubscriberWrapper}s.
  *
- * <p> Constructor takes two Flow.Subscribers: one that receives the network
- * data (after it has been encrypted by SSLFlowDelegate) data, and one that
- * receives the application data (before it has been encrypted by SSLFlowDelegate).
+ * <p> Constructor takes two {@linkplain Flow.Subscriber subscribers} - {@code downReader}
+ * and {@code downWriter}. {@code downReader} receives the application data (after it has
+ * been decrypted by SSLFlowDelegate). {@code downWriter} receives the network data (after it has
+ * been encrypted by SSLFlowDelegate).
  *
- * <p> Methods upstreamReader() and upstreamWriter() return the corresponding
- * Flow.Subscribers containing Flows for the encrypted/decrypted upstream data.
- * See diagram below.
+ * <p> Method {@link #upstreamWriter()} returns a {@linkplain Subscriber subscriber} which should
+ * be subscribed with a {@linkplain Flow.Publisher publisher} which publishes application data
+ * that can then be encrypted into network data by this SSLFlowDelegate and handed off to the
+ * {@code downWriter}.
  *
- * <p> How Flow.Subscribers are used in this class, and where they come from:
+ * <p> Method {@link #upstreamReader()} returns a {@link Subscriber subscriber} which should be
+ * subscribed with a {@linkplain Flow.Publisher publisher} which publishes encrypted network data
+ * that can then be decrypted into application data by this SSLFlowDelegate and handed off to the
+ * {@code downReader}.
+ *
+ * <p> Errors are reported to the {@code downReader} subscriber.
+ *
+ * <p> The diagram below illustrates how the Flow.Subscribers are used in this class, and where
+ * they come from:
  * <pre>
  * {@code
  *
@@ -72,17 +82,21 @@ import java.util.function.IntBinaryOperator;
  * --------->  data flow direction
  *
  *
- *                         +------------------+
- *        upstreamWriter   |                  | downWriter
- *        ---------------> |                  | ------------>
- *  obtained from this     |                  | supplied to constructor
- *                         | SSLFlowDelegate  |
- *        downReader       |                  | upstreamReader
- *        <--------------- |                  | <--------------
- * supplied to constructor |                  | obtained from this
- *                         +------------------+
- *
- * Errors are reported to the downReader Flow.Subscriber
+ *                  |                                   ^
+ *  upstreamWriter  |                                   | downReader
+ *  obtained from   |                                   | supplied to
+ * upstreamWriter() |                                   | constructor
+ *                  v                                   |
+ *      +-----------------------------------------------------------+
+ *      *                                            decrypts       *
+ *      *                       SSLFlowDelegate                     *
+ *      *        encrypts                                           *
+ *      +-----------------------------------------------------------+
+ *                  |                                   ^
+ *    downWriter    |                                   | upstreamReader
+ *    supplied to   |                                   | obtained from
+ *    constructor   |                                   | upstreamReader()
+ *                  v                                   |
  *
  * }
  * </pre>
@@ -467,7 +481,7 @@ public class SSLFlowDelegate {
                                 }
                             }
                             // request more data and return.
-                            requestMore();
+                            requestMoreDataIfNeeded();
                             return;
                         }
                         if (complete && result.status() == Status.CLOSED) {
@@ -781,6 +795,7 @@ public class SSLFlowDelegate {
                                 + hsTriggered() + ", needWrap:" + needWrap());
 
                 while (Utils.synchronizedRemaining(writeList) > 0 || hsTriggered() || needWrap()) {
+                    if (scheduler.isStopped()) return;
                     ByteBuffer[] outbufs = writeList.toArray(Utils.EMPTY_BB_ARRAY);
                     EngineResult result = wrapBuffers(outbufs);
                     if (debugw.on())
@@ -938,7 +953,7 @@ public class SSLFlowDelegate {
         @Override
         public String toString() {
             return "WRITER: " + super.toString()
-                    + ", writeList size: " + Integer.toString(writeList.size())
+                    + ", writeList size: " + writeList.size()
                     + ", scheduler: " + (scheduler.isStopped() ? "stopped" : "running")
                     + ", status: " + lastWrappedStatus;
                     //" writeList: " + writeList.toString();
@@ -1113,7 +1128,7 @@ public class SSLFlowDelegate {
         exec.execute(() -> {
             try {
                 List<Runnable> nextTasks = tasks;
-                if (debug.on()) debug.log("#tasks to execute: " + Integer.toString(nextTasks.size()));
+                if (debug.on()) debug.log("#tasks to execute: " + nextTasks.size());
                 do {
                     nextTasks.forEach(Runnable::run);
                     if (engine.getHandshakeStatus() == HandshakeStatus.NEED_TASK) {

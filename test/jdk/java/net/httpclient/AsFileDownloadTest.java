@@ -24,12 +24,13 @@
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -51,6 +52,7 @@ import javax.net.ssl.SSLContext;
 import jdk.test.lib.net.SimpleSSLContext;
 import jdk.test.lib.util.FileUtils;
 import jdk.httpclient.test.lib.common.HttpServerAdapters;
+import jdk.httpclient.test.lib.common.TestServerConfigurator;
 import jdk.httpclient.test.lib.http2.Http2TestServer;
 import jdk.httpclient.test.lib.http2.Http2TestExchange;
 import jdk.httpclient.test.lib.http2.Http2Handler;
@@ -73,10 +75,10 @@ import static org.testng.Assert.fail;
  * @library /test/lib /test/jdk/java/net/httpclient/lib
  * @build jdk.httpclient.test.lib.http2.Http2TestServer jdk.test.lib.net.SimpleSSLContext
  *        jdk.test.lib.Platform jdk.test.lib.util.FileUtils
+ *        jdk.httpclient.test.lib.common.TestServerConfigurator
  * @run testng/othervm AsFileDownloadTest
  * @run testng/othervm/java.security.policy=AsFileDownloadTest.policy AsFileDownloadTest
  */
-
 public class AsFileDownloadTest {
 
     SSLContext sslContext;
@@ -88,6 +90,7 @@ public class AsFileDownloadTest {
     String httpsURI;
     String http2URI;
     String https2URI;
+    final ReferenceTracker TRACKER = ReferenceTracker.INSTANCE;
 
     Path tempDir;
 
@@ -163,37 +166,49 @@ public class AsFileDownloadTest {
     {
         out.printf("test(%s, %s, %s): starting", uriString, contentDispositionValue, expectedFilename);
         HttpClient client = HttpClient.newBuilder().sslContext(sslContext).build();
+        TRACKER.track(client);
+        ReferenceQueue<HttpClient> queue = new ReferenceQueue<>();
+        WeakReference<HttpClient> ref = new WeakReference<>(client, queue);
+        try {
+            URI uri = URI.create(uriString);
+            HttpRequest request = HttpRequest.newBuilder(uri)
+                    .POST(BodyPublishers.ofString("May the luck of the Irish be with you!"))
+                    .build();
 
-        URI uri = URI.create(uriString);
-        HttpRequest request = HttpRequest.newBuilder(uri)
-                .POST(BodyPublishers.ofString("May the luck of the Irish be with you!"))
-                .build();
+            BodyHandler bh = ofFileDownload(tempDir.resolve(uri.getPath().substring(1)),
+                    CREATE, TRUNCATE_EXISTING, WRITE);
+            HttpResponse<Path> response = client.send(request, bh);
+            Path body = response.body();
+            out.println("Got response: " + response);
+            out.println("Got body Path: " + body);
+            String fileContents = new String(Files.readAllBytes(response.body()), UTF_8);
+            out.println("Got body: " + fileContents);
 
-        BodyHandler bh = ofFileDownload(tempDir.resolve(uri.getPath().substring(1)),
-                                        CREATE, TRUNCATE_EXISTING, WRITE);
-        HttpResponse<Path> response = client.send(request, bh);
+            assertEquals(response.statusCode(), 200);
+            assertEquals(body.getFileName().toString(), expectedFilename);
+            assertTrue(response.headers().firstValue("Content-Disposition").isPresent());
+            assertEquals(response.headers().firstValue("Content-Disposition").get(),
+                    contentDispositionValue);
+            assertEquals(fileContents, "May the luck of the Irish be with you!");
 
-        Path body = response.body();
-        out.println("Got response: " + response);
-        out.println("Got body Path: " + body);
-        String fileContents = new String(Files.readAllBytes(response.body()), UTF_8);
-        out.println("Got body: " + fileContents);
-
-        assertEquals(response.statusCode(),200);
-        assertEquals(body.getFileName().toString(), expectedFilename);
-        assertTrue(response.headers().firstValue("Content-Disposition").isPresent());
-        assertEquals(response.headers().firstValue("Content-Disposition").get(),
-                     contentDispositionValue);
-        assertEquals(fileContents, "May the luck of the Irish be with you!");
-
-        if (!body.toAbsolutePath().startsWith(tempDir.toAbsolutePath())) {
-            System.out.println("Tempdir = " + tempDir.toAbsolutePath());
-            System.out.println("body = " + body.toAbsolutePath());
-            throw new AssertionError("body in wrong location");
+            if (!body.toAbsolutePath().startsWith(tempDir.toAbsolutePath())) {
+                System.out.println("Tempdir = " + tempDir.toAbsolutePath());
+                System.out.println("body = " + body.toAbsolutePath());
+                throw new AssertionError("body in wrong location");
+            }
+            // additional checks unrelated to file download
+            caseInsensitivityOfHeaders(request.headers());
+            caseInsensitivityOfHeaders(response.headers());
+        } finally {
+            client = null;
+            System.gc();
+            while (!ref.refersTo(null)) {
+                System.gc();
+                if (queue.remove(100) == ref) break;
+            }
+            AssertionError failed = TRACKER.checkShutdown(1000);
+            if (failed != null) throw failed;
         }
-        // additional checks unrelated to file download
-        caseInsensitivityOfHeaders(request.headers());
-        caseInsensitivityOfHeaders(response.headers());
     }
 
     // --- Negative
@@ -245,18 +260,32 @@ public class AsFileDownloadTest {
     {
         out.printf("negativeTest(%s, %s): starting", uriString, contentDispositionValue);
         HttpClient client = HttpClient.newBuilder().sslContext(sslContext).build();
+        TRACKER.track(client);
+        ReferenceQueue<HttpClient> queue = new ReferenceQueue<>();
+        WeakReference<HttpClient> ref = new WeakReference<>(client, queue);
 
-        URI uri = URI.create(uriString);
-        HttpRequest request = HttpRequest.newBuilder(uri)
-                .POST(BodyPublishers.ofString("Does not matter"))
-                .build();
-
-        BodyHandler bh = ofFileDownload(tempDir, CREATE, TRUNCATE_EXISTING, WRITE);
         try {
-            HttpResponse<Path> response = client.send(request, bh);
-            fail("UNEXPECTED response: " + response + ", path:" + response.body());
-        } catch (UncheckedIOException | IOException ioe) {
-            System.out.println("Caught expected: " + ioe);
+            URI uri = URI.create(uriString);
+            HttpRequest request = HttpRequest.newBuilder(uri)
+                    .POST(BodyPublishers.ofString("Does not matter"))
+                    .build();
+
+            BodyHandler bh = ofFileDownload(tempDir, CREATE, TRUNCATE_EXISTING, WRITE);
+            try {
+                HttpResponse<Path> response = client.send(request, bh);
+                fail("UNEXPECTED response: " + response + ", path:" + response.body());
+            } catch (UncheckedIOException | IOException ioe) {
+                System.out.println("Caught expected: " + ioe);
+            }
+        } finally {
+            client = null;
+            System.gc();
+            while (!ref.refersTo(null)) {
+                System.gc();
+                if (queue.remove(100) == ref) break;
+            }
+            AssertionError failed = TRACKER.checkShutdown(1000);
+            if (failed != null) throw failed;
         }
     }
 
@@ -299,7 +328,7 @@ public class AsFileDownloadTest {
         httpURI = "http://" + serverAuthority(httpTestServer) + "/http1/afdt";
 
         httpsTestServer = HttpsServer.create(sa, 0);
-        httpsTestServer.setHttpsConfigurator(new HttpsConfigurator(sslContext));
+        httpsTestServer.setHttpsConfigurator(new TestServerConfigurator(sa.getAddress(), sslContext));
         httpsTestServer.createContext("/https1/afdt", new Http1FileDispoHandler());
         httpsURI = "https://" + serverAuthority(httpsTestServer) + "/https1/afdt";
 

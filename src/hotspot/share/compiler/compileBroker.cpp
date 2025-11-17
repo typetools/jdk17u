@@ -185,7 +185,7 @@ int CompileBroker::_sum_standard_bytes_compiled    = 0;
 int CompileBroker::_sum_nmethod_size               = 0;
 int CompileBroker::_sum_nmethod_code_size          = 0;
 
-long CompileBroker::_peak_compilation_time         = 0;
+jlong CompileBroker::_peak_compilation_time        = 0;
 
 CompilerStatistics CompileBroker::_stats_per_level[CompLevel_full_optimization];
 
@@ -998,7 +998,7 @@ void CompileBroker::init_compiler_sweeper_threads() {
     // for JVMCI compiler which can create further ones on demand.
     JVMCI_ONLY(if (!UseJVMCICompiler || !UseDynamicNumberOfCompilerThreads || i == 0) {)
     // Create a name for our thread.
-    sprintf(name_buffer, "%s CompilerThread%d", _compilers[1]->name(), i);
+    os::snprintf_checked(name_buffer, sizeof(name_buffer), "%s CompilerThread%d", _compilers[1]->name(), i);
     Handle thread_oop = create_thread_oop(name_buffer, CHECK);
     thread_handle = JNIHandles::make_global(thread_oop);
     JVMCI_ONLY(})
@@ -1022,7 +1022,7 @@ void CompileBroker::init_compiler_sweeper_threads() {
 
   for (int i = 0; i < _c1_count; i++) {
     // Create a name for our thread.
-    sprintf(name_buffer, "C1 CompilerThread%d", i);
+    os::snprintf_checked(name_buffer, sizeof(name_buffer), "C1 CompilerThread%d", i);
     Handle thread_oop = create_thread_oop(name_buffer, CHECK);
     jobject thread_handle = JNIHandles::make_global(thread_oop);
     _compiler1_objects[i] = thread_handle;
@@ -1069,18 +1069,34 @@ void CompileBroker::init_compiler_sweeper_threads() {
 
 void CompileBroker::possibly_add_compiler_threads(JavaThread* THREAD) {
 
+  int old_c2_count = 0, new_c2_count = 0, old_c1_count = 0, new_c1_count = 0;
+  const int c2_tasks_per_thread = 2, c1_tasks_per_thread = 4;
+
+  // Quick check if we already have enough compiler threads without taking the lock.
+  // Numbers may change concurrently, so we read them again after we have the lock.
+  if (_c2_compile_queue != nullptr) {
+    old_c2_count = get_c2_thread_count();
+    new_c2_count = MIN2(_c2_count, _c2_compile_queue->size() / c2_tasks_per_thread);
+  }
+  if (_c1_compile_queue != nullptr) {
+    old_c1_count = get_c1_thread_count();
+    new_c1_count = MIN2(_c1_count, _c1_compile_queue->size() / c1_tasks_per_thread);
+  }
+  if (new_c2_count <= old_c2_count && new_c1_count <= old_c1_count) return;
+
+  // Now, we do the more expensive operations.
   julong available_memory = os::available_memory();
   // If SegmentedCodeCache is off, both values refer to the single heap (with type CodeBlobType::All).
-  size_t available_cc_np  = CodeCache::unallocated_capacity(CodeBlobType::MethodNonProfiled),
-         available_cc_p   = CodeCache::unallocated_capacity(CodeBlobType::MethodProfiled);
+  size_t available_cc_np = CodeCache::unallocated_capacity(CodeBlobType::MethodNonProfiled),
+         available_cc_p  = CodeCache::unallocated_capacity(CodeBlobType::MethodProfiled);
 
-  // Only do attempt to start additional threads if the lock is free.
+  // Only attempt to start additional threads if the lock is free.
   if (!CompileThread_lock->try_lock()) return;
 
   if (_c2_compile_queue != NULL) {
-    int old_c2_count = _compilers[1]->num_compiler_threads();
-    int new_c2_count = MIN4(_c2_count,
-        _c2_compile_queue->size() / 2,
+    old_c2_count = get_c2_thread_count();
+    new_c2_count = MIN4(_c2_count,
+        _c2_compile_queue->size() / c2_tasks_per_thread,
         (int)(available_memory / (200*M)),
         (int)(available_cc_np / (128*K)));
 
@@ -1095,7 +1111,7 @@ void CompileBroker::possibly_add_compiler_threads(JavaThread* THREAD) {
         // transitions if we bind them to new JavaThreads.
         if (!THREAD->can_call_java()) break;
         char name_buffer[256];
-        sprintf(name_buffer, "%s CompilerThread%d", _compilers[1]->name(), i);
+        os::snprintf_checked(name_buffer, sizeof(name_buffer), "%s CompilerThread%d", _compilers[1]->name(), i);
         Handle thread_oop;
         {
           // We have to give up the lock temporarily for the Java calls.
@@ -1114,7 +1130,7 @@ void CompileBroker::possibly_add_compiler_threads(JavaThread* THREAD) {
           break;
         }
         // Check if another thread has beaten us during the Java calls.
-        if (_compilers[1]->num_compiler_threads() != i) break;
+        if (get_c2_thread_count() != i) break;
         jobject thread_handle = JNIHandles::make_global(thread_oop);
         assert(compiler2_object(i) == NULL, "Old one must be released!");
         _compiler2_objects[i] = thread_handle;
@@ -1136,9 +1152,9 @@ void CompileBroker::possibly_add_compiler_threads(JavaThread* THREAD) {
   }
 
   if (_c1_compile_queue != NULL) {
-    int old_c1_count = _compilers[0]->num_compiler_threads();
-    int new_c1_count = MIN4(_c1_count,
-        _c1_compile_queue->size() / 4,
+    old_c1_count = get_c1_thread_count();
+    new_c1_count = MIN4(_c1_count,
+        _c1_compile_queue->size() / c1_tasks_per_thread,
         (int)(available_memory / (100*M)),
         (int)(available_cc_p / (128*K)));
 
@@ -2731,7 +2747,7 @@ void CompileBroker::print_times(bool per_compiler, bool aggregate) {
     char tier_name[256];
     for (int tier = CompLevel_simple; tier <= CompilationPolicy::highest_compile_level(); tier++) {
       CompilerStatistics* stats = &_stats_per_level[tier-1];
-      sprintf(tier_name, "Tier%d", tier);
+      os::snprintf_checked(tier_name, sizeof(tier_name), "Tier%d", tier);
       print_times(tier_name, stats);
     }
   }

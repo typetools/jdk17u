@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2021, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -354,6 +354,7 @@ void stringStream::grow(size_t new_capacity) {
 }
 
 void stringStream::write(const char* s, size_t len) {
+  assert(_is_frozen == false, "Modification forbidden");
   assert(_capacity >= _written + 1, "Sanity");
   if (len == 0) {
     return;
@@ -393,6 +394,7 @@ void stringStream::zero_terminate() {
 }
 
 void stringStream::reset() {
+  assert(_is_frozen == false, "Modification forbidden");
   _written = 0; _precount = 0; _position = 0;
   _newlines = 0;
   zero_terminate();
@@ -614,7 +616,7 @@ void fileStream::flush() {
 void fdStream::write(const char* s, size_t len) {
   if (_fd != -1) {
     // Make an unused local variable to avoid warning from gcc compiler.
-    size_t count = ::write(_fd, s, (int)len);
+    ssize_t count = ::write(_fd, s, (int)len);
     update_position(s, len);
   }
 }

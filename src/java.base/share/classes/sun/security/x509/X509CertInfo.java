@@ -32,7 +32,6 @@ import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import java.security.cert.*;
 import java.util.*;
@@ -185,14 +184,15 @@ public class X509CertInfo implements CertAttrSet<String> {
      * @exception CertificateException on encoding errors.
      * @exception IOException on other errors.
      */
-    public void encode(OutputStream out)
-    throws CertificateException, IOException {
+    @Override
+    public void encode(DerOutputStream out)
+            throws CertificateException, IOException {
         if (rawCertInfo == null) {
-            DerOutputStream tmp = new DerOutputStream();
-            emit(tmp);
-            rawCertInfo = tmp.toByteArray();
+            emit(out);
+            rawCertInfo = out.toByteArray();
+        } else {
+            out.write(rawCertInfo.clone());
         }
-        out.write(rawCertInfo.clone());
     }
 
     /**

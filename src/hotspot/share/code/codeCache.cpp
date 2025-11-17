@@ -101,22 +101,37 @@ class CodeBlob_sizes {
     scopes_pcs_size  = 0;
   }
 
-  int total()                                    { return total_size; }
-  bool is_empty()                                { return count == 0; }
+  int total() const                              { return total_size; }
+  bool is_empty() const                          { return count == 0; }
 
-  void print(const char* title) {
-    tty->print_cr(" #%d %s = %dK (hdr %d%%,  loc %d%%, code %d%%, stub %d%%, [oops %d%%, metadata %d%%, data %d%%, pcs %d%%])",
-                  count,
-                  title,
-                  (int)(total() / K),
-                  header_size             * 100 / total_size,
-                  relocation_size         * 100 / total_size,
-                  code_size               * 100 / total_size,
-                  stub_size               * 100 / total_size,
-                  scopes_oop_size         * 100 / total_size,
-                  scopes_metadata_size    * 100 / total_size,
-                  scopes_data_size        * 100 / total_size,
-                  scopes_pcs_size         * 100 / total_size);
+  void print(const char* title) const {
+    if (is_empty()) {
+      tty->print_cr(" #%d %s = %dK",
+                    count,
+                    title,
+                    total()                 / (int)K);
+    } else {
+      tty->print_cr(" #%d %s = %dK (hdr %dK %d%%, loc %dK %d%%, code %dK %d%%, stub %dK %d%%, [oops %dK %d%%, metadata %dK %d%%, data %dK %d%%, pcs %dK %d%%])",
+                    count,
+                    title,
+                    total()                 / (int)K,
+                    header_size             / (int)K,
+                    header_size             * 100 / total_size,
+                    relocation_size         / (int)K,
+                    relocation_size         * 100 / total_size,
+                    code_size               / (int)K,
+                    code_size               * 100 / total_size,
+                    stub_size               / (int)K,
+                    stub_size               * 100 / total_size,
+                    scopes_oop_size         / (int)K,
+                    scopes_oop_size         * 100 / total_size,
+                    scopes_metadata_size    / (int)K,
+                    scopes_metadata_size    * 100 / total_size,
+                    scopes_data_size        / (int)K,
+                    scopes_data_size        * 100 / total_size,
+                    scopes_pcs_size         / (int)K,
+                    scopes_pcs_size         * 100 / total_size);
+    }
   }
 
   void add(CodeBlob* cb) {
@@ -638,11 +653,6 @@ bool CodeCache::contains(nmethod *nm) {
   return contains((void *)nm);
 }
 
-static bool is_in_asgct() {
-  Thread* current_thread = Thread::current_or_null_safe();
-  return current_thread != NULL && current_thread->is_Java_thread() && current_thread->as_Java_thread()->in_asgct();
-}
-
 // This method is safe to call without holding the CodeCache_lock, as long as a dead CodeBlob is not
 // looked up (i.e., one that has been marked for deletion). It only depends on the _segmap to contain
 // valid indices, which it will always do, as long as the CodeBlob is not in the process of being recycled.
@@ -651,7 +661,7 @@ CodeBlob* CodeCache::find_blob(void* start) {
   // We could potentially look up non_entrant methods
   bool is_zombie = result != NULL && result->is_zombie();
   bool is_result_safe = !is_zombie || result->is_locked_by_vm() || VMError::is_error_reported();
-  guarantee(is_result_safe || is_in_asgct(), "unsafe access to zombie method");
+  guarantee(is_result_safe || Thread::current_in_asgct(), "unsafe access to zombie method");
   // When in ASGCT the previous gurantee will pass for a zombie method but we still don't want that code blob returned in order
   // to minimize the chance of accessing dead memory
   return is_result_safe ? result : NULL;
@@ -1468,27 +1478,73 @@ void CodeCache::print() {
 #ifndef PRODUCT
   if (!Verbose) return;
 
-  CodeBlob_sizes live;
-  CodeBlob_sizes dead;
+  CodeBlob_sizes live[CompLevel_full_optimization + 1];
+  CodeBlob_sizes dead[CompLevel_full_optimization + 1];
+  CodeBlob_sizes runtimeStub;
+  CodeBlob_sizes uncommonTrapStub;
+  CodeBlob_sizes deoptimizationStub;
+  CodeBlob_sizes adapter;
+  CodeBlob_sizes bufferBlob;
+  CodeBlob_sizes other;
 
   FOR_ALL_ALLOCABLE_HEAPS(heap) {
     FOR_ALL_BLOBS(cb, *heap) {
-      if (!cb->is_alive()) {
-        dead.add(cb);
+      if (cb->is_nmethod()) {
+        const int level = cb->as_nmethod()->comp_level();
+        assert(0 <= level && level <= CompLevel_full_optimization, "Invalid compilation level");
+        if (!cb->is_alive()) {
+          dead[level].add(cb);
+        } else {
+          live[level].add(cb);
+        }
+      } else if (cb->is_runtime_stub()) {
+        runtimeStub.add(cb);
+      } else if (cb->is_deoptimization_stub()) {
+        deoptimizationStub.add(cb);
+      } else if (cb->is_uncommon_trap_stub()) {
+        uncommonTrapStub.add(cb);
+      } else if (cb->is_adapter_blob()) {
+        adapter.add(cb);
+      } else if (cb->is_buffer_blob()) {
+        bufferBlob.add(cb);
       } else {
-        live.add(cb);
+        other.add(cb);
       }
     }
   }
 
-  tty->print_cr("CodeCache:");
   tty->print_cr("nmethod dependency checking time %fs", dependentCheckTime.seconds());
 
-  if (!live.is_empty()) {
-    live.print("live");
+  tty->print_cr("nmethod blobs per compilation level:");
+  for (int i = 0; i <= CompLevel_full_optimization; i++) {
+    const char *level_name;
+    switch (i) {
+    case CompLevel_none:              level_name = "none";              break;
+    case CompLevel_simple:            level_name = "simple";            break;
+    case CompLevel_limited_profile:   level_name = "limited profile";   break;
+    case CompLevel_full_profile:      level_name = "full profile";      break;
+    case CompLevel_full_optimization: level_name = "full optimization"; break;
+    default: assert(false, "invalid compilation level");
+    }
+    tty->print_cr("%s:", level_name);
+    live[i].print("live");
+    dead[i].print("dead");
   }
-  if (!dead.is_empty()) {
-    dead.print("dead");
+
+  struct {
+    const char* name;
+    const CodeBlob_sizes* sizes;
+  } non_nmethod_blobs[] = {
+    { "runtime",        &runtimeStub },
+    { "uncommon trap",  &uncommonTrapStub },
+    { "deoptimization", &deoptimizationStub },
+    { "adapter",        &adapter },
+    { "buffer blob",    &bufferBlob },
+    { "other",          &other },
+  };
+  tty->print_cr("Non-nmethod blobs:");
+  for (auto& blob: non_nmethod_blobs) {
+    blob.sizes->print(blob.name);
   }
 
   if (WizardMode) {

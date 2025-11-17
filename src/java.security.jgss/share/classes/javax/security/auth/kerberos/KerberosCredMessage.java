@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2014, 2024, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -33,7 +33,6 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
 
 import javax.security.auth.Destroyable;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Objects;
 
 /**
@@ -146,8 +145,7 @@ public final class KerberosCredMessage implements Destroyable {
         if (destroyed) {
             return "Destroyed KerberosCredMessage";
         } else {
-            return "KRB_CRED from " + sender + " to " + recipient + ":\n"
-                    + Base64.getUrlEncoder().encodeToString(message);
+            return "KRB_CRED from " + sender + " to " + recipient;
         }
     }
 

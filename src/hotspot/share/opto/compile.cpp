@@ -3113,8 +3113,8 @@ void Compile::final_graph_reshaping_main_switch(Node* n, Final_Reshape_Counts& f
       bool is_oop   = t->isa_oopptr() != nullptr;
       bool is_klass = t->isa_klassptr() != nullptr;
 
-      if ((is_oop   && Matcher::const_oop_prefer_decode()  ) ||
-          (is_klass && Matcher::const_klass_prefer_decode())) {
+      if ((is_oop   && UseCompressedOops          && Matcher::const_oop_prefer_decode()  ) ||
+          (is_klass && UseCompressedClassPointers && Matcher::const_klass_prefer_decode())) {
         Node* nn = nullptr;
 
         int op = is_oop ? Op_ConN : Op_ConNKlass;
@@ -4610,7 +4610,7 @@ void Compile::remove_speculative_types(PhaseIterGVN &igvn) {
         const Type* t_no_spec = t->remove_speculative();
         if (t_no_spec != t) {
           bool in_hash = igvn.hash_delete(n);
-          assert(in_hash, "node should be in igvn hash table");
+          assert(in_hash || n->hash() == Node::NO_HASH, "node should be in igvn hash table");
           tn->set_type(t_no_spec);
           igvn.hash_insert(n);
           igvn._worklist.push(n); // give it a chance to go away

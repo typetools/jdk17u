@@ -316,7 +316,7 @@ AC_DEFUN([FLAGS_SETUP_OPTIMIZATION],
     C_O_FLAG_DEBUG="-Od"
     C_O_FLAG_DEBUG_JVM=""
     C_O_FLAG_NONE="-Od"
-    C_O_FLAG_SIZE="-Os"
+    C_O_FLAG_SIZE="-O1"
   fi
 
   # Now copy to C++ flags
@@ -419,7 +419,7 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
 [
   #### OS DEFINES, these should be independent on toolchain
   if test "x$OPENJDK_TARGET_OS" = xlinux; then
-    CFLAGS_OS_DEF_JVM="-DLINUX"
+    CFLAGS_OS_DEF_JVM="-DLINUX -D_FILE_OFFSET_BITS=64"
     CFLAGS_OS_DEF_JDK="-D_GNU_SOURCE -D_REENTRANT -D_LARGEFILE64_SOURCE"
   elif test "x$OPENJDK_TARGET_OS" = xmacosx; then
     CFLAGS_OS_DEF_JVM="-D_ALLBSD_SOURCE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE"
@@ -544,8 +544,8 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
     TOOLCHAIN_CFLAGS_JVM="-qtbtable=full -qtune=balanced \
         -qalias=noansi -qstrict -qtls=default -qnortti -qnoeh -qignerrno -qstackprotect"
   elif test "x$TOOLCHAIN_TYPE" = xmicrosoft; then
-    TOOLCHAIN_CFLAGS_JVM="-nologo -MD -MP"
-    TOOLCHAIN_CFLAGS_JDK="-nologo -MD -Zc:wchar_t-"
+    TOOLCHAIN_CFLAGS_JVM="-nologo -MD -Zc:strictStrings -MP"
+    TOOLCHAIN_CFLAGS_JDK="-nologo -MD -Zc:strictStrings -Zc:wchar_t-"
   fi
 
   # CFLAGS C language level for JDK sources (hotspot only uses C++)

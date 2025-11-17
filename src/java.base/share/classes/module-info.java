@@ -82,8 +82,8 @@ module java.base {
     exports org.checkerframework.checker.fenum.qual;
     exports org.checkerframework.checker.formatter.qual;
     exports org.checkerframework.checker.guieffect.qual;
-    exports org.checkerframework.checker.i18n.qual;
     exports org.checkerframework.checker.i18nformatter.qual;
+    exports org.checkerframework.checker.i18n.qual;
     exports org.checkerframework.checker.index.qual;
     exports org.checkerframework.checker.initialization.qual;
     exports org.checkerframework.checker.interning.qual;
@@ -96,6 +96,7 @@ module java.base {
     exports org.checkerframework.checker.regex.qual;
     exports org.checkerframework.checker.signature.qual;
     exports org.checkerframework.checker.signedness.qual;
+    exports org.checkerframework.checker.sqlquotes.qual;
     exports org.checkerframework.checker.tainting.qual;
     exports org.checkerframework.checker.units.qual;
     exports org.checkerframework.common.aliasing.qual;
@@ -258,6 +259,7 @@ module java.base {
         jdk.jfr;
     exports jdk.internal.ref to
         java.desktop,
+        java.net.http,
         jdk.incubator.foreign;
     exports jdk.internal.reflect to
         java.logging,

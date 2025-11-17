@@ -1,6 +1,7 @@
 # Typetools fork of the JDK
 
 This fork of the JDK contains type annotations for pluggable type-checking.
+It is called "the annotated JDK".
 
 It does *not* contain annotations for certain files (because annotations in
 them cause build failures, especially in the interim builds):
@@ -16,7 +17,19 @@ https://github.com/typetools/checker-framework/ .
 
 ## Building
 
-See file `azure-pipelines.yml`.  Briefly:
+You **do not need to build** the annotated JDK in order to use it in the Checker
+Framework.
+
+Put the annotated JDK is in a directory named `jdk/` that is a sibling of your
+`checker-framework/` directory.  Now, when you build the Checker Framework
+(e.g., `cd checker-framework && ./gradlew assemble`), it will automatically
+incorporate the annotated JDK into the resulting Checker Framework binaries.
+The `jdk/` and `checker-framework/` directories can be clones of the relevant
+repositories, or they can be (hard or soft) symbolic links to the clones.
+
+However, if for some reason you want to build the JDK on its own rather than
+just use it from the Checker Framework, see file `azure-pipelines.yml`.
+Briefly:
 
 ```
 bash configure --disable-warnings-as-errors --with-jtreg
@@ -115,13 +128,13 @@ cp -p $CHECKERFRAMEWORK/checker-qual/build/libs/checker-qual-*-sources.jar check
   unzip ../../../../checker-qual.jar -x 'META-INF*' && \
   rm -f org/checkerframework/checker/signedness/SignednessUtilExtra.java && \
   chmod -R u+w org/checkerframework) && \
-jar tf checker-qual.jar | grep '\.java$' | sed 's/\/[^/]*\.java/;/' | sed 's/\//./g' | sed 's/^/    exports /' | sort | uniq
+jar tf checker-qual.jar | grep '\.java$' | sed 's/\/[^/]*\.java/;/' | sed 's/\//./g' | sed 's/^/    exports /' | sort -u
 ```
 The result of the command will be a list of export lines.
 Replace the existing export lines present in
 `src/java.base/share/classes/module-info.java` with the newly-generated list of
-exports. If no new packages were added, then there are likely going to be no
-changes to the `module-info.java` file.
+exports. If no new packages were added, then likely no changes are needed
+in the `module-info.java` file.
 
 Commit the changes, including the new `checker.jar` file and any new `.java`
 files in a `qual/` directory.  (Both are used, by different parts of the build.)
@@ -182,7 +195,14 @@ but I wasn't able to make that work for JDK 17.
 The remainder of this file is the `README.md` from `openjdk/jdk`.
 
 
-# Welcome to the JDK!
+# Welcome to OpenJDK 17 Updates!
+
+The JDK 17 Updates project uses two GitHub repositories.
+Updates are continuously developed in the repository [jdk17u-dev](https://github.com/openjdk/jdk17u-dev). This is the repository usually targeted by contributors.
+The [jdk17u](https://github.com/openjdk/jdk17u) repository is used for rampdown of the update releases of jdk17u and only accepts critical changes that must make the next release during rampdown. (You probably do not want to target jdk17u).
+
+For more OpenJDK 17 updates specific information such as timelines and contribution guidelines see the [project wiki page](https://wiki.openjdk.org/display/JDKUpdates/JDK+17u/).
+
 
 For build instructions please see the
 [online documentation](https://openjdk.java.net/groups/build/doc/building.html),

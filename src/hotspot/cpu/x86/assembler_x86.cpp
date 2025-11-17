@@ -3325,7 +3325,7 @@ void Assembler::negl(Address dst) {
   emit_operand(as_Register(3), dst);
 }
 
-void Assembler::nop(int i) {
+void Assembler::nop(uint i) {
 #ifdef ASSERT
   assert(i > 0, " ");
   // The fancy nops aren't currently recognized by debuggers making it a
@@ -5811,6 +5811,14 @@ void Assembler::xorw(Register dst, Register src) {
   emit_arith(0x33, 0xC0, dst, src);
 }
 
+void Assembler::xorw(Register dst, Address src) {
+  InstructionMark im(this);
+  emit_int8(0x66);
+  prefix(src, dst);
+  emit_int8(0x33);
+  emit_operand(dst, src, 0);
+}
+
 // AVX 3-operands scalar float-point arithmetic instructions
 
 void Assembler::vaddsd(XMMRegister dst, XMMRegister nds, Address src) {
@@ -7538,6 +7546,10 @@ void Assembler::evprolq(XMMRegister dst, XMMRegister src, int shift, int vector_
   emit_int24(0x72, (0xC0 | encode), shift & 0xFF);
 }
 
+// Register is a class, but it would be assigned numerical value.
+// "0" is assigned for xmm0. Thus we need to ignore -Wnonnull.
+PRAGMA_DIAG_PUSH
+PRAGMA_NONNULL_IGNORED
 void Assembler::evprord(XMMRegister dst, XMMRegister src, int shift, int vector_len) {
   assert(VM_Version::supports_evex(), "requires EVEX support");
   assert(vector_len == Assembler::AVX_512bit || VM_Version::supports_avx512vl(), "requires VL support");
@@ -7555,6 +7567,7 @@ void Assembler::evprorq(XMMRegister dst, XMMRegister src, int shift, int vector_
   int encode = vex_prefix_and_encode(xmm0->encoding(), dst->encoding(), src->encoding(), VEX_SIMD_66, VEX_OPCODE_0F, &attributes);
   emit_int24(0x72, (0xC0 | encode), shift & 0xFF);
 }
+PRAGMA_DIAG_POP
 
 void Assembler::evprolvd(XMMRegister dst, XMMRegister src, XMMRegister shift, int vector_len) {
   assert(VM_Version::supports_evex(), "requires EVEX support");
@@ -10511,17 +10524,6 @@ void Assembler::movsbq(Register dst, Address src) {
 void Assembler::movsbq(Register dst, Register src) {
   int encode = prefixq_and_encode(dst->encoding(), src->encoding());
   emit_int24(0x0F, (unsigned char)0xBE, (0xC0 | encode));
-}
-
-void Assembler::movslq(Register dst, int32_t imm32) {
-  // dbx shows movslq(rcx, 3) as movq     $0x0000000049000000,(%rbx)
-  // and movslq(r8, 3); as movl     $0x0000000048000000,(%rbx)
-  // as a result we shouldn't use until tested at runtime...
-  ShouldNotReachHere();
-  InstructionMark im(this);
-  int encode = prefixq_and_encode(dst->encoding());
-  emit_int8(0xC7 | encode);
-  emit_int32(imm32);
 }
 
 void Assembler::movslq(Address dst, int32_t imm32) {

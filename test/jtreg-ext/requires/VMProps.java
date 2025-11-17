@@ -46,6 +46,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jdk.test.whitebox.code.Compiler;
 import jdk.test.whitebox.cpuinfo.CPUInfo;
@@ -80,6 +82,10 @@ public class VMProps implements Callable<Map<String, String>> {
             }
             map.put(key, value);
         }
+
+        public void putAll(Map<String, String> map) {
+            map.entrySet().forEach(e -> put(e.getKey(), () -> e.getValue()));
+        }
     }
 
     /**
@@ -99,6 +105,7 @@ public class VMProps implements Callable<Map<String, String>> {
         map.put("vm.simpleArch", this::vmArch);
         map.put("vm.debug", this::vmDebug);
         map.put("vm.jvmci", this::vmJvmci);
+        map.put("vm.jvmci.enabled", this::vmJvmciEnabled);
         map.put("vm.emulatedClient", this::vmEmulatedClient);
         // vm.hasSA is "true" if the VM contains the serviceability agent
         // and jhsdb.
@@ -120,11 +127,12 @@ public class VMProps implements Callable<Map<String, String>> {
         map.put("vm.graal.enabled", this::isGraalEnabled);
         map.put("vm.compiler1.enabled", this::isCompiler1Enabled);
         map.put("vm.compiler2.enabled", this::isCompiler2Enabled);
-        map.put("docker.support", this::dockerSupport);
+        map.put("container.support", this::containerSupport);
         map.put("vm.musl", this::isMusl);
         map.put("release.implementor", this::implementor);
         map.put("jdk.containerized", this::jdkContainerized);
         map.put("vm.flagless", this::isFlagless);
+        map.putAll(xOptFlags()); // -Xmx4g -> @requires vm.opt.x.Xmx == "4g" )
         vmGC(map); // vm.gc.X = true/false
         vmOptFinalFlags(map);
 
@@ -260,6 +268,20 @@ public class VMProps implements Callable<Map<String, String>> {
         return "true";
     }
 
+
+    /**
+     * @return true if JVMCI is enabled
+     */
+    protected String vmJvmciEnabled() {
+        // builds with jvmci have this flag
+        if ("false".equals(vmJvmci())) {
+            return "false";
+        }
+
+        return "" + Compiler.isJVMCIEnabled();
+    }
+
+
     /**
      * @return true if VM runs in emulated-client mode and false otherwise.
      */
@@ -317,6 +339,7 @@ public class VMProps implements Callable<Map<String, String>> {
         vmOptFinalFlag(map, "ClassUnloading");
         vmOptFinalFlag(map, "ClassUnloadingWithConcurrentMark");
         vmOptFinalFlag(map, "UseCompressedOops");
+        vmOptFinalFlag(map, "UseLargePages");
         vmOptFinalFlag(map, "UseVectorizedMismatchIntrinsic");
         vmOptFinalFlag(map, "EnableJVMCI");
         vmOptFinalFlag(map, "EliminateAllocations");
@@ -432,16 +455,16 @@ public class VMProps implements Callable<Map<String, String>> {
     }
 
    /**
-     * A simple check for docker support
+     * A simple check for container support
      *
-     * @return true if docker is supported in a given environment
+     * @return true if container is supported in a given environment
      */
-    protected String dockerSupport() {
-        log("Entering dockerSupport()");
+    protected String containerSupport() {
+        log("Entering containerSupport()");
 
         boolean isSupported = false;
         if (Platform.isLinux()) {
-           // currently docker testing is only supported for Linux,
+           // currently container testing is only supported for Linux,
            // on certain platforms
 
            String arch = System.getProperty("os.arch");
@@ -457,17 +480,17 @@ public class VMProps implements Callable<Map<String, String>> {
            }
         }
 
-        log("dockerSupport(): platform check: isSupported = " + isSupported);
+        log("containerSupport(): platform check: isSupported = " + isSupported);
 
         if (isSupported) {
            try {
-              isSupported = checkDockerSupport();
+              isSupported = checkProgramSupport("checkContainerSupport()", Container.ENGINE_COMMAND);
            } catch (Exception e) {
               isSupported = false;
            }
          }
 
-        log("dockerSupport(): returning isSupported = " + isSupported);
+        log("containerSupport(): returning isSupported = " + isSupported);
         return "" + isSupported;
     }
 
@@ -504,18 +527,17 @@ public class VMProps implements Callable<Map<String, String>> {
                     log("-------------");
                 });
     }
-
-    private boolean checkDockerSupport() throws IOException, InterruptedException {
-        log("checkDockerSupport(): entering");
-        ProcessBuilder pb = new ProcessBuilder("which", Container.ENGINE_COMMAND);
+    private boolean checkProgramSupport(String logString, String cmd) throws IOException, InterruptedException {
+        log(logString + ": entering");
+        ProcessBuilder pb = new ProcessBuilder("which", cmd);
         Map<String, String> logFileNames =
-            redirectOutputToLogFile("checkDockerSupport(): which <container-engine>",
-                                                      pb, "which-container");
+            redirectOutputToLogFile(logString + ": which " + cmd,
+                                                      pb, "which-cmd");
         Process p = pb.start();
         p.waitFor(10, TimeUnit.SECONDS);
         int exitValue = p.exitValue();
 
-        log(String.format("checkDockerSupport(): exitValue = %s, pid = %s", exitValue, p.pid()));
+        log(String.format("%s: exitValue = %s, pid = %s", logString, exitValue, p.pid()));
         if (exitValue != 0) {
             printLogfileContent(logFileNames);
         }
@@ -568,9 +590,7 @@ public class VMProps implements Callable<Map<String, String>> {
             return "" + "true".equalsIgnoreCase(flagless);
         }
 
-        List<String> allFlags = new ArrayList<String>();
-        Collections.addAll(allFlags, System.getProperty("test.vm.opts", "").trim().split("\\s+"));
-        Collections.addAll(allFlags, System.getProperty("test.java.opts", "").trim().split("\\s+"));
+        List<String> allFlags = allFlags().toList();
 
         // check -XX flags
         var ignoredXXFlags = Set.of(
@@ -615,6 +635,35 @@ public class VMProps implements Callable<Map<String, String>> {
                           .isEmpty();
 
         return "" + result;
+    }
+
+    private Stream<String> allFlags() {
+        return Stream.of((System.getProperty("test.vm.opts", "") + " " + System.getProperty("test.java.opts", "")).trim().split("\\s+"));
+    }
+
+    /**
+     * Parses extra options, options that start with -X excluding the
+     * bare -X option (as it is not considered an extra option).
+     * Ignores extra options not starting with -X
+     *
+     * This could be improved to handle extra options not starting
+     * with -X as well as "standard" options.
+     */
+    private Map<String, String> xOptFlags() {
+        return allFlags()
+            .filter(s -> s.startsWith("-X") && !s.startsWith("-XX:") && !s.equals("-X"))
+            .map(s -> s.replaceFirst("-", ""))
+            .map(flag -> {
+                String[] split = flag.split("[:0123456789]", 2);
+                return split.length == 2 ? new String[] {split[0], flag.substring(split[0].length(), flag.length() - split[1].length()), split[1]}
+                    : split;
+            })
+            .collect(Collectors.toMap(a -> "vm.opt.x." + a[0],
+                                      a -> (a.length == 1)
+                                      ? "true" // -Xnoclassgc
+                                      : (a[1].equals(":")
+                                         ? a[2]            // ["-XshowSettings", ":", "system"]
+                                         : a[1] + a[2]))); // ["-Xmx", "4", "g"]
     }
 
     /**
